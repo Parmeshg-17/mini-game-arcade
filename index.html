@@ -75,8 +75,13 @@
 
         <div class="hero-actions">
           <a href="#games-section" class="btn-primary">
-            <span>Explore Games</span>
+            <span>Explore All Games</span>
             <span>↓</span>
+          </a>
+          <a href="games/tic-tac-toe/index.html" class="btn-secondary" style="border-color: var(--border-lime);">
+            <span>Play Tic Tac Toe</span>
+            <span class="btn-badge-new" style="background: var(--accent-lime); color: #10120f; font-size: 0.65rem; padding: 1px 6px; border-radius: 4px; font-weight: 800; margin-left: 4px;">NEW</span>
+            <span>→</span>
           </a>
           <a href="games/citrus-blitz/index.html" class="btn-secondary">
             <span>Play Citrus Blitz</span>
@@ -154,9 +159,93 @@
         </div>
       </div>
 
-      <!-- Games Grid -->
+      <!-- Games Grid (Pre-rendered static cards with live dynamic filter support) -->
       <div id="games-grid" class="games-grid">
-        <!-- Rendered dynamically from js/games-data.js -->
+        <!-- Game 1: Citrus Blitz -->
+        <article class="arcade-card" data-game-id="citrus-blitz">
+          <a href="games/citrus-blitz/index.html" class="card-media-wrapper" aria-label="Play Citrus Blitz">
+            <img src="assets/games/citrus-blitz.svg" alt="Citrus Blitz original gameplay illustration" class="card-thumb" loading="lazy" />
+            <div class="card-badges">
+              <span class="badge-category">Arcade</span>
+              <span class="badge-status">Featured</span>
+            </div>
+            <div class="card-hover-overlay">
+              <span class="hover-play-pill">Play Now →</span>
+            </div>
+          </a>
+
+          <div class="card-body">
+            <div class="card-header-row">
+              <h3 class="card-title">Citrus Blitz</h3>
+              <span class="card-session-tag">Quick Play</span>
+            </div>
+
+            <p class="card-tagline">Slice fast. Chain combos. Beat your best.</p>
+            <p class="card-description">Slice fruit, avoid bombs, and build your highest score in a fast-paced browser arcade challenge. Engineered with 100% procedural Canvas 2D physics, dynamic blade swipe trails, and synthesized Web Audio effects.</p>
+
+            <div class="card-features">
+              <span class="feature-tag">Canvas 2D Physics</span>
+              <span class="feature-tag">Procedural Audio</span>
+              <span class="feature-tag">Touch & Mouse</span>
+              <span class="feature-tag">60s Blitz & Survival</span>
+            </div>
+
+            <div class="card-controls-hint">
+              <span class="hint-label">CONTROLS</span>
+              <span class="hint-text">Mouse Drag or Touch Swipe to slice • Space / P to Pause • R to Restart • M to Mute</span>
+            </div>
+
+            <div class="card-actions">
+              <a href="games/citrus-blitz/index.html" class="btn-play-game">
+                <span>Play Citrus Blitz</span>
+                <span class="play-arrow">→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Game 2: Tic Tac Toe -->
+        <article class="arcade-card" data-game-id="tic-tac-toe">
+          <a href="games/tic-tac-toe/index.html" class="card-media-wrapper" aria-label="Play Tic Tac Toe">
+            <img src="assets/games/tic-tac-toe.svg" alt="Tic Tac Toe original gameplay illustration" class="card-thumb" loading="lazy" />
+            <div class="card-badges">
+              <span class="badge-category">Puzzle</span>
+              <span class="badge-status">New</span>
+            </div>
+            <div class="card-hover-overlay">
+              <span class="hover-play-pill">Play Now →</span>
+            </div>
+          </a>
+
+          <div class="card-body">
+            <div class="card-header-row">
+              <h3 class="card-title">Tic Tac Toe</h3>
+              <span class="card-session-tag">Quick Play</span>
+            </div>
+
+            <p class="card-tagline">Claim three in a row. Me vs Bot & 2 Players.</p>
+            <p class="card-description">Challenge the unbeatable Mastermind Bot or play head-to-head 2-player pass & play on the same device. Features synthesized arcade audio, laser strike animations, match timer, move counter, and persistent scoreboard.</p>
+
+            <div class="card-features">
+              <span class="feature-tag">Me vs Bot & 2 Players</span>
+              <span class="feature-tag">Unbeatable Minimax AI</span>
+              <span class="feature-tag">Keyboard & Touch</span>
+              <span class="feature-tag">Match Timer & Scoreboard</span>
+            </div>
+
+            <div class="card-controls-hint">
+              <span class="hint-label">CONTROLS</span>
+              <span class="hint-text">Touch / Click cells • Number keys 1-9 • Arrow keys + Enter • R to Restart • M to Mute</span>
+            </div>
+
+            <div class="card-actions">
+              <a href="games/tic-tac-toe/index.html" class="btn-play-game">
+                <span>Play Tic Tac Toe</span>
+                <span class="play-arrow">→</span>
+              </a>
+            </div>
+          </div>
+        </article>
       </div>
 
       <!-- Empty State -->
@@ -262,8 +351,8 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
-  <script src="js/games-data.js"></script>
-  <script src="js/arcade.js"></script>
+  <!-- Scripts (with cache-busting version query) -->
+  <script src="js/games-data.js?v=2"></script>
+  <script src="js/arcade.js?v=2"></script>
 </body>
 </html>
