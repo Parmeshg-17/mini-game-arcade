@@ -144,13 +144,23 @@ it('Search and category filter logic filters games correctly', () => {
   assert.strictEqual(res4.length, 1);
   assert.strictEqual(res4[0].id, 'tic-tac-toe');
 
+  // Casual category filter matches Memory Match
+  const res5 = filterGames('', 'Casual');
+  assert.strictEqual(res5.length, 1);
+  assert.strictEqual(res5[0].id, 'memory-match');
+
+  // Tag search for memory
+  const res6 = filterGames('memory', 'All');
+  assert.strictEqual(res6.length, 1);
+  assert.strictEqual(res6[0].id, 'memory-match');
+
   // Non-matching category
-  const res5 = filterGames('', 'Racing');
-  assert.strictEqual(res5.length, 0);
+  const res7 = filterGames('', 'Racing');
+  assert.strictEqual(res7.length, 0);
 
   // Non-matching query
-  const res6 = filterGames('nonexistentgamexyz', 'All');
-  assert.strictEqual(res6.length, 0);
+  const res8 = filterGames('nonexistentgamexyz', 'All');
+  assert.strictEqual(res8.length, 0);
 });
 
 // 7. Dedicated Tic Tac Toe Playable Page & Engine Integrity
@@ -209,7 +219,55 @@ it('Tic Tac Toe AI correctly detects wins and blocks immediate opponent threats'
   assert.strictEqual(botMoveBlock, 2, 'Mastermind AI must block human win at index 2');
 });
 
-// 9. Slicing Collision & Math Logic
+// 9. Dedicated Memory Match Playable Page & Engine Integrity
+it('Dedicated Memory Match page (games/memory-match/index.html) has all DOM elements required by game.js', () => {
+  const memHtmlPath = path.join(__dirname, 'games/memory-match/index.html');
+  assert(fs.existsSync(memHtmlPath), 'games/memory-match/index.html must exist');
+  const memHtml = fs.readFileSync(memHtmlPath, 'utf8');
+  const memGameJs = fs.readFileSync(path.join(__dirname, 'games/memory-match/js/game.js'), 'utf8');
+
+  // Verify all document.getElementById calls in game.js are present in HTML
+  const idRegex = /document\.getElementById\(['"]([^'"]+)['"]\)/g;
+  let match;
+  while ((match = idRegex.exec(memGameJs)) !== null) {
+    const id = match[1];
+    assert(memHtml.includes(`id="${id}"`), `DOM id="${id}" missing in games/memory-match/index.html`);
+  }
+
+  // Verify navigation back link to arcade exists
+  assert(memHtml.includes('href="../../index.html"'), 'Memory Match page must link back to arcade homepage');
+});
+
+// 10. Memory Match Deck Generator & Modes Logic
+it('Memory Match generates accurate decks and matching pairs for Easy, Medium, and Hard modes', () => {
+  const { generateDeck, DIFFICULTIES } = require('./games/memory-match/js/cards-data.js');
+
+  // 1. Easy mode: exactly 8 cards (4 pairs)
+  const easyDeck = generateDeck('easy');
+  assert.strictEqual(easyDeck.length, 8, 'Easy mode must have exactly 8 cards');
+  const easyCounts = {};
+  easyDeck.forEach(c => easyCounts[c.cardId] = (easyCounts[c.cardId] || 0) + 1);
+  assert.strictEqual(Object.keys(easyCounts).length, 4, 'Easy mode must have 4 distinct pairs');
+  Object.values(easyCounts).forEach(cnt => assert.strictEqual(cnt, 2, 'Each card must appear exactly twice'));
+
+  // 2. Medium mode: exactly 16 cards (8 pairs)
+  const medDeck = generateDeck('medium');
+  assert.strictEqual(medDeck.length, 16, 'Medium mode must have exactly 16 cards');
+  const medCounts = {};
+  medDeck.forEach(c => medCounts[c.cardId] = (medCounts[c.cardId] || 0) + 1);
+  assert.strictEqual(Object.keys(medCounts).length, 8, 'Medium mode must have 8 distinct pairs');
+  Object.values(medCounts).forEach(cnt => assert.strictEqual(cnt, 2, 'Each card must appear exactly twice'));
+
+  // 3. Hard mode: exactly 24 cards (12 pairs)
+  const hardDeck = generateDeck('hard');
+  assert.strictEqual(hardDeck.length, 24, 'Hard mode must have exactly 24 cards');
+  const hardCounts = {};
+  hardDeck.forEach(c => hardCounts[c.cardId] = (hardCounts[c.cardId] || 0) + 1);
+  assert.strictEqual(Object.keys(hardCounts).length, 12, 'Hard mode must have 12 distinct pairs');
+  Object.values(hardCounts).forEach(cnt => assert.strictEqual(cnt, 2, 'Each card must appear exactly twice'));
+});
+
+// 11. Slicing Collision & Math Logic
 it('Circle-to-segment collision correctly detects slices and ignores misses', () => {
   function checkSlice(fruitX, fruitY, radius, p1, p2) {
     const dx = p2.x - p1.x;

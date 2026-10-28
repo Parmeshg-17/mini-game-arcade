@@ -19,6 +19,7 @@ A fast, modern, responsive browser arcade website showcasing lightweight, origin
 - **Featured Games**:
   - **Citrus Blitz**: Original procedural fruit-slicing arcade game with realistic slicing physics, glowing blade swipe trails, Web Audio procedural sounds, combo multipliers, and bomb-avoidance mechanics.
   - **Tic Tac Toe**: Clean neon arcade strategy game with **Me vs Bot** (Casual & unbeatable Mastermind Minimax AI) and **2 Players** local pass & play, laser strike animations, match timer, move counter, and persistent scoreboard.
+  - **Memory Match**: Crisp 3D card-matching challenge with 3 difficulty modes (**Easy** 8 cards, **Medium** 16 cards, **Hard** 24 cards), 12 bespoke vector icons, match timer, move counter, 3-star ratings, and personal best records.
 - **Comprehensive Policy & Info Pages**: Dedicated, fully populated [About](file:///c:/Users/parmesh/Desktop/mini%20game/about.html), [Contact](file:///c:/Users/parmesh/Desktop/mini%20game/contact.html) (with working client-side validation), [Privacy Policy](file:///c:/Users/parmesh/Desktop/mini%20game/privacy.html), and [Terms of Service](file:///c:/Users/parmesh/Desktop/mini%20game/terms.html) pages.
 - **Zero Dependencies & Zero Build Step**: 100% vanilla HTML5, CSS3, and JavaScript. Lightning-fast loads and zero Vercel build failures.
 - **Privacy-First**: No tracking cookies, no accounts, and no servers. High scores and mute settings are stored strictly in `localStorage`.

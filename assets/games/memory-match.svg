@@ -1,0 +1,197 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="memBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#181c16"/>
+      <stop offset="50%" stop-color="#121511"/>
+      <stop offset="100%" stop-color="#0c0e0b"/>
+    </linearGradient>
+
+    <!-- Card Face Up Gradient -->
+    <linearGradient id="cardFront" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#242b21"/>
+      <stop offset="100%" stop-color="#181c16"/>
+    </linearGradient>
+
+    <!-- Card Back Gradient -->
+    <linearGradient id="cardBack" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1b2019"/>
+      <stop offset="100%" stop-color="#10130f"/>
+    </linearGradient>
+
+    <!-- Electric Lime Match Gradient -->
+    <linearGradient id="limeGlowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f2ffad"/>
+      <stop offset="50%" stop-color="#d5ff55"/>
+      <stop offset="100%" stop-color="#8bb81e"/>
+    </linearGradient>
+
+    <!-- Cyan Gem Gradient -->
+    <linearGradient id="cyanGem" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+
+    <!-- Coral Red Gradient -->
+    <linearGradient id="coralGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffa085"/>
+      <stop offset="50%" stop-color="#ff784f"/>
+      <stop offset="100%" stop-color="#c2410c"/>
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="neonGlowMem" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Card Background -->
+  <rect width="640" height="380" rx="16" fill="url(#memBg)"/>
+
+  <!-- Subtle Grid Lines -->
+  <g opacity="0.06" stroke="#f4f2e9" stroke-width="1">
+    <line x1="0" y1="95" x2="640" y2="95"/>
+    <line x1="0" y1="190" x2="640" y2="190"/>
+    <line x1="0" y1="285" x2="640" y2="285"/>
+    <line x1="160" y1="0" x2="160" y2="380"/>
+    <line x1="320" y1="0" x2="320" y2="380"/>
+    <line x1="480" y1="0" x2="480" y2="380"/>
+  </g>
+
+  <!-- Corner Crosshairs -->
+  <g stroke="#d5ff55" stroke-width="1.5" opacity="0.4">
+    <path d="M 28 20 L 28 36 M 20 28 L 36 28"/>
+    <path d="M 612 20 L 612 36 M 604 28 L 620 28"/>
+    <path d="M 28 344 L 28 360 M 20 352 L 36 352"/>
+    <path d="M 612 344 L 612 360 M 604 352 L 620 352"/>
+  </g>
+
+  <!-- Central Display: Array of Memory Cards -->
+  <g transform="translate(110, 55)">
+
+    <!-- Card 1 (Face Up - MATCH! Diamond) -->
+    <g transform="translate(0, 0)" filter="url(#cardShadow)">
+      <rect width="95" height="125" rx="12" fill="url(#cardFront)" stroke="#d5ff55" stroke-width="2"/>
+      <!-- Inner Glow Border -->
+      <rect x="5" y="5" width="85" height="115" rx="8" fill="none" stroke="#d5ff55" stroke-width="1" stroke-opacity="0.3"/>
+      <!-- Diamond Icon (Lime) -->
+      <g transform="translate(47.5, 62.5)" filter="url(#neonGlowMem)">
+        <polygon points="0,-24 20,0 0,24 -20,0" fill="url(#limeGlowGrad)"/>
+        <polygon points="0,-14 11,0 0,14 -11,0" fill="#ffffff" opacity="0.4"/>
+      </g>
+      <!-- Matched Mini Check Badge -->
+      <circle cx="80" cy="18" r="8" fill="#d5ff55"/>
+      <path d="M 76 18 L 79 21 L 84 15" stroke="#10120f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </g>
+
+    <!-- Card 2 (Face Up - MATCH! Diamond - Twin) -->
+    <g transform="translate(110, 0)" filter="url(#cardShadow)">
+      <rect width="95" height="125" rx="12" fill="url(#cardFront)" stroke="#d5ff55" stroke-width="2"/>
+      <rect x="5" y="5" width="85" height="115" rx="8" fill="none" stroke="#d5ff55" stroke-width="1" stroke-opacity="0.3"/>
+      <!-- Diamond Icon (Lime) -->
+      <g transform="translate(47.5, 62.5)" filter="url(#neonGlowMem)">
+        <polygon points="0,-24 20,0 0,24 -20,0" fill="url(#limeGlowGrad)"/>
+        <polygon points="0,-14 11,0 0,14 -11,0" fill="#ffffff" opacity="0.4"/>
+      </g>
+      <circle cx="80" cy="18" r="8" fill="#d5ff55"/>
+      <path d="M 76 18 L 79 21 L 84 15" stroke="#10120f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </g>
+
+    <!-- Connecting Match Beam between Card 1 and Card 2 -->
+    <path d="M 95 62.5 L 110 62.5" stroke="#d5ff55" stroke-width="3" stroke-linecap="round" filter="url(#neonGlowMem)"/>
+    <circle cx="102.5" cy="62.5" r="4" fill="#ffffff" filter="url(#neonGlowMem)"/>
+
+    <!-- Card 3 (Face Down - Arcade Emblem) -->
+    <g transform="translate(220, 0)" filter="url(#cardShadow)">
+      <rect width="95" height="125" rx="12" fill="url(#cardBack)" stroke="rgba(244,242,233,0.15)" stroke-width="1.5"/>
+      <!-- Pattern -->
+      <rect x="8" y="8" width="79" height="109" rx="6" fill="none" stroke="rgba(244,242,233,0.08)" stroke-width="1" stroke-dasharray="4 4"/>
+      <!-- Center Emblem Cross -->
+      <g transform="translate(47.5, 62.5)" stroke="#38bdf8" stroke-width="2" opacity="0.6">
+        <circle cx="0" cy="0" r="14" fill="none"/>
+        <line x1="-8" y1="0" x2="8" y2="0"/>
+        <line x1="0" y1="-8" x2="0" y2="8"/>
+      </g>
+    </g>
+
+    <!-- Card 4 (Face Down) -->
+    <g transform="translate(330, 0)" filter="url(#cardShadow)">
+      <rect width="95" height="125" rx="12" fill="url(#cardBack)" stroke="rgba(244,242,233,0.15)" stroke-width="1.5"/>
+      <rect x="8" y="8" width="79" height="109" rx="6" fill="none" stroke="rgba(244,242,233,0.08)" stroke-width="1" stroke-dasharray="4 4"/>
+      <g transform="translate(47.5, 62.5)" stroke="#ff784f" stroke-width="2" opacity="0.6">
+        <circle cx="0" cy="0" r="14" fill="none"/>
+        <polygon points="0,-8 7,6 -7,6" fill="none"/>
+      </g>
+    </g>
+
+    <!-- Bottom Row Cards -->
+    <!-- Card 5 (Face Down) -->
+    <g transform="translate(0, 140)" filter="url(#cardShadow)">
+      <rect width="95" height="125" rx="12" fill="url(#cardBack)" stroke="rgba(244,242,233,0.15)" stroke-width="1.5"/>
+      <rect x="8" y="8" width="79" height="109" rx="6" fill="none" stroke="rgba(244,242,233,0.08)" stroke-width="1" stroke-dasharray="4 4"/>
+      <g transform="translate(47.5, 62.5)" stroke="#d5ff55" stroke-width="2" opacity="0.6">
+        <circle cx="0" cy="0" r="14" fill="none"/>
+        <rect x="-6" y="-6" width="12" height="12" fill="none"/>
+      </g>
+    </g>
+
+    <!-- Card 6 (Face Up - Star) -->
+    <g transform="translate(110, 140)" filter="url(#cardShadow)">
+      <rect width="95" height="125" rx="12" fill="url(#cardFront)" stroke="rgba(56,189,248,0.5)" stroke-width="1.5"/>
+      <rect x="5" y="5" width="85" height="115" rx="8" fill="none" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.2"/>
+      <!-- Star Icon (Cyan) -->
+      <g transform="translate(47.5, 62.5)" filter="url(#neonGlowMem)">
+        <polygon points="0,-22 6,-6 22,-4 10,7 14,23 0,13 -14,23 -10,7 -22,-4 -6,-6" fill="url(#cyanGem)"/>
+      </g>
+    </g>
+
+    <!-- Card 7 (Mid Flip Animation Perspective) -->
+    <g transform="translate(240, 140) scale(0.6, 1)" filter="url(#cardShadow)">
+      <rect width="95" height="125" rx="12" fill="#20251e" stroke="rgba(255,120,79,0.7)" stroke-width="2"/>
+      <line x1="47.5" y1="0" x2="47.5" y2="125" stroke="#ff784f" stroke-width="2" opacity="0.7"/>
+    </g>
+
+    <!-- Card 8 (Face Up - Flame/Heart) -->
+    <g transform="translate(330, 140)" filter="url(#cardShadow)">
+      <rect width="95" height="125" rx="12" fill="url(#cardFront)" stroke="rgba(255,120,79,0.5)" stroke-width="1.5"/>
+      <rect x="5" y="5" width="85" height="115" rx="8" fill="none" stroke="#ff784f" stroke-width="1" stroke-opacity="0.2"/>
+      <!-- Heart/Crown Icon (Coral) -->
+      <g transform="translate(47.5, 62.5)" filter="url(#neonGlowMem)">
+        <path d="M 0,18 C -18,4 -20,-12 -8,-16 C -3,-18 0,-12 0,-12 C 0,-12 3,-18 8,-16 C 20,-12 18,4 0,18 Z" fill="url(#coralGrad)"/>
+      </g>
+    </g>
+
+  </g>
+
+  <!-- Left Side Pill Badge -->
+  <g transform="translate(36, 165)">
+    <rect width="64" height="48" rx="8" fill="#171a16" stroke="rgba(213,255,85,0.3)" stroke-width="1"/>
+    <text x="32" y="24" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700" fill="#d5ff55" text-anchor="middle">MATCH</text>
+    <text x="32" y="38" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="600" fill="#a7ada0" text-anchor="middle">PAIRS</text>
+  </g>
+
+  <!-- Right Side Pill Badge: Modes -->
+  <g transform="translate(540, 160)">
+    <rect width="68" height="58" rx="8" fill="#171a16" stroke="rgba(56,189,248,0.3)" stroke-width="1"/>
+    <text x="34" y="20" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700" fill="#38bdf8" text-anchor="middle">3 MODES</text>
+    <text x="34" y="34" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="600" fill="#f4f2e9" text-anchor="middle">EASY / MED</text>
+    <text x="34" y="47" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="600" fill="#ff784f" text-anchor="middle">HARD</text>
+  </g>
+
+  <!-- Sparkle Stars -->
+  <g fill="#d5ff55" opacity="0.6">
+    <circle cx="80" cy="80" r="1.5"/>
+    <circle cx="560" cy="85" r="2"/>
+    <circle cx="95" cy="310" r="2"/>
+    <circle cx="550" cy="300" r="1.5"/>
+  </g>
+</svg>

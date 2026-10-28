@@ -29,6 +29,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/tic-tac-toe.svg',
     controlsSummary: 'Touch / Click cells • Number keys 1-9 • Arrow keys + Enter • R to Restart • M to Mute',
     features: ['Me vs Bot & 2 Players', 'Unbeatable Minimax AI', 'Keyboard & Touch', 'Match Timer & Scoreboard']
+  },
+  {
+    id: 'memory-match',
+    title: 'Memory Match',
+    category: 'Casual',
+    tags: ['casual', 'puzzle', 'memory', 'cards', 'brain', 'matching', 'reflex'],
+    badge: 'New',
+    tagline: 'Flip cards. Find pairs. Beat the clock.',
+    description: 'Challenge your visual recall across Easy (8 cards), Medium (16 cards), and Hard (24 cards) modes. Features 3D card-flip animations, synthesized Web Audio effects, moves counter, match timer, and star ratings.',
+    route: 'games/memory-match/index.html',
+    thumbnail: 'assets/games/memory-match.svg',
+    controlsSummary: 'Click or Tap to flip cards • Arrow keys + Enter/Space • R to Restart • M to Mute',
+    features: ['3 Modes: Easy, Med & Hard', '3D Card Flip Animation', 'Timer & Move Counter', 'Star Rating & High Scores']
   }
 ];
 

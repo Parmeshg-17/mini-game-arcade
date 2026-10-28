@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Memory Match — Play Free on Mini Game Arcade</title>
+  <meta name="description" content="Play Memory Match online for free. Flip cards, match pairs, and test your memory across Easy, Medium, and Hard arcade difficulty modes.">
+  <meta name="theme-color" content="#10120f">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="Memory Match — Mini Game Arcade">
+  <meta property="og:description" content="Flip cards, match pairs, and beat the clock in 3 arcade difficulty modes on desktop and mobile.">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Root-relative stylesheet link with file:// fallback -->
+  <link rel="stylesheet" href="/games/memory-match/style.css" id="game-stylesheet">
+  <script>
+    // Fallback if loaded via file:/// protocol
+    if (window.location.protocol === 'file:') {
+      const link = document.getElementById('game-stylesheet');
+      if (link) link.href = 'style.css';
+    }
+  </script>
+</head>
+<body class="game-page-body">
+
+  <!-- Arcade Top Navigation Bar -->
+  <nav class="arcade-nav-bar" aria-label="Game page navigation">
+    <div class="nav-content-container">
+      <a href="../../index.html" class="back-link">
+        <span class="back-arrow">←</span>
+        <span>Back to Arcade</span>
+      </a>
+
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="crumb-separator">/</span>
+        <a href="../../index.html#games-section">Games</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-current">Memory Match</span>
+      </div>
+
+      <a href="#controls-guide" class="nav-guide-link">Controls & Rules</a>
+    </div>
+  </nav>
+
+  <!-- Main Stage Container -->
+  <main class="game-stage-wrapper">
+
+    <!-- Game Editorial Header -->
+    <header class="game-editorial-header">
+      <div class="game-eyebrow-row">
+        <span class="badge-arcade">CASUAL // PUZZLE</span>
+        <span class="badge-tagline">3 MODES &bull; EASY &bull; MEDIUM &bull; HARD</span>
+      </div>
+      <h1 class="game-title">Memory Match</h1>
+      <p class="game-subheading">Flip cards, memorize positions, and connect matching pairs in the fewest moves possible.</p>
+    </header>
+
+    <!-- Arcade Play Card -->
+    <section class="arcade-play-card" id="memory-stage-card" aria-label="Interactive Memory Match Game Stage">
+
+      <!-- Mode / Difficulty Selector -->
+      <div class="mode-selector-wrap">
+        <div class="segmented-control" role="tablist" aria-label="Game Difficulty">
+          <button id="diff-easy-btn" class="segment-btn" role="tab" aria-selected="false">
+            <span>🌱</span>
+            <span>Easy (8)</span>
+          </button>
+          <button id="diff-med-btn" class="segment-btn active" role="tab" aria-selected="true">
+            <span>⚡</span>
+            <span>Medium (16)</span>
+          </button>
+          <button id="diff-hard-btn" class="segment-btn" role="tab" aria-selected="false">
+            <span>🔥</span>
+            <span>Hard (24)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Match HUD -->
+      <div class="match-hud-bar" role="region" aria-label="Match Status">
+        <div class="hud-group">
+          <span id="match-timer" class="hud-pill highlight-cyan" title="Time Elapsed">00:00</span>
+          <span id="moves-count" class="hud-pill" title="Total moves">Moves: 0</span>
+          <span id="pairs-matched" class="hud-pill highlight-lime" title="Pairs matched">Pairs: 0 / 8</span>
+        </div>
+
+        <div class="hud-group">
+          <button id="audio-toggle-btn" class="audio-btn" type="button" aria-label="Toggle Sound" title="Sound Toggle (M)">
+            <span id="audio-icon">🔊</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3D Memory Grid Container -->
+      <div class="memory-grid-container">
+        <!-- Confetti Canvas -->
+        <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+        <!-- Outcome Modal / Banner -->
+        <div id="outcome-banner" class="outcome-banner" role="dialog" aria-live="polite">
+          <div id="outcome-stars" class="outcome-stars">★★★</div>
+          <h2 id="outcome-title" class="outcome-title">Puzzle Completed!</h2>
+          <p id="outcome-subtitle" class="outcome-subtitle">Clean sweep across all pairs!</p>
+
+          <div class="outcome-stats-row">
+            <div class="outcome-stat-box">
+              <span class="outcome-stat-label">Time</span>
+              <span id="outcome-time-val" class="outcome-stat-val">00:00</span>
+            </div>
+            <div class="outcome-stat-box">
+              <span class="outcome-stat-label">Moves</span>
+              <span id="outcome-moves-val" class="outcome-stat-val">0</span>
+            </div>
+            <div class="outcome-stat-box">
+              <span class="outcome-stat-label">Best</span>
+              <span id="outcome-best-val" class="outcome-stat-val">--</span>
+            </div>
+          </div>
+
+          <button id="play-again-btn" class="btn-play-again" type="button">
+            <span>Play Next Round</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        <!-- Dynamic Card Grid -->
+        <div id="memory-grid" class="memory-grid grid-cols-4" role="grid" aria-label="Memory Card Grid">
+          <!-- Populated dynamically by js/game.js -->
+        </div>
+      </div>
+
+      <!-- Stage Footer Controls -->
+      <div class="stage-footer-controls">
+        <button id="restart-btn" class="btn-restart" type="button">
+          <span>↺</span>
+          <span>Restart Round (R)</span>
+        </button>
+
+        <div class="hud-group">
+          <span id="best-score-display" class="best-score-badge">Best: --</span>
+          <button id="clear-best-btn" class="btn-clear-best" type="button">Reset Best</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Controls & Game Information Section -->
+    <section id="controls-guide" class="game-info-section">
+      <div class="info-cards-grid">
+
+        <!-- Controls Guide -->
+        <article class="info-card">
+          <div class="info-card-header">
+            <span class="info-icon">[ ⌨ ]</span>
+            <h3 class="info-card-title">Controls & Input</h3>
+          </div>
+          <ul class="info-list">
+            <li><strong>Touch / Mouse:</strong> Click or tap any face-down card to flip it over.</li>
+            <li><strong>Keyboard Arrows:</strong> Navigate across cards with <span class="key-kbd">↑</span> <span class="key-kbd">↓</span> <span class="key-kbd">←</span> <span class="key-kbd">→</span>.</li>
+            <li><strong>Flip Card:</strong> Press <span class="key-kbd">Enter</span> or <span class="key-kbd">Space</span> to flip the focused card.</li>
+            <li><strong>Quick Restart:</strong> Press <span class="key-kbd">R</span> to shuffle a new deck.</li>
+            <li><strong>Audio Toggle:</strong> Press <span class="key-kbd">M</span> to mute or unmute procedural arcade audio.</li>
+          </ul>
+        </article>
+
+        <!-- 3 Modes Explained -->
+        <article class="info-card">
+          <div class="info-card-header">
+            <span class="info-icon">[ 🎯 ]</span>
+            <h3 class="info-card-title">3 Difficulty Modes</h3>
+          </div>
+          <ul class="info-list">
+            <li><strong>Easy (8 Cards):</strong> 4 matching pairs in a 4×2 grid. Fast, breezy, and perfect for quick warmups.</li>
+            <li><strong>Medium (16 Cards):</strong> 8 matching pairs in a classic 4×4 grid. The sweet spot of memory strategy.</li>
+            <li><strong>Hard (24 Cards):</strong> 12 matching pairs in an extensive 6×4 grid. The ultimate memory test.</li>
+          </ul>
+        </article>
+
+        <!-- Star Rating & Strategy -->
+        <article class="info-card">
+          <div class="info-card-header">
+            <span class="info-icon">[ ★ ]</span>
+            <h3 class="info-card-title">Star Ratings & Scoring</h3>
+          </div>
+          <ul class="info-list">
+            <li><strong>3 Stars (★★★):</strong> Finish near optimal par moves with minimal redundant flips.</li>
+            <li><strong>Session Records:</strong> Your lowest move count and fastest completion time for each mode are saved in <span class="key-kbd">localStorage</span>.</li>
+            <li><strong>Zero Lag:</strong> 100% client-side with 3D CSS hardware transforms and zero server latency.</li>
+          </ul>
+        </article>
+
+      </div>
+
+      <!-- Quick Arcade Footer Links -->
+      <footer class="game-page-footer">
+        <p>&copy; 2026 Mini Game Arcade. All games are original and free to play.</p>
+        <div class="footer-links">
+          <a href="../../index.html">Arcade Home</a>
+          <a href="../../about.html">About</a>
+          <a href="../../contact.html">Contact</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+        </div>
+      </footer>
+    </section>
+
+  </main>
+
+  <!-- Scripts (Root-relative paths with file:// fallback) -->
+  <script src="/games/memory-match/js/audio.js"></script>
+  <script src="/games/memory-match/js/cards-data.js"></script>
+  <script src="/games/memory-match/js/game.js"></script>
+  <script>
+    // Fallback if loaded via file:/// protocol where root-relative paths fail
+    if (window.location.protocol === 'file:' && typeof MemoryCards === 'undefined') {
+      ['audio.js', 'cards-data.js', 'game.js'].forEach(function(s) {
+        var scriptEl = document.createElement('script');
+        scriptEl.src = 'js/' + s;
+        scriptEl.async = false;
+        document.body.appendChild(scriptEl);
+      });
+    }
+  </script>
+</body>
+</html>
