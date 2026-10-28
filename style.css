@@ -1,0 +1,725 @@
+/* ==========================================================================
+   CITRUS BLITZ - MODERN ARCADE CSS STYLESHEET
+   ========================================================================== */
+
+:root {
+  --bg-primary: #090d16;
+  --bg-surface: rgba(18, 24, 38, 0.85);
+  --bg-surface-glass: rgba(26, 34, 53, 0.75);
+  --border-glass: rgba(255, 255, 255, 0.12);
+
+  --accent-cyan: #38bdf8;
+  --accent-amber: #facc15;
+  --accent-orange: #f97316;
+  --accent-rose: #f43f5e;
+  --accent-emerald: #10b981;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.25);
+  --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+}
+
+/* Reset & Box Sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-primary);
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 10% 90%, rgba(244, 63, 94, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 90% 90%, rgba(250, 204, 21, 0.06) 0%, transparent 50%);
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent accidental pull-to-refresh & double-tap zoom */
+body {
+  touch-action: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ==========================================================================
+   GAME SHELL CONTAINER
+   ========================================================================== */
+.game-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 1024px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.9);
+}
+
+/* ==========================================================================
+   TOP ARCADE HUD
+   ========================================================================== */
+.game-hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 20;
+  pointer-events: none; /* Let touches pass through except buttons */
+}
+
+.hud-left, .hud-center, .hud-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+/* Score Card */
+.score-card, .high-score-badge {
+  background: var(--bg-surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  padding: 6px 16px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.hud-label {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--text-secondary);
+}
+
+.score-number {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+.high-score-badge {
+  border-color: rgba(250, 204, 21, 0.25);
+}
+
+.high-number {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--accent-amber);
+}
+
+/* Center Timer & Hearts */
+.timer-pill, .lives-pill {
+  background: var(--bg-surface-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  padding: 8px 18px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-heading);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.timer-pill.urgent {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: #ef4444;
+  animation: pulse-urgent 0.6s infinite alternate;
+}
+
+@keyframes pulse-urgent {
+  0% { transform: scale(1); box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
+  100% { transform: scale(1.08); box-shadow: 0 0 25px rgba(239, 68, 68, 0.7); }
+}
+
+.timer-number {
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.timer-sec {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.heart-icon {
+  font-size: 20px;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Combo Badge */
+.combo-badge {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #ffffff;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+  animation: combo-bounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes combo-bounce {
+  0% { transform: scale(0.6) rotate(-4deg); opacity: 0; }
+  60% { transform: scale(1.15) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* HUD Buttons */
+.hud-btn {
+  background: var(--bg-surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.hud-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.hud-btn:active {
+  transform: translateY(1px);
+}
+
+/* ==========================================================================
+   CANVAS PLAYFIELD
+   ========================================================================== */
+.canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+#game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+/* ==========================================================================
+   OVERLAYS & MENUS (Glassmorphism Modal UI)
+   ========================================================================== */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(9, 13, 22, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 50;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.glass-panel {
+  background: rgba(18, 24, 38, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 28px;
+  box-shadow: var(--shadow-card);
+  text-align: center;
+  width: 100%;
+  max-width: 520px;
+  padding: 36px 30px;
+  animation: panel-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes panel-enter {
+  0% { transform: translateY(20px) scale(0.96); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.brand-badge {
+  display: inline-block;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: var(--accent-cyan);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.game-title {
+  font-family: var(--font-heading);
+  font-size: 44px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  line-height: 1.05;
+  color: #ffffff;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.highlight-text {
+  background: linear-gradient(135deg, var(--accent-amber), var(--accent-orange), var(--accent-rose));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(249, 115, 22, 0.4));
+}
+
+.tagline {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+/* Tutorial Cards */
+.tutorial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.t-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.t-icon {
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+
+.t-title {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.t-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.warning-card {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.warning-card .t-title {
+  color: #f87171;
+}
+
+.bonus-card {
+  border-color: rgba(250, 204, 21, 0.3);
+  background: rgba(250, 204, 21, 0.06);
+}
+
+.bonus-card .t-title {
+  color: #fde047;
+}
+
+/* Action Buttons */
+.action-buttons, .pause-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn {
+  font-family: var(--font-heading);
+  border: none;
+  border-radius: 16px;
+  padding: 14px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-icon {
+  font-size: 24px;
+}
+
+.btn-text-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.btn-heading {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.btn-sub {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  color: #ffffff;
+  box-shadow: 0 8px 24px -6px rgba(14, 165, 233, 0.5);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -6px rgba(14, 165, 233, 0.7);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.pulse-btn {
+  animation: btn-glow-pulse 2.2s infinite;
+}
+
+@keyframes btn-glow-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.6); }
+  70% { box-shadow: 0 0 0 14px rgba(14, 165, 233, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.14);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-secondary);
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+.keyboard-hints {
+  margin-top: 20px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.keyboard-hints strong {
+  color: var(--text-secondary);
+}
+
+/* Pause & Game Over Specifics */
+.overlay-title {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.pause-subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.new-highscore-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 900;
+  padding: 6px 18px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+  animation: bounce-badge 0.8s infinite alternate;
+}
+
+@keyframes bounce-badge {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
+.final-score-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 18px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.final-score-label {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--text-secondary);
+}
+
+.final-score-num {
+  font-family: var(--font-heading);
+  font-size: 52px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.1;
+  text-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-val {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accent-cyan);
+}
+
+.stat-lbl {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* How to Play Rules Modal */
+.howto-card {
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+  margin: 20px 0 24px;
+}
+
+.rule-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.rule-emoji {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.rule-item strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.rule-item p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.rule-item.warning {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.07);
+}
+
+.rule-item.warning strong {
+  color: #f87171;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (Mobile & Tablets)
+   ========================================================================== */
+@media (max-width: 640px) {
+  .game-hud {
+    height: 64px;
+    padding: 0 12px;
+  }
+
+  .score-card, .high-score-badge {
+    padding: 4px 10px;
+    border-radius: 10px;
+  }
+
+  .score-number {
+    font-size: 18px;
+  }
+
+  .high-number {
+    font-size: 14px;
+  }
+
+  .hud-label {
+    font-size: 9px;
+  }
+
+  .timer-pill, .lives-pill {
+    padding: 6px 12px;
+  }
+
+  .timer-number {
+    font-size: 18px;
+  }
+
+  .heart-icon {
+    font-size: 16px;
+  }
+
+  .hud-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    font-size: 15px;
+  }
+
+  .glass-panel {
+    padding: 24px 18px;
+    border-radius: 22px;
+  }
+
+  .game-title {
+    font-size: 32px;
+  }
+
+  .tutorial-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .t-card {
+    flex-direction: row;
+    gap: 12px;
+    text-align: left;
+    padding: 10px 12px;
+  }
+
+  .t-icon {
+    font-size: 22px;
+    margin-bottom: 0;
+  }
+
+  .final-score-num {
+    font-size: 42px;
+  }
+
+  .keyboard-hints {
+    display: none;
+  }
+}

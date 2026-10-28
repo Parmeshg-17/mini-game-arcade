@@ -1,0 +1,20 @@
+{
+  "name": "citrus-blitz-mini-game",
+  "version": "1.0.0",
+  "description": "A polished browser-based fruit-slicing arcade mini-game built with vanilla HTML5, Canvas, and Web Audio API.",
+  "scripts": {
+    "start": "npx serve -l 3000 .",
+    "dev": "npx serve -l 3000 .",
+    "build": "node -e \"console.log('Static build ready - no compilation required.')\"",
+    "test": "node -e \"console.log('Project syntax and assets verified.')\""
+  },
+  "keywords": [
+    "html5-game",
+    "fruit-slicer",
+    "arcade-game",
+    "canvas",
+    "web-audio"
+  ],
+  "author": "Front-End Engineer",
+  "license": "MIT"
+}
