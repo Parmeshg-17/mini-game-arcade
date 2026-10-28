@@ -16,6 +16,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/citrus-blitz.svg',
     controlsSummary: 'Mouse Drag or Touch Swipe to slice • Space / P to Pause • R to Restart • M to Mute',
     features: ['Canvas 2D Physics', 'Procedural Audio', 'Touch & Mouse', '60s Blitz & Survival']
+  },
+  {
+    id: 'tic-tac-toe',
+    title: 'Tic Tac Toe',
+    category: 'Puzzle',
+    tags: ['puzzle', 'strategy', 'casual', 'tic-tac-toe', 'bot', 'ai', '2-player', 'multiplayer'],
+    badge: 'New',
+    tagline: 'Claim three in a row. Me vs Bot & 2 Players.',
+    description: 'Challenge the unbeatable Mastermind Bot or play head-to-head 2-player pass & play on the same device. Features synthesized arcade audio, laser strike animations, match timer, move counter, and persistent scoreboard.',
+    route: 'games/tic-tac-toe/index.html',
+    thumbnail: 'assets/games/tic-tac-toe.svg',
+    controlsSummary: 'Touch / Click cells • Number keys 1-9 • Arrow keys + Enter • R to Restart • M to Mute',
+    features: ['Me vs Bot & 2 Players', 'Unbeatable Minimax AI', 'Keyboard & Touch', 'Match Timer & Scoreboard']
   }
 ];
 

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Tic Tac Toe — Play Free on Mini Game Arcade</title>
+  <meta name="description" content="Play Tic Tac Toe online for free in your browser. Challenge the unbeatable Mastermind Bot or play 2 Players local pass-and-play with crisp neon visuals and procedural audio.">
+  <meta name="theme-color" content="#10120f">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="Tic Tac Toe — Mini Game Arcade">
+  <meta property="og:description" content="Challenge the Mastermind Bot or play 2 Players local on desktop, tablet, and mobile.">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Root-relative stylesheet link with file:// fallback -->
+  <link rel="stylesheet" href="/games/tic-tac-toe/style.css" id="game-stylesheet">
+  <script>
+    // Fallback if loaded via file:/// protocol
+    if (window.location.protocol === 'file:') {
+      const link = document.getElementById('game-stylesheet');
+      if (link) link.href = 'style.css';
+    }
+  </script>
+</head>
+<body class="game-page-body">
+
+  <!-- Arcade Top Navigation Bar -->
+  <nav class="arcade-nav-bar" aria-label="Game page navigation">
+    <div class="nav-content-container">
+      <a href="../../index.html" class="back-link">
+        <span class="back-arrow">←</span>
+        <span>Back to Arcade</span>
+      </a>
+
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="crumb-separator">/</span>
+        <a href="../../index.html#games-section">Games</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-current">Tic Tac Toe</span>
+      </div>
+
+      <a href="#controls-guide" class="nav-guide-link">Controls & Rules</a>
+    </div>
+  </nav>
+
+  <!-- Main Stage Container -->
+  <main class="game-stage-wrapper">
+
+    <!-- Game Editorial Header -->
+    <header class="game-editorial-header">
+      <div class="game-eyebrow-row">
+        <span class="badge-arcade">PUZZLE // STRATEGY</span>
+        <span class="badge-tagline">ME VS BOT &bull; 2 PLAYERS</span>
+      </div>
+      <h1 class="game-title">Tic Tac Toe</h1>
+      <p class="game-subheading">Claim three in a row. Outmaneuver the AI bot or battle head-to-head in local 2-player pass & play.</p>
+    </header>
+
+    <!-- Arcade Play Card -->
+    <section class="arcade-play-card" aria-label="Interactive Tic Tac Toe Game Stage">
+
+      <!-- Mode Selector -->
+      <div class="mode-selector-wrap">
+        <div class="segmented-control" role="tablist" aria-label="Game Mode">
+          <button id="mode-bot-btn" class="segment-btn active" role="tab" aria-selected="true">
+            <span>🤖</span>
+            <span>Me vs Bot</span>
+          </button>
+          <button id="mode-pvp-btn" class="segment-btn" role="tab" aria-selected="false">
+            <span>👥</span>
+            <span>2 Players</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bot Options Bar (Difficulty & Player Symbol) -->
+      <div id="bot-options-bar" class="sub-options-bar">
+        <!-- AI Difficulty -->
+        <div class="options-group">
+          <span class="options-label">AI Level:</span>
+          <div class="pill-toggle-group" role="group" aria-label="AI Difficulty">
+            <button id="diff-casual-btn" class="pill-btn" type="button">Casual</button>
+            <button id="diff-mastermind-btn" class="pill-btn active" type="button">Mastermind</button>
+          </div>
+        </div>
+
+        <!-- Symbol Chooser -->
+        <div class="options-group">
+          <span class="options-label">Play As:</span>
+          <div class="pill-toggle-group" role="group" aria-label="Choose Player Symbol">
+            <button id="symbol-x-btn" class="pill-btn active" type="button">X (First)</button>
+            <button id="symbol-o-btn" class="pill-btn" type="button">O (Second)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Match HUD -->
+      <div class="match-hud-bar" role="region" aria-label="Match Status">
+        <!-- Active Turn -->
+        <div class="hud-item" id="turn-indicator">
+          <div id="turn-symbol-badge" class="turn-symbol-badge badge-x">X</div>
+          <span id="turn-label" class="turn-label-text">Your Turn</span>
+        </div>
+
+        <!-- Timer & Move Counter -->
+        <div class="hud-item">
+          <span id="match-timer" class="hud-pill" title="Match Duration">00:00</span>
+          <span id="move-counter" class="hud-pill" title="Total moves placed">Move: 0 / 9</span>
+        </div>
+
+        <!-- Sound Toggle -->
+        <div class="hud-item">
+          <button id="audio-toggle-btn" class="audio-btn" type="button" aria-label="Toggle Sound" title="Sound Toggle (M)">
+            <span id="audio-icon">🔊</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3x3 Board Container -->
+      <div class="ttt-board-container">
+        <!-- Confetti Canvas -->
+        <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+        <!-- Strike Line SVG Overlay -->
+        <svg id="strike-svg" class="strike-svg-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <line id="strike-glow" class="strike-glow-line" x1="0" y1="0" x2="0" y2="0" />
+          <line id="strike-line" class="strike-laser-line" x1="0" y1="0" x2="0" y2="0" />
+        </svg>
+
+        <!-- Outcome Modal / Banner -->
+        <div id="outcome-banner" class="outcome-banner" role="dialog" aria-live="polite">
+          <h2 id="outcome-title" class="outcome-title">Victory!</h2>
+          <p id="outcome-subtitle" class="outcome-subtitle">Resolved in 5 moves</p>
+          <button id="play-again-btn" class="btn-play-again" type="button">
+            <span>Play Next Round</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        <!-- 3x3 Grid Buttons -->
+        <div id="ttt-board" class="ttt-board" role="grid" aria-label="Tic Tac Toe Board">
+          <button class="ttt-cell" data-index="0" role="gridcell" aria-label="Cell 1, empty" tabindex="0"></button>
+          <button class="ttt-cell" data-index="1" role="gridcell" aria-label="Cell 2, empty" tabindex="0"></button>
+          <button class="ttt-cell" data-index="2" role="gridcell" aria-label="Cell 3, empty" tabindex="0"></button>
+          <button class="ttt-cell" data-index="3" role="gridcell" aria-label="Cell 4, empty" tabindex="0"></button>
+          <button class="ttt-cell" data-index="4" role="gridcell" aria-label="Cell 5, empty" tabindex="0"></button>
+          <button class="ttt-cell" data-index="5" role="gridcell" aria-label="Cell 6, empty" tabindex="0"></button>
+          <button class="ttt-cell" data-index="6" role="gridcell" aria-label="Cell 7, empty" tabindex="0"></button>
+          <button class="ttt-cell" data-index="7" role="gridcell" aria-label="Cell 8, empty" tabindex="0"></button>
+          <button class="ttt-cell" data-index="8" role="gridcell" aria-label="Cell 9, empty" tabindex="0"></button>
+        </div>
+      </div>
+
+      <!-- Bottom Controls -->
+      <div class="bottom-controls-bar">
+        <button id="restart-btn" class="btn-restart" type="button">
+          <span>↺</span>
+          <span>Restart Match (R)</span>
+        </button>
+      </div>
+
+      <!-- Persistent Scoreboard -->
+      <div class="scoreboard-wrapper" role="region" aria-label="Game History & Scoreboard">
+        <div class="scoreboard-title-row">
+          <span class="scoreboard-title">Session Scoreboard</span>
+          <button id="clear-scores-btn" class="btn-clear-scores" type="button">Reset History</button>
+        </div>
+
+        <div class="scoreboard-grid">
+          <div class="score-card card-x">
+            <span id="label-score-x" class="score-label">Player (X)</span>
+            <span id="score-x" class="score-value">0</span>
+          </div>
+          <div class="score-card card-draws">
+            <span class="score-label">Draws</span>
+            <span id="score-draws" class="score-value">0</span>
+          </div>
+          <div class="score-card card-o">
+            <span id="label-score-o" class="score-label">Bot (O)</span>
+            <span id="score-o" class="score-value">0</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Controls & Game Information Section -->
+    <section id="controls-guide" class="game-info-section">
+      <div class="info-cards-grid">
+
+        <!-- Controls Guide -->
+        <article class="info-card">
+          <div class="info-card-header">
+            <span class="info-icon">[ ⌨ ]</span>
+            <h3 class="info-card-title">Controls & Input</h3>
+          </div>
+          <ul class="info-list">
+            <li><strong>Touch / Mouse:</strong> Tap or click any open square on the 3x3 grid to claim it.</li>
+            <li><strong>Keyboard Numbers:</strong> Press <span class="key-kbd">1</span> through <span class="key-kbd">9</span> to place a mark instantly.</li>
+            <li><strong>Arrow Keys:</strong> Navigate cells with <span class="key-kbd">↑</span> <span class="key-kbd">↓</span> <span class="key-kbd">←</span> <span class="key-kbd">→</span>, press <span class="key-kbd">Enter</span> or <span class="key-kbd">Space</span> to place.</li>
+            <li><strong>Quick Reset:</strong> Press <span class="key-kbd">R</span> anytime to wipe the board and start fresh.</li>
+            <li><strong>Audio Toggle:</strong> Press <span class="key-kbd">M</span> to mute or unmute synthesized arcade audio.</li>
+          </ul>
+        </article>
+
+        <!-- Game Modes Guide -->
+        <article class="info-card">
+          <div class="info-card-header">
+            <span class="info-icon">[ 🎮 ]</span>
+            <h3 class="info-card-title">Arcade Game Modes</h3>
+          </div>
+          <ul class="info-list">
+            <li><strong>Me vs Bot:</strong> Play against our intelligent AI decision engine. Choose between approachable <em>Casual Bot</em> or the unbeatable <em>Mastermind AI</em> powered by recursive minimax depth pruning.</li>
+            <li><strong>2 Players (Pass & Play):</strong> Play head-to-head on the same device with a friend, alternating turns between Electric Lime (X) and Vibrant Coral (O).</li>
+            <li><strong>Pick Your Symbol:</strong> Choose whether you want to move first with X or respond second with O.</li>
+          </ul>
+        </article>
+
+        <!-- Rules & Win Condition -->
+        <article class="info-card">
+          <div class="info-card-header">
+            <span class="info-icon">[ ★ ]</span>
+            <h3 class="info-card-title">Winning & Rules</h3>
+          </div>
+          <ul class="info-list">
+            <li><strong>Three in a Row:</strong> Connect three of your marks horizontally, vertically, or diagonally to trigger the neon victory laser strike.</li>
+            <li><strong>Cat's Game (Draw):</strong> If all 9 squares are claimed without three matching marks, the match concludes in a draw.</li>
+            <li><strong>Zero Server Latency:</strong> 100% computed in-browser using Web Audio synthesis and CSS hardware-accelerated animations.</li>
+          </ul>
+        </article>
+
+      </div>
+
+      <!-- Quick Arcade Footer Links -->
+      <footer class="game-page-footer">
+        <p>&copy; 2026 Mini Game Arcade. All games are original and free to play.</p>
+        <div class="footer-links">
+          <a href="../../index.html">Arcade Home</a>
+          <a href="../../about.html">About</a>
+          <a href="../../contact.html">Contact</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+        </div>
+      </footer>
+    </section>
+
+  </main>
+
+  <!-- Scripts (Root-relative paths with file:// fallback) -->
+  <script src="/games/tic-tac-toe/js/audio.js"></script>
+  <script src="/games/tic-tac-toe/js/ai.js"></script>
+  <script src="/games/tic-tac-toe/js/game.js"></script>
+  <script>
+    // Fallback if loaded via file:/// protocol where root-relative paths fail
+    if (window.location.protocol === 'file:' && typeof TicTacToeAI === 'undefined') {
+      ['audio.js', 'ai.js', 'game.js'].forEach(function(s) {
+        var scriptEl = document.createElement('script');
+        scriptEl.src = 'js/' + s;
+        scriptEl.async = false;
+        document.body.appendChild(scriptEl);
+      });
+    }
+  </script>
+</body>
+</html>

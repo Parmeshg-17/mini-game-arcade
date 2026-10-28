@@ -137,17 +137,79 @@ it('Search and category filter logic filters games correctly', () => {
   // Category filter
   const res3 = filterGames('', 'Arcade');
   assert.strictEqual(res3.length, 1);
+  assert.strictEqual(res3[0].id, 'citrus-blitz');
+
+  // Puzzle category filter matches Tic Tac Toe
+  const res4 = filterGames('', 'Puzzle');
+  assert.strictEqual(res4.length, 1);
+  assert.strictEqual(res4[0].id, 'tic-tac-toe');
 
   // Non-matching category
-  const res4 = filterGames('', 'Puzzle');
-  assert.strictEqual(res4.length, 0);
+  const res5 = filterGames('', 'Racing');
+  assert.strictEqual(res5.length, 0);
 
   // Non-matching query
-  const res5 = filterGames('nonexistent game query 12345', 'All');
-  assert.strictEqual(res5.length, 0);
+  const res6 = filterGames('nonexistentgamexyz', 'All');
+  assert.strictEqual(res6.length, 0);
 });
 
-// 7. Slicing Collision & Math Logic
+// 7. Dedicated Tic Tac Toe Playable Page & Engine Integrity
+it('Dedicated Tic Tac Toe page (games/tic-tac-toe/index.html) has all DOM elements required by game.js', () => {
+  const tttHtmlPath = path.join(__dirname, 'games/tic-tac-toe/index.html');
+  assert(fs.existsSync(tttHtmlPath), 'games/tic-tac-toe/index.html must exist');
+  const tttHtml = fs.readFileSync(tttHtmlPath, 'utf8');
+  const tttGameJs = fs.readFileSync(path.join(__dirname, 'games/tic-tac-toe/js/game.js'), 'utf8');
+
+  // Verify all document.getElementById calls in game.js are present in HTML
+  const idRegex = /document\.getElementById\(['"]([^'"]+)['"]\)/g;
+  let match;
+  while ((match = idRegex.exec(tttGameJs)) !== null) {
+    const id = match[1];
+    assert(tttHtml.includes(`id="${id}"`), `DOM id="${id}" missing in games/tic-tac-toe/index.html`);
+  }
+
+  // Verify navigation back link to arcade exists
+  assert(tttHtml.includes('href="../../index.html"'), 'Tic Tac Toe page must link back to arcade homepage');
+});
+
+// 8. Tic Tac Toe AI Decision Engine & Minimax Logic
+it('Tic Tac Toe AI correctly detects wins and blocks immediate opponent threats', () => {
+  const { checkWinner, getMastermindMove } = require('./games/tic-tac-toe/js/ai.js');
+
+  // Test win detection
+  const boardRowWin = ['X', 'X', 'X', 'O', 'O', '', '', '', ''];
+  const winResult = checkWinner(boardRowWin);
+  assert(winResult !== null, 'Should detect horizontal win');
+  assert.strictEqual(winResult.winner, 'X');
+
+  // Test diagonal win detection
+  const boardDiagWin = ['O', 'X', '', '', 'O', 'X', '', '', 'O'];
+  const diagResult = checkWinner(boardDiagWin);
+  assert(diagResult !== null, 'Should detect diagonal win');
+  assert.strictEqual(diagResult.winner, 'O');
+
+  // Test immediate winning move selection by AI
+  // Board: Bot is 'O', Human is 'X'. Bot has two 'O's in row 1: cells 3 and 4. Cell 5 is empty.
+  const boardTakeWin = [
+    'X', 'X', '',
+    'O', 'O', '',
+    '',  '',  ''
+  ];
+  const botMoveWin = getMastermindMove(boardTakeWin, 'O', 'X');
+  assert.strictEqual(botMoveWin, 5, 'Mastermind AI must take immediate winning move at index 5');
+
+  // Test immediate blocking move selection by AI
+  // Human 'X' has two in row 0: cells 0 and 1. Cell 2 is empty. Bot 'O' must block at index 2.
+  const boardBlock = [
+    'X', 'X', '',
+    '',  'O', '',
+    '',  '',  ''
+  ];
+  const botMoveBlock = getMastermindMove(boardBlock, 'O', 'X');
+  assert.strictEqual(botMoveBlock, 2, 'Mastermind AI must block human win at index 2');
+});
+
+// 9. Slicing Collision & Math Logic
 it('Circle-to-segment collision correctly detects slices and ignores misses', () => {
   function checkSlice(fruitX, fruitY, radius, p1, p2) {
     const dx = p2.x - p1.x;
