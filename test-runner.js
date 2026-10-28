@@ -144,10 +144,11 @@ it('Search and category filter logic filters games correctly', () => {
   assert.strictEqual(res4.length, 1);
   assert.strictEqual(res4[0].id, 'tic-tac-toe');
 
-  // Casual category filter matches Memory Match
+  // Casual category filter matches Memory Match and Bubble Pop
   const res5 = filterGames('', 'Casual');
-  assert.strictEqual(res5.length, 1);
-  assert.strictEqual(res5[0].id, 'memory-match');
+  assert.strictEqual(res5.length, 2);
+  assert(res5.some(g => g.id === 'memory-match'));
+  assert(res5.some(g => g.id === 'bubble-pop'));
 
   // Action category filter matches Brick Breaker
   const res6 = filterGames('', 'Action');
@@ -158,6 +159,11 @@ it('Search and category filter logic filters games correctly', () => {
   const res7 = filterGames('brick', 'All');
   assert.strictEqual(res7.length, 1);
   assert.strictEqual(res7[0].id, 'brick-breaker');
+
+  // Tag search for bubble
+  const resBubble = filterGames('bubble', 'All');
+  assert.strictEqual(resBubble.length, 1);
+  assert.strictEqual(resBubble[0].id, 'bubble-pop');
 
   // Non-matching category
   const res8 = filterGames('', 'Racing');
@@ -357,7 +363,92 @@ it('Circle-to-segment collision correctly detects slices and ignores misses', ()
   assert.strictEqual(checkSlice(50, 100, 20, p1, p2), false, 'Far fruit should miss');
 });
 
-// 8. Security & Clean Static Deployment Verification
+// 14. Dedicated Bubble Pop Playable Page & Engine Integrity
+it('Dedicated Bubble Pop page (games/bubble-pop/index.html) has all DOM elements required by game.js', () => {
+  const bpHtmlPath = path.join(__dirname, 'games/bubble-pop/index.html');
+  assert(fs.existsSync(bpHtmlPath), 'games/bubble-pop/index.html must exist');
+  const bpHtml = fs.readFileSync(bpHtmlPath, 'utf8');
+  const bpGameJs = fs.readFileSync(path.join(__dirname, 'games/bubble-pop/js/game.js'), 'utf8');
+
+  // Verify all document.getElementById calls in game.js are present in HTML
+  const idRegex = /document\.getElementById\(['"]([^'"]+)['"]\)/g;
+  let match;
+  while ((match = idRegex.exec(bpGameJs)) !== null) {
+    const id = match[1];
+    assert(bpHtml.includes(`id="${id}"`), `DOM id="${id}" missing in games/bubble-pop/index.html`);
+  }
+
+  // Verify navigation back link to arcade exists
+  assert(bpHtml.includes('href="../../index.html"'), 'Bubble Pop page must link back to arcade homepage');
+});
+
+// 15. Bubble Pop Cluster Flood-Fill & Gravity Physics
+it('Bubble Pop identifies clusters, computes scores, and collapses grids correctly', () => {
+  const {
+    createInitialGrid,
+    findCluster,
+    hasValidMoves,
+    calculateScore,
+    applyGravityAndCollapse,
+    calculateStars
+  } = require('./games/bubble-pop/js/board.js');
+
+  // 1. Grid generation
+  const grid = createInitialGrid(10, 8, 5);
+  assert.strictEqual(grid.length, 10, 'Grid must have 10 rows');
+  assert.strictEqual(grid[0].length, 8, 'Grid must have 8 columns');
+  assert.strictEqual(hasValidMoves(grid), true, 'Initial grid must have at least one valid cluster');
+
+  // 2. Controlled test grid
+  // Row 0: [0, 0, 1]
+  // Row 1: [0, 2, 1]
+  // Row 2: [3, 2, 1]
+  const testGrid = [
+    [0, 0, 1],
+    [0, 2, 1],
+    [3, 2, 1]
+  ];
+
+  // Cluster of 0s starting at (0, 0) should be size 3: (0,0), (0,1), (1,0)
+  const cluster0 = findCluster(testGrid, 0, 0);
+  assert.strictEqual(cluster0.length, 3, 'Color 0 cluster must have 3 cells');
+
+  // Cluster of 1s starting at (0, 2) should be size 3: (0,2), (1,2), (2,2)
+  const cluster1 = findCluster(testGrid, 0, 2);
+  assert.strictEqual(cluster1.length, 3, 'Color 1 cluster must have 3 cells');
+
+  // Singleton at (2, 0) has color 3
+  const clusterSingleton = findCluster(testGrid, 2, 0);
+  assert.strictEqual(clusterSingleton.length, 1, 'Color 3 singleton must have size 1');
+
+  // 3. Scoring Math
+  // Size 4, Combo 1 => 4^2 * 10 = 160
+  assert.strictEqual(calculateScore(4, 1), 160, 'Size 4 with 1x combo must be 160 pts');
+  // Size 5, Combo 3 => 5^2 * 10 * 3 = 750
+  assert.strictEqual(calculateScore(5, 3), 750, 'Size 5 with 3x combo must be 750 pts');
+
+  // 4. Gravity & Column Collapse
+  // Clear the 0s:
+  // [null, null, 1]
+  // [null, 2,    1]
+  // [3,    2,    1]
+  const toCollapse = [
+    [null, null, 1],
+    [null, 2,    1],
+    [3,    2,    1]
+  ];
+  const { newGrid } = applyGravityAndCollapse(toCollapse);
+  // In col 0: cell 3 should fall to row 2
+  assert.strictEqual(newGrid[2][0], 3, 'Bubble in col 0 must drop to bottom row');
+  assert.strictEqual(newGrid[0][0], null, 'Top cell in col 0 must be empty');
+  assert.strictEqual(newGrid[1][0], null, 'Middle cell in col 0 must be empty');
+
+  // 5. Stars calculation
+  assert.strictEqual(calculateStars(5000, 0), 3, 'Perfect clear must yield 3 stars');
+  assert.strictEqual(calculateStars(2500, 6), 2, 'Good score must yield at least 2 stars');
+});
+
+// 16. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });

@@ -55,6 +55,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/brick-breaker.svg',
     controlsSummary: 'Mouse Drag or Touch • Arrow keys / A & D • Space to Launch/Pause • R to Restart • M to Mute',
     features: ['3 Progressive Waves', 'Multi-Ball & Power-Ups', 'Angle Reflection Physics', 'Combo Streaks & High Scores']
+  },
+  {
+    id: 'bubble-pop',
+    title: 'Bubble Pop',
+    category: 'Casual',
+    tags: ['casual', 'puzzle', 'bubble', 'pop', 'arcade', 'matching', 'cluster', 'cascade', 'physics'],
+    badge: 'New',
+    tagline: 'Pop clusters. Chain cascades. Clear the board.',
+    description: 'A vibrant, addictive bubble-bursting arcade challenge. Tap adjacent matching bubble clusters to trigger explosive cascades, ignite combo multipliers, and clear the board across Classic and 60s Blitz modes.',
+    route: 'games/bubble-pop/index.html',
+    thumbnail: 'assets/games/bubble-pop.svg',
+    controlsSummary: 'Click or Tap bubble clusters • Arrow keys + Space/Enter • P to Pause • R to Restart • M to Mute',
+    features: ['Classic & 60s Blitz Modes', 'Cascading Gravity Physics', 'Timer & Move Counter', 'Star Ratings & High Scores']
   }
 ];
 
