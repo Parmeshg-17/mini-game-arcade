@@ -1,36 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="100%" height="100%">
   <defs>
     <!-- Background Gradient -->
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0f172a"/>
-      <stop offset="50%" stop-color="#1e1b4b"/>
-      <stop offset="100%" stop-color="#090d16"/>
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#181c16"/>
+      <stop offset="50%" stop-color="#121511"/>
+      <stop offset="100%" stop-color="#0c0e0b"/>
     </linearGradient>
 
-    <!-- Blade Glow -->
-    <linearGradient id="bladeGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.2"/>
-      <stop offset="50%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#facc15"/>
+    <!-- Electric Lime Blade Slash -->
+    <linearGradient id="limeBlade" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d5ff55" stop-opacity="0.1"/>
+      <stop offset="40%" stop-color="#d5ff55"/>
+      <stop offset="65%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#ff784f"/>
     </linearGradient>
 
     <!-- Watermelon Gradient -->
-    <radialGradient id="melonGrad" cx="40%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#f87171"/>
-      <stop offset="70%" stop-color="#ef4444"/>
-      <stop offset="100%" stop-color="#b91c1c"/>
+    <radialGradient id="melonFlesh" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#fb7185"/>
+      <stop offset="70%" stop-color="#e11d48"/>
+      <stop offset="100%" stop-color="#9f1239"/>
     </radialGradient>
 
     <!-- Orange Gradient -->
-    <radialGradient id="orangeGrad" cx="35%" cy="35%" r="65%">
-      <stop offset="0%" stop-color="#fb923c"/>
-      <stop offset="75%" stop-color="#ea580c"/>
-      <stop offset="100%" stop-color="#9a3412"/>
+    <radialGradient id="orangeFlesh" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ff9a76"/>
+      <stop offset="75%" stop-color="#ff784f"/>
+      <stop offset="100%" stop-color="#c2410c"/>
     </radialGradient>
 
-    <!-- Filter for Glow -->
-    <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="6" result="blur"/>
+    <!-- Glow Filter -->
+    <filter id="bladeGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
@@ -39,93 +40,112 @@
   </defs>
 
   <!-- Card Background -->
-  <rect width="600" height="360" rx="20" fill="url(#bgGrad)"/>
+  <rect width="640" height="380" rx="16" fill="url(#cardBg)"/>
 
-  <!-- Cyber Grid Lines -->
-  <g opacity="0.12" stroke="#38bdf8" stroke-width="1.5">
-    <line x1="0" y1="90" x2="600" y2="90"/>
-    <line x1="0" y1="180" x2="600" y2="180"/>
-    <line x1="0" y1="270" x2="600" y2="270"/>
-    <line x1="150" y1="0" x2="150" y2="360"/>
-    <line x1="300" y1="0" x2="300" y2="360"/>
-    <line x1="450" y1="0" x2="450" y2="360"/>
+  <!-- Subtle Subtle Grid Lines -->
+  <g opacity="0.06" stroke="#f4f2e9" stroke-width="1">
+    <line x1="0" y1="95" x2="640" y2="95"/>
+    <line x1="0" y1="190" x2="640" y2="190"/>
+    <line x1="0" y1="285" x2="640" y2="285"/>
+    <line x1="160" y1="0" x2="160" y2="380"/>
+    <line x1="320" y1="0" x2="320" y2="380"/>
+    <line x1="480" y1="0" x2="480" y2="380"/>
   </g>
 
-  <!-- Neon Backlight -->
-  <circle cx="300" cy="180" r="140" fill="#38bdf8" opacity="0.15" filter="url(#neonGlow)"/>
-  <circle cx="240" cy="160" r="100" fill="#f43f5e" opacity="0.18" filter="url(#neonGlow)"/>
-
-  <!-- Juice Splashes -->
-  <g fill="#ef4444" opacity="0.6">
-    <circle cx="160" cy="130" r="10"/>
-    <circle cx="140" cy="110" r="6"/>
-    <circle cx="190" cy="90" r="8"/>
-    <circle cx="380" cy="80" r="12"/>
-    <circle cx="430" cy="110" r="7"/>
-    <circle cx="460" cy="150" r="9"/>
-  </g>
-  <g fill="#f59e0b" opacity="0.6">
-    <circle cx="420" cy="240" r="11"/>
-    <circle cx="470" cy="220" r="8"/>
-    <circle cx="450" cy="270" r="5"/>
-    <circle cx="150" cy="220" r="9"/>
+  <!-- Registration Marks in Corners -->
+  <g stroke="#d5ff55" stroke-width="1.5" opacity="0.4">
+    <!-- Top-Left -->
+    <line x1="24" y1="18" x2="24" y2="30"/>
+    <line x1="18" y1="24" x2="30" y2="24"/>
+    <!-- Top-Right -->
+    <line x1="616" y1="18" x2="616" y2="30"/>
+    <line x1="610" y1="24" x2="622" y2="24"/>
+    <!-- Bottom-Left -->
+    <line x1="24" y1="350" x2="24" y2="362"/>
+    <line x1="18" y1="356" x2="30" y2="356"/>
+    <!-- Bottom-Right -->
+    <line x1="616" y1="350" x2="616" y2="362"/>
+    <line x1="610" y1="356" x2="622" y2="356"/>
   </g>
 
-  <!-- Flying Orange Slice (Top Right) -->
-  <g transform="translate(390, 110) rotate(25)">
-    <!-- Rind -->
-    <path d="M -50 0 A 50 50 0 0 0 50 0 Z" fill="#ea580c"/>
-    <path d="M -46 0 A 46 46 0 0 0 46 0 Z" fill="#ffedd5"/>
-    <path d="M -42 0 A 42 42 0 0 0 42 0 Z" fill="url(#orangeGrad)"/>
-    <!-- Orange Segments -->
-    <path d="M 0 0 L -34 -15 A 38 38 0 0 0 -12 -36 Z" fill="#fb923c" opacity="0.9"/>
-    <path d="M 0 0 L -8 -37 A 38 38 0 0 0 18 -34 Z" fill="#fb923c" opacity="0.9"/>
-    <path d="M 0 0 L 22 -32 A 38 38 0 0 0 36 -12 Z" fill="#fb923c" opacity="0.9"/>
+  <!-- Ambient Light Halos -->
+  <circle cx="320" cy="190" r="140" fill="#d5ff55" opacity="0.07" filter="url(#bladeGlow)"/>
+  <circle cx="230" cy="160" r="110" fill="#e11d48" opacity="0.09" filter="url(#bladeGlow)"/>
+
+  <!-- Juice Droplets -->
+  <g fill="#e11d48" opacity="0.7">
+    <circle cx="170" cy="130" r="9"/>
+    <circle cx="145" cy="105" r="5"/>
+    <circle cx="205" cy="85" r="7"/>
+    <circle cx="395" cy="75" r="11"/>
+    <circle cx="450" cy="105" r="6"/>
+    <circle cx="485" cy="145" r="8"/>
+  </g>
+  <g fill="#ff784f" opacity="0.7">
+    <circle cx="440" cy="245" r="10"/>
+    <circle cx="495" cy="225" r="7"/>
+    <circle cx="475" cy="275" r="4.5"/>
+    <circle cx="155" cy="235" r="8"/>
   </g>
 
-  <!-- Flying Watermelon Halves Sliced in Mid-Air -->
-  <!-- Bottom Half -->
-  <g transform="translate(250, 220) rotate(-18)">
-    <path d="M -80 0 A 80 80 0 0 0 80 0 Z" fill="#15803d"/>
-    <path d="M -74 0 A 74 74 0 0 0 74 0 Z" fill="#f0fdf4"/>
-    <path d="M -68 0 A 68 68 0 0 0 68 0 Z" fill="url(#melonGrad)"/>
-    <!-- Seeds -->
-    <ellipse cx="-40" cy="25" rx="5" ry="3" fill="#1e293b" transform="rotate(30 -40 25)"/>
-    <ellipse cx="-15" cy="40" rx="5" ry="3" fill="#1e293b" transform="rotate(10 -15 40)"/>
-    <ellipse cx="15" cy="40" rx="5" ry="3" fill="#1e293b" transform="rotate(-10 15 40)"/>
-    <ellipse cx="40" cy="25" rx="5" ry="3" fill="#1e293b" transform="rotate(-30 40 25)"/>
+  <!-- Flying Citrus Orange Wedge (Top Right) -->
+  <g transform="translate(420, 115) rotate(28)">
+    <path d="M -54 0 A 54 54 0 0 0 54 0 Z" fill="#c2410c"/>
+    <path d="M -50 0 A 50 50 0 0 0 50 0 Z" fill="#ffedd5"/>
+    <path d="M -45 0 A 45 45 0 0 0 45 0 Z" fill="url(#orangeFlesh)"/>
+    <!-- Pulp Segments -->
+    <path d="M 0 0 L -36 -16 A 40 40 0 0 0 -13 -38 Z" fill="#ff9a76" opacity="0.95"/>
+    <path d="M 0 0 L -9 -39 A 40 40 0 0 0 20 -35 Z" fill="#ff9a76" opacity="0.95"/>
+    <path d="M 0 0 L 24 -33 A 40 40 0 0 0 38 -13 Z" fill="#ff9a76" opacity="0.95"/>
   </g>
 
-  <!-- Top Half (Separated along cut angle) -->
-  <g transform="translate(210, 130) rotate(15)">
-    <path d="M -80 0 A 80 80 0 0 1 80 0 Z" fill="#15803d"/>
-    <path d="M -74 0 A 74 74 0 0 1 74 0 Z" fill="#f0fdf4"/>
-    <path d="M -68 0 A 68 68 0 0 1 68 0 Z" fill="url(#melonGrad)"/>
-    <!-- Seeds -->
-    <ellipse cx="-35" cy="-25" rx="5" ry="3" fill="#1e293b" transform="rotate(-20 -35 -25)"/>
-    <ellipse cx="0" cy="-35" rx="5" ry="3" fill="#1e293b"/>
-    <ellipse cx="35" cy="-25" rx="5" ry="3" fill="#1e293b" transform="rotate(20 35 -25)"/>
+  <!-- Watermelon Bottom Half Sliced in Mid-Air -->
+  <g transform="translate(265, 235) rotate(-16)">
+    <path d="M -86 0 A 86 86 0 0 0 86 0 Z" fill="#15803d"/>
+    <path d="M -80 0 A 80 80 0 0 0 80 0 Z" fill="#f0fdf4"/>
+    <path d="M -73 0 A 73 73 0 0 0 73 0 Z" fill="url(#melonFlesh)"/>
+    <!-- Black Teardrop Seeds -->
+    <ellipse cx="-44" cy="26" rx="5" ry="3" fill="#171a16" transform="rotate(30 -44 26)"/>
+    <ellipse cx="-16" cy="42" rx="5" ry="3" fill="#171a16" transform="rotate(10 -16 42)"/>
+    <ellipse cx="16" cy="42" rx="5" ry="3" fill="#171a16" transform="rotate(-10 16 42)"/>
+    <ellipse cx="44" cy="26" rx="5" ry="3" fill="#171a16" transform="rotate(-30 44 26)"/>
+    <!-- Sheen on cut -->
+    <line x1="-70" y1="0" x2="70" y2="0" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+  </g>
+
+  <!-- Watermelon Top Half (Flying Upward Separated by Blade) -->
+  <g transform="translate(225, 140) rotate(16)">
+    <path d="M -86 0 A 86 86 0 0 1 86 0 Z" fill="#15803d"/>
+    <path d="M -80 0 A 80 80 0 0 1 80 0 Z" fill="#f0fdf4"/>
+    <path d="M -73 0 A 73 73 0 0 1 73 0 Z" fill="url(#melonFlesh)"/>
+    <ellipse cx="-38" cy="-26" rx="5" ry="3" fill="#171a16" transform="rotate(-20 -38 -26)"/>
+    <ellipse cx="0" cy="-38" rx="5" ry="3" fill="#171a16"/>
+    <ellipse cx="38" cy="-26" rx="5" ry="3" fill="#171a16" transform="rotate(20 38 -26)"/>
+    <line x1="-70" y1="0" x2="70" y2="0" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
   </g>
 
   <!-- Golden Bonus Starfruit (Top Left) -->
-  <g transform="translate(130, 90)" filter="url(#neonGlow)">
-    <polygon points="0,-28 8,-9 28,-9 12,3 18,22 0,10 -18,22 -12,3 -28,-9 -8,-9" fill="#facc15" stroke="#f59e0b" stroke-width="2"/>
+  <g transform="translate(135, 95)" filter="url(#bladeGlow)">
+    <polygon points="0,-28 8,-9 28,-9 12,3 18,22 0,10 -18,22 -12,3 -28,-9 -8,-9" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
     <circle cx="0" cy="0" r="5" fill="#ffffff"/>
   </g>
 
-  <!-- Glowing Neon Blade Slash Line Passing Right Between Halves -->
-  <path d="M 50 310 Q 230 170 540 60" fill="none" stroke="url(#bladeGrad)" stroke-width="8" stroke-linecap="round" filter="url(#neonGlow)"/>
-  <path d="M 50 310 Q 230 170 540 60" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+  <!-- Electric Lime Blade Slash Curve Cutting Through Fruits -->
+  <path d="M 45 325 Q 240 180 575 55" fill="none" stroke="url(#limeBlade)" stroke-width="9" stroke-linecap="round" filter="url(#bladeGlow)"/>
+  <path d="M 45 325 Q 240 180 575 55" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
 
-  <!-- Blade Sparks -->
-  <g fill="#ffffff" filter="url(#neonGlow)">
-    <circle cx="230" cy="175" r="4"/>
-    <circle cx="270" cy="155" r="3"/>
-    <circle cx="310" cy="138" r="5"/>
-    <circle cx="340" cy="125" r="3"/>
+  <!-- Blade Trail Sparks -->
+  <g fill="#d5ff55" filter="url(#bladeGlow)">
+    <circle cx="245" cy="182" r="4.5"/>
+    <circle cx="285" cy="162" r="3.5"/>
+    <circle cx="330" cy="142" r="5.5"/>
+    <circle cx="365" cy="128" r="3"/>
   </g>
 
-  <!-- Subtle Arcade Badge Overlay -->
-  <rect x="24" y="24" width="94" height="28" rx="14" fill="#090d16" fill-opacity="0.8" stroke="#38bdf8" stroke-width="1.5"/>
-  <text x="71" y="42" fill="#38bdf8" font-family="'Outfit', sans-serif" font-size="12" font-weight="900" text-anchor="middle" letter-spacing="1">ARCADE</text>
+  <!-- Editorial Metadata Label -->
+  <g transform="translate(38, 38)">
+    <rect width="130" height="28" rx="6" fill="#10120f" stroke="#d5ff55" stroke-width="1.2"/>
+    <circle cx="14" cy="14" r="3.5" fill="#d5ff55"/>
+    <text x="70" y="18" fill="#f4f2e9" font-family="'Space Grotesk', -apple-system, sans-serif" font-size="11" font-weight="700" text-anchor="middle" letter-spacing="1.5">ARCADE // 01</text>
+  </g>
 </svg>

@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact Us — Mini Game Arcade</title>
   <meta name="description" content="Get in touch with the Mini Game Arcade team. Send suggestions, report bugs, or share your feedback.">
-  <meta name="theme-color" content="#080c14">
+  <meta name="theme-color" content="#10120f">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/arcade.css">
 </head>
@@ -18,13 +18,20 @@
   <!-- Site Header -->
   <header class="site-header">
     <div class="header-container">
-      <a href="index.html" class="brand-logo" aria-label="Mini Game Arcade Homepage">
-        <span class="brand-icon">🕹️</span>
-        <span>Mini Game <span class="brand-accent">Arcade</span></span>
+      <a href="index.html" class="brand-logo" aria-label="Mini Game Arcade Home">
+        <svg class="brand-emblem-svg" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="2" y="2" width="24" height="24" rx="4" fill="#171A16" stroke="#F4F2E9" stroke-width="1.6"/>
+          <path d="M7 14H21M14 7V21" stroke="#F4F2E9" stroke-width="1.6" stroke-linecap="round"/>
+          <rect x="11.5" y="11.5" width="5" height="5" fill="#D5FF55"/>
+          <circle cx="20" cy="8" r="1.5" fill="#FF784F"/>
+        </svg>
+        <span class="brand-text">MINI GAME <span class="brand-slash">//</span> <span class="brand-tag">ARCADE</span></span>
       </a>
 
       <button class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
-        <span>☰</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M3 5h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2z" clip-rule="evenodd"/>
+        </svg>
       </button>
 
       <nav class="main-nav" id="main-nav" aria-label="Main Navigation">
@@ -33,7 +40,10 @@
         <a href="contact.html" class="nav-link active">Contact</a>
         <a href="privacy.html" class="nav-link">Privacy Policy</a>
         <a href="terms.html" class="nav-link">Terms</a>
-        <a href="games/citrus-blitz/index.html" class="nav-link nav-cta">⚡ Play Citrus Blitz</a>
+        <a href="games/citrus-blitz/index.html" class="nav-cta">
+          <span class="nav-cta-pip"></span>
+          <span>Play Citrus Blitz</span>
+        </a>
       </nav>
     </div>
   </header>
@@ -42,20 +52,20 @@
   <main class="page-main">
     <div class="content-container">
       <header class="page-header">
-        <span class="page-category-tag">Get in Touch</span>
+        <span class="page-category-tag">GET IN TOUCH</span>
         <h1 class="page-title">Contact & Support</h1>
-        <p class="page-subtitle">Have a game suggestion, found a bug, or just want to say hello? Send us a message.</p>
+        <p class="page-subtitle">Have a game suggestion, found a bug, or want to share feedback? We'd love to hear from you.</p>
       </header>
 
       <div class="content-card">
         <article class="prose">
-          <h2>Send Us a Message</h2>
-          <p>We read all feedback and are always working to improve gameplay performance and add new browser games.</p>
+          <h2>Send a Direct Message</h2>
+          <p>We review player feedback regularly to tune game mechanics, optimize device performance, and prioritize new titles.</p>
 
           <form id="contact-form" class="contact-form" novalidate>
             <div class="form-group">
               <label for="contact-name" class="form-label">Your Name</label>
-              <input type="text" id="contact-name" class="form-input" placeholder="e.g. Alex Hunter" required />
+              <input type="text" id="contact-name" class="form-input" placeholder="e.g. Alex Morgan" required />
             </div>
 
             <div class="form-group">
@@ -68,7 +78,7 @@
               <select id="contact-subject" class="form-input" required>
                 <option value="feedback">General Feedback</option>
                 <option value="bug">Bug Report / Performance Issue</option>
-                <option value="suggestion">Game Concept Suggestion</option>
+                <option value="suggestion">New Game Concept Suggestion</option>
                 <option value="other">Other Inquiry</option>
               </select>
             </div>
@@ -83,23 +93,23 @@
             </button>
 
             <div id="contact-success" class="form-status-alert success" role="alert">
-              ✓ <strong>Thank you!</strong> Your message has been received. We appreciate your feedback and will get back to you if a response is needed.
+              ✓ <strong>Message Received.</strong> Thank you for your feedback! We review submissions and will follow up if your inquiry requires assistance.
             </div>
           </form>
 
-          <h2 style="margin-top: 40px;">Frequently Asked Questions</h2>
+          <h2 style="margin-top: 48px;">Frequently Asked Questions</h2>
 
-          <h3>Are the games completely free to play?</h3>
-          <p>Yes. All games hosted on Mini Game Arcade are 100% free with no in-app purchases, paid subscriptions, or locked content.</p>
+          <h3>Are all games free to play?</h3>
+          <p>Yes. All titles on Mini Game Arcade are 100% free with no in-app purchases, paid passes, or locked levels.</p>
 
-          <h3>Do games work on mobile phones and tablets?</h3>
-          <p>Yes. Every title is tested specifically for touch interfaces, gesture controls, and responsive screen scaling on Android and iOS devices.</p>
+          <h3>Do games work on mobile and tablet devices?</h3>
+          <p>Yes. Every title is built specifically to support multi-touch gestures, swipe velocity detection, and responsive canvas scaling on Android and iOS devices.</p>
 
-          <h3>How do I save my high score?</h3>
-          <p>Your high scores are automatically saved in your browser's local memory (<code>localStorage</code>). No account creation is required.</p>
+          <h3>How are high scores saved?</h3>
+          <p>High scores are stored directly in your browser's local memory via <code>localStorage</code>. They remain saved on your device across visits without requiring an account.</p>
 
-          <h3>How do I report a game glitch?</h3>
-          <p>Please select "Bug Report" in the form above and mention your device, browser version, and the game you were playing.</p>
+          <h3>How do I report a glitch or performance issue?</h3>
+          <p>Select "Bug Report" in the form above and mention your device model, browser version, and the game you were playing.</p>
         </article>
       </div>
     </div>
@@ -122,7 +132,6 @@
 
   <script src="js/arcade.js"></script>
   <script>
-    // Client-side Contact Form Handler
     document.getElementById('contact-form')?.addEventListener('submit', (e) => {
       e.preventDefault();
       const name = document.getElementById('contact-name').value.trim();
@@ -135,7 +144,6 @@
         return;
       }
 
-      // Simulate submission & show confirmation
       alertBox.style.display = 'block';
       document.getElementById('contact-form').reset();
       alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

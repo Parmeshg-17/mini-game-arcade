@@ -1,6 +1,6 @@
 /**
- * Mini Game Arcade - Homepage UI Controller
- * Manages game grid rendering, instant search, category filtering, and mobile nav.
+ * Mini Game Arcade - UI Controller
+ * Manages game discovery, instant search, category filtering, keyboard shortcuts, and mobile navigation.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -44,9 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderGames() {
     if (!gamesGrid) return;
 
-    const filtered = window.ARCADE_GAMES.filter((game) => {
+    const filtered = (window.ARCADE_GAMES || []).filter((game) => {
       // Category match
-      const matchesCategory = activeCategory === 'All' || game.category.toLowerCase() === activeCategory.toLowerCase();
+      const matchesCategory =
+        activeCategory === 'All' ||
+        game.category.toLowerCase() === activeCategory.toLowerCase();
 
       // Search match
       const query = searchQuery.toLowerCase().trim();
@@ -56,14 +58,15 @@ document.addEventListener('DOMContentLoaded', () => {
         game.title.toLowerCase().includes(query) ||
         game.description.toLowerCase().includes(query) ||
         game.tagline.toLowerCase().includes(query) ||
-        game.tags.some(tag => tag.toLowerCase().includes(query));
+        (game.tags && game.tags.some(tag => tag.toLowerCase().includes(query)));
 
       return matchesCategory && matchesSearch;
     });
 
     // Update count badge
     if (gamesCountDisplay) {
-      gamesCountDisplay.textContent = `${filtered.length} game${filtered.length === 1 ? '' : 's'}`;
+      const count = filtered.length;
+      gamesCountDisplay.textContent = `${count} ${count === 1 ? 'Playable Title' : 'Playable Titles'}`;
     }
 
     // Toggle Empty State
@@ -76,34 +79,42 @@ document.addEventListener('DOMContentLoaded', () => {
     gamesGrid.style.display = 'grid';
     if (emptyState) emptyState.style.display = 'none';
 
-    // Build Cards HTML
+    // Build Cards HTML with Premium Editorial Layout
     gamesGrid.innerHTML = filtered.map((game) => `
       <article class="arcade-card" data-game-id="${game.id}">
-        <div class="card-media-wrapper">
-          <img src="${game.thumbnail}" alt="${game.title} Gameplay Illustration" class="card-thumb" loading="lazy" />
+        <a href="${game.route}" class="card-media-wrapper" aria-label="Play ${game.title}">
+          <img src="${game.thumbnail}" alt="${game.title} original gameplay illustration" class="card-thumb" loading="lazy" />
           <div class="card-badges">
             <span class="badge-category">${game.category}</span>
             ${game.badge ? `<span class="badge-status">${game.badge}</span>` : ''}
           </div>
-        </div>
+          <div class="card-hover-overlay">
+            <span class="hover-play-pill">Play Now →</span>
+          </div>
+        </a>
 
         <div class="card-body">
-          <h3 class="card-title">${game.title}</h3>
+          <div class="card-header-row">
+            <h3 class="card-title">${game.title}</h3>
+            <span class="card-session-tag">Quick Play</span>
+          </div>
+
           <p class="card-tagline">${game.tagline}</p>
+          <p class="card-description">${game.description}</p>
 
           <div class="card-features">
-            ${game.features.map(f => `<span class="feature-tag">${f}</span>`).join('')}
+            ${(game.features || []).map(f => `<span class="feature-tag">${f}</span>`).join('')}
           </div>
 
           <div class="card-controls-hint">
-            <span class="hint-icon">🎮</span>
+            <span class="hint-label">CONTROLS</span>
             <span class="hint-text">${game.controlsSummary}</span>
           </div>
 
           <div class="card-actions">
             <a href="${game.route}" class="btn-play-game">
-              <span class="play-icon">▶</span>
-              <span>Play Now</span>
+              <span>Play ${game.title}</span>
+              <span class="play-arrow">→</span>
             </a>
           </div>
         </div>
@@ -116,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.addEventListener('input', (e) => {
       searchQuery = e.target.value;
       if (searchClearBtn) {
-        searchClearBtn.style.display = searchQuery ? 'block' : 'none';
+        searchClearBtn.style.display = searchQuery ? 'flex' : 'none';
       }
       renderGames();
     });
@@ -130,6 +141,21 @@ document.addEventListener('DOMContentLoaded', () => {
         renderGames();
       });
     }
+
+    // Keyboard shortcut: '/' to focus search, Escape to clear
+    window.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== searchInput && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+        e.preventDefault();
+        searchInput.focus();
+        searchInput.select();
+      } else if (e.key === 'Escape' && document.activeElement === searchInput) {
+        searchInput.value = '';
+        searchQuery = '';
+        if (searchClearBtn) searchClearBtn.style.display = 'none';
+        searchInput.blur();
+        renderGames();
+      }
+    });
   }
 
   if (emptyResetBtn) {
@@ -153,7 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
       mainNav.classList.toggle('nav-open');
     });
 
-    // Close nav when clicking a link
     mainNav.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => {
         mainNav.classList.remove('nav-open');

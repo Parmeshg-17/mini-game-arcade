@@ -1,6 +1,6 @@
 /**
  * Mini Game Arcade - Central Games Registry
- * Makes adding, categorizing, and filtering new games clean and instantaneous.
+ * Editorial metadata for playable browser mini-games.
  */
 
 const ARCADE_GAMES = [
@@ -8,14 +8,14 @@ const ARCADE_GAMES = [
     id: 'citrus-blitz',
     title: 'Citrus Blitz',
     category: 'Arcade',
-    tags: ['arcade', 'fruit', 'slicer', 'ninja', 'action', 'blade'],
-    badge: 'Popular',
-    tagline: 'Slice juicy fruits, dodge bombs, and ignite mega combo streaks.',
-    description: 'A fast-paced, original arcade fruit-slicing mini-game with realistic slice physics, glowing neon blade swipe trails, and 100% procedural synthesized Web Audio sound effects. Play 60s Arcade Blitz or 3-strike Classic Survival.',
+    tags: ['arcade', 'fruit', 'slicer', 'action', 'blade', 'reflex', 'canvas'],
+    badge: 'Featured',
+    tagline: 'Slice fast. Chain combos. Beat your best.',
+    description: 'Slice fruit, avoid bombs, and build your highest score in a fast-paced browser arcade challenge. Engineered with 100% procedural Canvas 2D physics, dynamic blade swipe trails, and synthesized Web Audio effects.',
     route: 'games/citrus-blitz/index.html',
     thumbnail: 'assets/games/citrus-blitz.svg',
-    controlsSummary: 'Mouse Drag or Touch Swipe to slice. Space/P to Pause, R to Restart, M to Mute.',
-    features: ['High-DPI Canvas', 'Web Audio Effects', 'No Downloads', 'Touch & Mouse']
+    controlsSummary: 'Mouse Drag or Touch Swipe to slice • Space / P to Pause • R to Restart • M to Mute',
+    features: ['Canvas 2D Physics', 'Procedural Audio', 'Touch & Mouse', '60s Blitz & Survival']
   }
 ];
 
