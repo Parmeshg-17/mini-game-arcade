@@ -218,16 +218,16 @@
 
   </main>
 
-  <!-- Scripts (Root-relative paths with file:// fallback) -->
-  <script src="/games/brick-breaker/js/audio.js"></script>
-  <script src="/games/brick-breaker/js/levels.js"></script>
-  <script src="/games/brick-breaker/js/game.js"></script>
+  <!-- Scripts (Root-relative paths with cache-busting and file:// fallback) -->
+  <script src="/games/brick-breaker/js/audio.js?v=1.1.0"></script>
+  <script src="/games/brick-breaker/js/levels.js?v=1.1.0"></script>
+  <script src="/games/brick-breaker/js/game.js?v=1.1.0"></script>
   <script>
     // Fallback if loaded via file:/// protocol where root-relative paths fail
     if (window.location.protocol === 'file:' && typeof BrickLevels === 'undefined') {
       ['audio.js', 'levels.js', 'game.js'].forEach(function(s) {
         var scriptEl = document.createElement('script');
-        scriptEl.src = 'js/' + s;
+        scriptEl.src = 'js/' + s + '?v=1.1.0';
         scriptEl.async = false;
         document.body.appendChild(scriptEl);
       });

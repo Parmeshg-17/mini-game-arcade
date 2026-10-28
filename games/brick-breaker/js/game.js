@@ -8,7 +8,7 @@
   'use strict';
 
   // Game Engine Constants
-  const BASE_BALL_SPEED = 6.0;
+  const BASE_BALL_SPEED = 4.0;
   const MAX_BOUNCE_ANGLE = Math.PI * 0.38; // ~68 degrees
 
   // Game State
@@ -54,6 +54,7 @@
   let dom = {};
   let ctx = null;
   let animFrameId = null;
+  let lastTime = 0;
   let dpr = 1;
   let canvasW = 600;
   let canvasH = 480;
@@ -214,6 +215,7 @@
 
   // 4. Game Loop
   function startLoop() {
+    lastTime = performance.now();
     if (!animFrameId) {
       animFrameId = requestAnimationFrame(gameLoop);
     }
@@ -224,11 +226,25 @@
       cancelAnimationFrame(animFrameId);
       animFrameId = null;
     }
+    lastTime = 0;
   }
 
-  function gameLoop() {
+  function gameLoop(timestamp) {
+    const currentTime = timestamp || performance.now();
+    if (!lastTime) lastTime = currentTime;
+    let dt = (currentTime - lastTime) / 1000;
+    lastTime = currentTime;
+
+    // Safety clamp dt to avoid sudden physics jumps on lag spike or background tab
+    if (dt > 0.05) dt = 0.05;
+
+    // timeScale: normalized to standard 60 FPS (dt = 1/60s => timeScale = 1.0)
+    // On a 120Hz monitor, dt = 1/120s => timeScale = 0.5 (moves at exact same speed)
+    // On a 144Hz monitor, dt = 1/144s => timeScale = 0.416
+    const timeScale = dt * 60;
+
     if (state.mode === 'playing') {
-      update();
+      update(timeScale, dt);
     }
     render();
 
@@ -240,23 +256,23 @@
   }
 
   // 5. Physics & Logic Update
-  function update() {
-    updatePaddle();
-    updateBalls();
-    updatePowerups();
-    updateParticles();
-    updateFloatingTexts();
+  function update(timeScale = 1.0, dt = 1 / 60) {
+    updatePaddle(timeScale, dt);
+    updateBalls(timeScale);
+    updatePowerups(timeScale);
+    updateParticles(timeScale);
+    updateFloatingTexts(timeScale);
 
     // Screen Shake decay
     if (state.screenShake > 0) {
-      state.screenShake *= 0.85;
+      state.screenShake *= Math.pow(0.85, timeScale);
       if (state.screenShake < 0.2) state.screenShake = 0;
     }
   }
 
-  function updatePaddle() {
+  function updatePaddle(timeScale, dt) {
     // Keyboard movement
-    const moveSpeed = 8.5;
+    const moveSpeed = 7.5 * timeScale;
     if (state.keys.left) {
       state.paddle.x -= moveSpeed;
     }
@@ -270,16 +286,16 @@
       state.paddle.x = canvasW - state.paddle.width;
     }
 
-    // Wide paddle countdown
+    // Wide paddle countdown in real seconds
     if (state.paddle.wideTimer > 0) {
-      state.paddle.wideTimer -= 1 / 60;
+      state.paddle.wideTimer -= dt;
       if (state.paddle.wideTimer <= 0) {
         state.paddle.width = state.paddle.baseWidth;
       }
     }
   }
 
-  function updateBalls() {
+  function updateBalls(timeScale) {
     const ballsToRemove = [];
 
     state.balls.forEach((ball, bIdx) => {
@@ -293,9 +309,9 @@
       ball.trail.push({ x: ball.x, y: ball.y });
       if (ball.trail.length > 7) ball.trail.shift();
 
-      // Move
-      ball.x += ball.vx;
-      ball.y += ball.vy;
+      // Move scaled by timeScale
+      ball.x += ball.vx * timeScale;
+      ball.y += ball.vy * timeScale;
 
       // Wall Collisions
       // Left Wall
@@ -330,7 +346,7 @@
         const clampedOffset = Math.max(-0.95, Math.min(0.95, hitOffset));
 
         const bounceAngle = clampedOffset * MAX_BOUNCE_ANGLE;
-        const speed = Math.hypot(ball.vx, ball.vy);
+        const speed = ball.speed || BASE_BALL_SPEED;
 
         ball.vx = speed * Math.sin(bounceAngle);
         ball.vy = -speed * Math.cos(bounceAngle);
@@ -443,11 +459,11 @@
     }
   }
 
-  function updatePowerups() {
+  function updatePowerups(timeScale = 1.0) {
     const toRemove = [];
 
     state.powerups.forEach((p, idx) => {
-      p.y += p.vy;
+      p.y += p.vy * timeScale;
 
       // Check collision with paddle
       if (
@@ -487,16 +503,17 @@
       state.paddle.wideTimer = 12; // 12 seconds
     } else if (data.type === 'multiball') {
       // Spawn 2 extra balls
-      const primaryBall = state.balls[0] || { x: state.paddle.x + state.paddle.width / 2, y: state.paddle.y - 10, speed: 6 };
+      const primaryBall = state.balls[0] || { x: state.paddle.x + state.paddle.width / 2, y: state.paddle.y - 10, speed: BASE_BALL_SPEED };
+      const currentSpeed = primaryBall.speed || BASE_BALL_SPEED;
       for (let i = 0; i < 2; i++) {
         const angle = (Math.random() * 0.8 - 0.4) * Math.PI;
         state.balls.push({
           x: primaryBall.x,
           y: primaryBall.y,
           radius: 6,
-          vx: primaryBall.speed * Math.sin(angle),
-          vy: -Math.abs(primaryBall.speed * Math.cos(angle)),
-          speed: primaryBall.speed,
+          vx: currentSpeed * Math.sin(angle),
+          vy: -Math.abs(currentSpeed * Math.cos(angle)),
+          speed: currentSpeed,
           trail: [],
           glued: false
         });
@@ -506,8 +523,10 @@
       updateHUD();
     } else if (data.type === 'slow') {
       state.balls.forEach(b => {
-        b.vx *= 0.75;
-        b.vy *= 0.75;
+        b.speed = Math.max(2.8, (b.speed || BASE_BALL_SPEED) * 0.8);
+        const currentAngle = Math.atan2(b.vx, -b.vy);
+        b.vx = b.speed * Math.sin(currentAngle);
+        b.vy = -b.speed * Math.cos(currentAngle);
       });
     }
   }
@@ -593,13 +612,13 @@
     }
   }
 
-  function updateParticles() {
+  function updateParticles(timeScale = 1.0) {
     for (let i = state.particles.length - 1; i >= 0; i--) {
       const p = state.particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.15; // Gravity
-      p.alpha -= p.decay;
+      p.x += p.vx * timeScale;
+      p.y += p.vy * timeScale;
+      p.vy += 0.15 * timeScale; // Gravity
+      p.alpha -= p.decay * timeScale;
 
       if (p.alpha <= 0) {
         state.particles.splice(i, 1);
@@ -607,11 +626,11 @@
     }
   }
 
-  function updateFloatingTexts() {
+  function updateFloatingTexts(timeScale = 1.0) {
     for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
       const ft = state.floatingTexts[i];
-      ft.y += ft.vy;
-      ft.alpha -= 0.025;
+      ft.y += ft.vy * timeScale;
+      ft.alpha -= 0.025 * timeScale;
       if (ft.alpha <= 0) {
         state.floatingTexts.splice(i, 1);
       }
@@ -953,6 +972,7 @@
         launchBall();
       } else if (state.mode === 'playing') {
         state.mode = 'paused';
+        stopLoop();
         showOverlay(dom.overlayPause);
       } else if (state.mode === 'paused') {
         state.mode = 'playing';
@@ -966,6 +986,7 @@
       e.preventDefault();
       if (state.mode === 'playing') {
         state.mode = 'paused';
+        stopLoop();
         showOverlay(dom.overlayPause);
       } else if (state.mode === 'paused') {
         state.mode = 'playing';

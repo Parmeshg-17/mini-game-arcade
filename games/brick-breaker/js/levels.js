@@ -45,7 +45,7 @@
       name: 'Wave 2: Diamond Fortress',
       rows: 6,
       cols: 8,
-      speedMultiplier: 1.1,
+      speedMultiplier: 1.06,
       grid: [
         [0, 0, 1, 1, 1, 1, 0, 0],
         [0, 1, 2, 2, 2, 2, 1, 0],
@@ -62,7 +62,7 @@
       name: 'Wave 3: Cyber Bastion',
       rows: 7,
       cols: 8,
-      speedMultiplier: 1.2,
+      speedMultiplier: 1.12,
       grid: [
         [2, 0, 2, 0, 0, 2, 0, 2],
         [2, 2, 2, 2, 2, 2, 2, 2],
