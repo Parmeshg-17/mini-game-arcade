@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us — Mini Game Arcade</title>
+  <meta name="description" content="Get in touch with the Mini Game Arcade team. Send suggestions, report bugs, or share your feedback.">
+  <meta name="theme-color" content="#080c14">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/arcade.css">
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" class="brand-logo" aria-label="Mini Game Arcade Homepage">
+        <span class="brand-icon">🕹️</span>
+        <span>Mini Game <span class="brand-accent">Arcade</span></span>
+      </a>
+
+      <button class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span>☰</span>
+      </button>
+
+      <nav class="main-nav" id="main-nav" aria-label="Main Navigation">
+        <a href="index.html" class="nav-link">Games</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link active">Contact</a>
+        <a href="privacy.html" class="nav-link">Privacy Policy</a>
+        <a href="terms.html" class="nav-link">Terms</a>
+        <a href="games/citrus-blitz/index.html" class="nav-link nav-cta">⚡ Play Citrus Blitz</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="page-main">
+    <div class="content-container">
+      <header class="page-header">
+        <span class="page-category-tag">Get in Touch</span>
+        <h1 class="page-title">Contact & Support</h1>
+        <p class="page-subtitle">Have a game suggestion, found a bug, or just want to say hello? Send us a message.</p>
+      </header>
+
+      <div class="content-card">
+        <article class="prose">
+          <h2>Send Us a Message</h2>
+          <p>We read all feedback and are always working to improve gameplay performance and add new browser games.</p>
+
+          <form id="contact-form" class="contact-form" novalidate>
+            <div class="form-group">
+              <label for="contact-name" class="form-label">Your Name</label>
+              <input type="text" id="contact-name" class="form-input" placeholder="e.g. Alex Hunter" required />
+            </div>
+
+            <div class="form-group">
+              <label for="contact-email" class="form-label">Email Address</label>
+              <input type="email" id="contact-email" class="form-input" placeholder="name@example.com" required />
+            </div>
+
+            <div class="form-group">
+              <label for="contact-subject" class="form-label">Subject</label>
+              <select id="contact-subject" class="form-input" required>
+                <option value="feedback">General Feedback</option>
+                <option value="bug">Bug Report / Performance Issue</option>
+                <option value="suggestion">Game Concept Suggestion</option>
+                <option value="other">Other Inquiry</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="contact-message" class="form-label">Message</label>
+              <textarea id="contact-message" class="form-textarea" placeholder="Describe your question, issue, or feedback in detail..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">
+              <span>Send Message</span>
+            </button>
+
+            <div id="contact-success" class="form-status-alert success" role="alert">
+              ✓ <strong>Thank you!</strong> Your message has been received. We appreciate your feedback and will get back to you if a response is needed.
+            </div>
+          </form>
+
+          <h2 style="margin-top: 40px;">Frequently Asked Questions</h2>
+
+          <h3>Are the games completely free to play?</h3>
+          <p>Yes. All games hosted on Mini Game Arcade are 100% free with no in-app purchases, paid subscriptions, or locked content.</p>
+
+          <h3>Do games work on mobile phones and tablets?</h3>
+          <p>Yes. Every title is tested specifically for touch interfaces, gesture controls, and responsive screen scaling on Android and iOS devices.</p>
+
+          <h3>How do I save my high score?</h3>
+          <p>Your high scores are automatically saved in your browser's local memory (<code>localStorage</code>). No account creation is required.</p>
+
+          <h3>How do I report a game glitch?</h3>
+          <p>Please select "Bug Report" in the form above and mention your device, browser version, and the game you were playing.</p>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-bottom">
+        <p class="copyright">&copy; 2026 Mini Game Arcade. All rights reserved.</p>
+        <div class="footer-sublinks">
+          <a href="index.html">Games</a>
+          <a href="about.html">About</a>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/arcade.js"></script>
+  <script>
+    // Client-side Contact Form Handler
+    document.getElementById('contact-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('contact-name').value.trim();
+      const email = document.getElementById('contact-email').value.trim();
+      const message = document.getElementById('contact-message').value.trim();
+      const alertBox = document.getElementById('contact-success');
+
+      if (!name || !email || !message) {
+        alert('Please fill out all required fields.');
+        return;
+      }
+
+      // Simulate submission & show confirmation
+      alertBox.style.display = 'block';
+      document.getElementById('contact-form').reset();
+      alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  </script>
+</body>
+</html>

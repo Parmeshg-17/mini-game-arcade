@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us — Mini Game Arcade</title>
+  <meta name="description" content="Learn about Mini Game Arcade, our mission to build fast, lightweight, browser-based games, and our engineering principles.">
+  <meta name="theme-color" content="#080c14">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/arcade.css">
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" class="brand-logo" aria-label="Mini Game Arcade Homepage">
+        <span class="brand-icon">🕹️</span>
+        <span>Mini Game <span class="brand-accent">Arcade</span></span>
+      </a>
+
+      <button class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span>☰</span>
+      </button>
+
+      <nav class="main-nav" id="main-nav" aria-label="Main Navigation">
+        <a href="index.html" class="nav-link">Games</a>
+        <a href="about.html" class="nav-link active">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <a href="privacy.html" class="nav-link">Privacy Policy</a>
+        <a href="terms.html" class="nav-link">Terms</a>
+        <a href="games/citrus-blitz/index.html" class="nav-link nav-cta">⚡ Play Citrus Blitz</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="page-main">
+    <div class="content-container">
+      <header class="page-header">
+        <span class="page-category-tag">Our Mission</span>
+        <h1 class="page-title">About Mini Game Arcade</h1>
+        <p class="page-subtitle">Simple, responsive, high-performance web gaming without barriers.</p>
+      </header>
+
+      <div class="content-card">
+        <article class="prose">
+          <h2>Welcome to Mini Game Arcade</h2>
+          <p>
+            <strong>Mini Game Arcade</strong> was created to bring back the pure joy of classic arcade gaming directly in the modern web browser.
+            In an era of multi-gigabyte game downloads, long load times, forced account creations, and invasive pop-up ads, we believe web gaming should be instant, clean, and accessible to everyone.
+          </p>
+
+          <h2>Our Engineering Principles</h2>
+          <ul>
+            <li><strong>Zero Installations:</strong> Every game runs immediately using native HTML5, CSS3, and JavaScript standards. No third-party plugins, downloads, or external app stores are needed.</li>
+            <li><strong>Responsive & Touch-Friendly:</strong> Whether you are playing with a precision gaming mouse on desktop or swiping on a smartphone during a commute, controls are calibrated for fluid responsiveness.</li>
+            <li><strong>100% Original Content:</strong> We build original games featuring procedurally generated Canvas 2D graphics and synthesized Web Audio sound effects, ensuring no copyrighted assets are used.</li>
+            <li><strong>Respect for Player Privacy:</strong> We do not track personal identities or require accounts. Your game records and high scores stay safely stored in your own device's browser memory via <code>localStorage</code>.</li>
+            <li><strong>Clean, Non-Intrusive Layouts:</strong> We never use deceptive click traps, fake download buttons, or gameplay-blocking ads.</li>
+          </ul>
+
+          <h2>Our Games</h2>
+          <p>
+            We launch each game only after thorough testing, balance tuning, and quality assurance. Our flagship title, 
+            <a href="games/citrus-blitz/index.html" style="color: var(--accent-cyan);"><strong>Citrus Blitz</strong></a>, 
+            showcases responsive swipe mechanics, authentic slicing physics, combo multipliers, and procedural audio synthesis.
+          </p>
+
+          <h2>Have Feedback or Ideas?</h2>
+          <p>
+            We are continuously expanding the arcade with new original titles, including memory games, puzzles, and arcade reflex challenges.
+            If you have ideas, feedback, or bug reports, please reach out via our <a href="contact.html" style="color: var(--accent-cyan);">Contact page</a>.
+          </p>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-bottom">
+        <p class="copyright">&copy; 2026 Mini Game Arcade. All rights reserved.</p>
+        <div class="footer-sublinks">
+          <a href="index.html">Games</a>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="contact.html">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/arcade.js"></script>
+</body>
+</html>

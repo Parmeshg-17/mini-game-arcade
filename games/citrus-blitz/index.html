@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Play Citrus Blitz — Mini Game Arcade</title>
+  <meta name="description" content="Play Citrus Blitz online for free in your browser. Slice juicy fruit, avoid ticking bombs, chain combos, and beat your high score.">
+  <meta name="theme-color" content="#090d16">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="Citrus Blitz — Mini Game Arcade">
+  <meta property="og:description" content="Slice vibrant fruits, dodge bombs, and unleash blazing combos in this juicy browser arcade game!">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="game-page-body">
+
+  <!-- Arcade Top Navigation Bar -->
+  <nav class="arcade-nav-bar" aria-label="Game page navigation">
+    <div class="nav-content-container">
+      <a href="../../index.html" class="back-link">
+        <span class="back-arrow">←</span>
+        <span>Back to Arcade</span>
+      </a>
+
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="crumb-separator">/</span>
+        <a href="../../index.html#games-section">Games</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-current">Citrus Blitz</span>
+      </div>
+
+      <div class="nav-right-actions">
+        <a href="#controls-guide" class="nav-guide-link">🎮 Controls</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Game Shell / Responsive Viewport Container -->
+  <div id="game-container" class="game-container">
+
+    <!-- Top Arcade HUD -->
+    <header id="game-hud" class="game-hud">
+      <div class="hud-left">
+        <div class="score-card">
+          <span class="hud-label">SCORE</span>
+          <span id="score-val" class="score-number">0</span>
+        </div>
+        <div class="high-score-badge">
+          <span class="hud-label">BEST</span>
+          <span id="high-score-val" class="high-number">0</span>
+        </div>
+      </div>
+
+      <div class="hud-center">
+        <!-- 60s Timer (Arcade Mode) -->
+        <div id="timer-container" class="timer-pill">
+          <span class="timer-icon">⏱️</span>
+          <span id="timer-val" class="timer-number">60</span>
+          <span class="timer-sec">s</span>
+        </div>
+
+        <!-- 3 Lives Hearts (Classic Mode) -->
+        <div id="lives-container" class="lives-pill" style="display: none;">
+          <span class="heart-icon">❤️</span>
+          <span class="heart-icon">❤️</span>
+          <span class="heart-icon">❤️</span>
+        </div>
+      </div>
+
+      <div class="hud-right">
+        <button id="btn-sound-toggle" class="hud-btn" aria-label="Toggle Sound" title="Sound Toggle (M)">
+          <span id="btn-sound-icon">🔊</span>
+        </button>
+        <button id="btn-pause" class="hud-btn" aria-label="Pause Game" title="Pause (Space/P)">
+          <span>⏸️</span>
+        </button>
+        <button id="btn-help" class="hud-btn" aria-label="How to Play" title="How to Play">
+          <span>❓</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Floating Combo Multiplier Banner -->
+    <div id="combo-badge" class="combo-badge hidden">
+      <span id="combo-text">3x COMBO!</span>
+    </div>
+
+    <!-- Interactive Canvas Playfield -->
+    <main id="canvas-container" class="canvas-container">
+      <canvas id="game-canvas"></canvas>
+    </main>
+
+    <!-- Overlay: Main Menu / Start Screen -->
+    <div id="menu-overlay" class="overlay">
+      <div class="menu-card glass-panel">
+        <div class="brand-badge">ARCADE EDITION</div>
+        <h1 class="game-title">
+          CITRUS <span class="highlight-text">BLITZ</span>
+        </h1>
+        <p class="tagline">Slice juicy fruit, avoid ticking bombs, and unleash blazing combo streaks!</p>
+
+        <!-- Quick Tutorial Highlights -->
+        <div class="tutorial-grid">
+          <div class="t-card">
+            <div class="t-icon">🍉</div>
+            <div class="t-title">Slice Fruit</div>
+            <div class="t-desc">Swipe with mouse or finger to slice juicy flying fruit.</div>
+          </div>
+          <div class="t-card warning-card">
+            <div class="t-icon">💣</div>
+            <div class="t-title">Avoid Bombs!</div>
+            <div class="t-desc">Bombs subtract 10s and 10 pts. Don't slice them!</div>
+          </div>
+          <div class="t-card bonus-card">
+            <div class="t-icon">⚡</div>
+            <div class="t-title">Combo Blitz</div>
+            <div class="t-desc">Slice 3+ fruit in a single swipe for massive bonus points!</div>
+          </div>
+        </div>
+
+        <!-- Mode Select Buttons -->
+        <div class="action-buttons">
+          <button id="btn-start-arcade" class="btn btn-primary pulse-btn">
+            <span class="btn-icon">⚡</span>
+            <div class="btn-text-group">
+              <span class="btn-heading">PLAY ARCADE BLITZ</span>
+              <span class="btn-sub">60-second high score rush with starfruit</span>
+            </div>
+          </button>
+
+          <button id="btn-start-classic" class="btn btn-secondary">
+            <span class="btn-icon">❤️</span>
+            <div class="btn-text-group">
+              <span class="btn-heading">PLAY CLASSIC SURVIVAL</span>
+              <span class="btn-sub">3 strikes — don't miss fruit or hit bombs</span>
+            </div>
+          </button>
+        </div>
+
+        <div class="keyboard-hints">
+          <span>Shortcuts: <strong>Space/P</strong> = Pause | <strong>R</strong> = Restart | <strong>M</strong> = Mute</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlay: Pause Menu -->
+    <div id="pause-overlay" class="overlay hidden">
+      <div class="menu-card glass-panel pause-card">
+        <h2 class="overlay-title">GAME PAUSED</h2>
+        <p class="pause-subtitle">Take a breather, ninja.</p>
+
+        <div class="pause-actions">
+          <button id="btn-resume" class="btn btn-primary">
+            <span>▶️ Resume</span>
+          </button>
+          <button id="btn-restart" class="btn btn-secondary">
+            <span>🔄 Restart Game</span>
+          </button>
+          <button id="btn-pause-menu" class="btn btn-outline">
+            <span>🏠 Main Menu</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlay: Game Over -->
+    <div id="gameover-overlay" class="overlay hidden">
+      <div class="menu-card glass-panel gameover-card">
+        <h2 id="gameover-title" class="overlay-title gameover-title">TIME'S UP!</h2>
+        <div id="final-highscore-notice" class="new-highscore-badge" style="display: none;">
+          🏆 NEW HIGH SCORE! 🏆
+        </div>
+
+        <div class="final-score-box">
+          <span class="final-score-label">FINAL SCORE</span>
+          <span id="final-score" class="final-score-num">0</span>
+        </div>
+
+        <!-- Detailed Stats Grid -->
+        <div class="stats-row">
+          <div class="stat-item">
+            <span class="stat-val" id="stat-sliced">0</span>
+            <span class="stat-lbl">Fruits Sliced</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-val" id="stat-combo">0x</span>
+            <span class="stat-lbl">Best Combo</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-val" id="stat-bombs">0</span>
+            <span class="stat-lbl">Bombs Dodged</span>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button id="btn-gameover-restart" class="btn btn-primary pulse-btn">
+            <span>🔄 Play Again</span>
+          </button>
+          <button id="btn-gameover-menu" class="btn btn-secondary">
+            <span>🏠 Main Menu</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlay: How to Play Modal -->
+    <div id="howto-overlay" class="overlay hidden">
+      <div class="menu-card glass-panel howto-card">
+        <h2 class="overlay-title">HOW TO PLAY</h2>
+        <div class="rules-list">
+          <div class="rule-item">
+            <span class="rule-emoji">🎯</span>
+            <div>
+              <strong>Controls:</strong>
+              <p>Click & drag with your mouse or swipe across the screen with your finger to slash.</p>
+            </div>
+          </div>
+          <div class="rule-item">
+            <span class="rule-emoji">🍉</span>
+            <div>
+              <strong>Juicy Fruits:</strong>
+              <p>Watermelon, Orange, Lemon, Strawberry, Kiwi, and Pineapple award 1 to 3 points each.</p>
+            </div>
+          </div>
+          <div class="rule-item">
+            <span class="rule-emoji">⭐</span>
+            <div>
+              <strong>Golden Starfruit:</strong>
+              <p>Rare glowing fruit that grants +10 points and adds +5 bonus seconds to your clock!</p>
+            </div>
+          </div>
+          <div class="rule-item warning">
+            <span class="rule-emoji">💣</span>
+            <div>
+              <strong>Rule: AVOID BOMBS!</strong>
+              <p>Slicing a bomb detonates an explosion, deducts 10 seconds and 10 points (or 1 life in Classic mode), and resets your combo streak!</p>
+            </div>
+          </div>
+          <div class="rule-item">
+            <span class="rule-emoji">⚡</span>
+            <div>
+              <strong>Combo Multipliers:</strong>
+              <p>Slice 2 or more fruits in a single fluid swipe stroke to earn 3x, 4x, and 5x frenzy bonuses.</p>
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-close-help" class="btn btn-primary">
+          <span>Got It, Let's Play!</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Dedicated Controls & Guide Section Below Arena -->
+  <section id="controls-guide" class="game-details-section">
+    <div class="details-container">
+      <div class="details-header">
+        <h2>About Citrus Blitz</h2>
+        <p>A fast-paced, original arcade fruit-slicing experience running directly in your browser with zero installation.</p>
+      </div>
+
+      <div class="details-grid">
+        <div class="details-box">
+          <h3>🎮 Controls & Keybindings</h3>
+          <ul class="controls-list">
+            <li><span class="kbd-pill">Mouse Drag</span> <span>Click & swipe cursor across fruits</span></li>
+            <li><span class="kbd-pill">Touch Swipe</span> <span>Swipe finger(s) across touchscreens</span></li>
+            <li><span class="kbd-pill">Space</span> or <span class="kbd-pill">P</span> <span>Pause / Resume game</span></li>
+            <li><span class="kbd-pill">R</span> <span>Restart current session</span></li>
+            <li><span class="kbd-pill">M</span> <span>Toggle sound on / off</span></li>
+            <li><span class="kbd-pill">Esc</span> <span>Close modal / Pause</span></li>
+          </ul>
+        </div>
+
+        <div class="details-box">
+          <h3>✨ Game Modes & Rules</h3>
+          <div class="rule-subgroup">
+            <strong>⚡ Arcade Blitz (60s)</strong>
+            <p>Race against a 60-second timer. Slice fruits to rack up points. Slice rare Golden Starfruit for +10 points and +5 bonus seconds! Beware of bombs: slicing a bomb costs 10 seconds and 10 points.</p>
+          </div>
+          <div class="rule-subgroup">
+            <strong>❤️ Classic Survival (3 Strikes)</strong>
+            <p>No timer! You have 3 lives. Missing any fruit costs 1 life. Slicing a bomb costs 1 life. Lose all 3 lives and the game ends.</p>
+          </div>
+          <div class="rule-subgroup">
+            <strong>🔥 Combo Streaks</strong>
+            <p>Slice 2, 3, 4, or 5+ fruits in a single fluid stroke to unleash mega bonus scores and golden fire trails.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Arcade Links Footer -->
+      <footer class="game-page-footer">
+        <p>&copy; 2026 Mini Game Arcade. All games are original and free to play.</p>
+        <div class="footer-links">
+          <a href="../../index.html">Arcade Home</a>
+          <a href="../../about.html">About</a>
+          <a href="../../contact.html">Contact</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+        </div>
+      </footer>
+    </div>
+  </section>
+
+  <!-- Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/blade.js"></script>
+  <script src="js/fruit.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

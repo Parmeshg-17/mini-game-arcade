@@ -1,131 +1,151 @@
-# Citrus Blitz — Blade Fruit Slicer Arcade
+# Mini Game Arcade
 
-A fast, juicy, browser-based fruit-slicing arcade mini-game built with vanilla HTML5, Canvas 2D, and procedural Web Audio API. Designed for desktop, tablet, and mobile browsers with zero external runtime dependencies.
+A fast, modern, responsive browser arcade website showcasing lightweight, original HTML5 mini-games built with vanilla web technologies (HTML5, Canvas 2D, Web Audio API). Deployable instantly as a static site on Vercel with zero backend or API keys required.
 
 ```
-  ____ _ _                      ____  _ _ _       
- / ___(_) |_ _ __ _   _ ___   | __ )| (_) |_ ____
-| |   | | __| '__| | | / __|  |  _ \| | | __|_  /
-| |___| | |_| |  | |_| \__ \  | |_) | | | |_ / / 
- \____|_|\__|_|   \__,_|___/  |____/|_|_|\__/___|
-          ARCADE FRUIT SLICER EDITION
+  __  __ _       _    ____                            _                     _      
+ |  \/  (_)_ __ (_)  / ___| __ _ _ __ ___   ___      / \   _ __ ___ __ _  __| | ___ 
+ | |\/| | | '_ \| | | |  _ / _` | '_ ` _ \ / _ \    / _ \ | '__/ __/ _` |/ _` |/ _ \
+ | |  | | | | | | | | |_| | (_| | | | | | |  __/   / ___ \| | | (_| (_| | (_| |  __/
+ |_|  |_|_|_| |_|_|  \____|\__,_|_| |_| |_|\___|  /_/   \_\_|  \___\__,_|\__,_|\___|
 ```
 
 ---
 
-## 🌟 Features & Highlights
+## 🌟 Key Features
 
-- **Dynamic Slice Physics**: Fruits fly with parabolic trajectories, realistic gravity, and angular spin. When sliced, fruits cleanly cleave in half along the exact cut angle and fly apart with normal velocity.
-- **Vibrant Procedural Vector Graphics**: 100% original, generated in canvas (Watermelon, Orange, Lemon, Strawberry, Kiwi, Pineapple, Dragonfruit, and rare Golden Starfruit). No external image assets or copyright issues.
-- **Avoid the Bombs!**: Ticking iron bombs with burning fuse sparks. Slicing a bomb detonates an explosion with screen shake, shockwave flash, and a -10s penalty (Arcade) or lost life (Classic).
-- **Combo Multiplier System**: Slice 2 or more fruits in a single fluid swipe stroke to trigger combo multipliers (Double Slice, 3x Combo, 4x Mega Combo, and 5x Blade Frenzy) with custom fanfare and fiery blade trails.
-- **Multi-Touch & Smooth Pointer Tracking**: Independent pointer tracking allows multi-finger slicing on mobile devices without cross-screen jump artifacts.
-- **100% Procedural Web Audio Engine**: Blade swooshes, juicy splatters, bomb fuses, explosions, and musical combo chimes synthesized using the browser's Web Audio API. No external audio files to download.
-- **Sound Mute / Volume Toggle**: Quick sound toggle button and `M` key shortcut, with audio preferences remembered via `localStorage`.
-- **Accidental Scroll Prevention**: `touch-action: none` on the play area stops accidental mobile pull-to-refresh or page swiping while slashing.
-- **Two Game Modes**:
-  - **⚡ Arcade Blitz**: 60-second high-score sprint. Slicing starfruit adds +5s bonus time; bombs deduct 10s and 10 points.
-  - **❤️ Classic Survival**: 3 strikes/lives. Missing a fruit or slicing a bomb costs 1 life.
-- **Persistent High Scores**: High scores for each mode are saved locally.
-- **Responsive & High-DPI Ready**: Scales automatically across phones (even 320px width), tablets, and desktops using `window.devicePixelRatio` for sharp Retina graphics.
-- **Keyboard Shortcuts**:
-  - `Space` or `P` : Pause / Resume
-  - `R` : Restart Game
-  - `M` : Toggle Sound On/Off
-  - `Esc` : Close Modals / Pause
+- **Responsive Arcade Homepage**: Sleek dark-mode aesthetic with live search filtering, category pills, and dynamic game cards.
+- **Dedicated Playable Game Pages**: Each game runs on its own dedicated route (`games/<game-id>/index.html`) with a "← Back to Arcade" breadcrumb navigation bar, full playfield, and complete controls guide.
+- **Featured Flagship Game — Citrus Blitz**: Original procedural fruit-slicing arcade game with realistic slicing physics, glowing blade swipe trails, Web Audio procedural sounds, combo multipliers, and bomb-avoidance mechanics.
+- **Comprehensive Policy & Info Pages**: Dedicated, fully populated [About](file:///c:/Users/parmesh/Desktop/mini%20game/about.html), [Contact](file:///c:/Users/parmesh/Desktop/mini%20game/contact.html) (with working client-side validation), [Privacy Policy](file:///c:/Users/parmesh/Desktop/mini%20game/privacy.html), and [Terms of Service](file:///c:/Users/parmesh/Desktop/mini%20game/terms.html) pages.
+- **Zero Dependencies & Zero Build Step**: 100% vanilla HTML5, CSS3, and JavaScript. Lightning-fast loads and zero Vercel build failures.
+- **Privacy-First**: No tracking cookies, no accounts, and no servers. High scores and mute settings are stored strictly in `localStorage`.
+
+---
+
+## 🕹️ How to Add a New Game (Step-by-Step)
+
+Mini Game Arcade was designed from the ground up to make adding new games straightforward and modular.
+
+### Step 1: Create the Game Directory
+Create a dedicated folder for your new game under `games/`:
+```bash
+games/
+└── memory-match/
+    ├── index.html       # Game playfield with Back to Arcade navigation
+    ├── style.css        # Game-specific styles
+    └── js/
+        └── game.js      # Game logic
+```
+
+### Step 2: Add an Original Vector Thumbnail
+Create an SVG or PNG illustration in `assets/games/`:
+```bash
+assets/games/memory-match.svg
+```
+
+### Step 3: Register the Game in `js/games-data.js`
+Open [js/games-data.js](file:///c:/Users/parmesh/Desktop/mini%20game/js/games-data.js) and add your new game configuration to the `ARCADE_GAMES` array:
+
+```javascript
+{
+  id: 'memory-match',
+  title: 'Memory Match',
+  category: 'Puzzle',
+  tags: ['memory', 'puzzle', 'cards', 'brain', 'casual'],
+  badge: 'New',
+  tagline: 'Flip cards and match pairs against the clock.',
+  description: 'A polished card-matching memory challenge with accessible keyboard and touch controls.',
+  route: 'games/memory-match/index.html',
+  thumbnail: 'assets/games/memory-match.svg',
+  controlsSummary: 'Click or tap cards to flip. R to Restart.',
+  features: ['Timer', 'Move Counter', 'Keyboard & Touch']
+}
+```
+
+### Step 4: Verify with Automated QA
+Run the automated test runner to ensure routes, DOM elements, and asset links are valid:
+```bash
+npm test
+```
+
+The new game card will automatically appear on the homepage with working search and category filters!
 
 ---
 
 ## 🚀 Running Locally
 
-Because this project uses vanilla HTML5, CSS, and JavaScript, it can be tested in multiple ways without any compilation step.
+Because this project is built with static web standards, you can test it locally using any of these methods:
 
-### Option A: Using NPM / Node.js
+### Option 1: Using Node / NPM
 ```bash
-# 1. Install dependencies (optional, serves static files)
-npm install
-
-# 2. Run local development server
-npm run dev
-# or
+# Start local static server at http://localhost:3000
 npm start
+# or
+npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Option B: Using Python's Built-in Server
-If you have Python installed:
+### Option 2: Using Python
 ```bash
 python -m http.server 8000
 ```
-Open [http://localhost:8000](http://localhost:8000) in your browser.
+Open `http://localhost:8000`.
 
-### Option C: Direct Browser Opening
-Simply double-click `index.html` or open it with Chrome, Firefox, Safari, or Edge.
+### Option 3: Direct Browser Launch
+Open [index.html](file:///c:/Users/parmesh/Desktop/mini%20game/index.html) directly in any web browser.
 
 ---
 
 ## ☁️ Deploying to Vercel
 
-Citrus Blitz is 100% static and ready for instant deployment on Vercel's free tier.
-
-### Method 1: Deploy via GitHub (Recommended)
-1. Initialize Git and commit the files:
+### Method 1: Push to GitHub (Recommended)
+1. Commit your files:
    ```bash
-   git init
    git add .
-   git commit -m "Initial commit: Citrus Blitz fruit slicer game"
-   git branch -M main
-   ```
-2. Create a new repository on [GitHub](https://github.com/new).
-3. Link and push to your GitHub repo:
-   ```bash
-   git remote add origin YOUR_GITHUB_REPOSITORY_URL
+   git commit -m "Add Mini Game Arcade multi-page website"
    git push -u origin main
    ```
-4. Visit [Vercel Dashboard](https://vercel.com/dashboard) and click **"Add New..." > "Project"**.
-5. Select and import your GitHub repository.
-6. Settings:
-   - **Framework Preset**: `Other`
-   - **Root Directory**: `./`
-   - **Build Command**: *(leave empty)*
-   - **Output Directory**: `./` (or leave empty)
-7. Click **Deploy**. Your game will be live at `https://your-project.vercel.app`!
+2. In the [Vercel Dashboard](https://vercel.com/dashboard), import your repository.
+3. Keep default settings (**Framework**: `Other`, **Root Directory**: `./`, **Build Command**: empty, **Output Directory**: `./`).
+4. Click **Deploy**.
 
 ### Method 2: Deploy with Vercel CLI
 ```bash
-# 1. Install Vercel CLI
 npm install -g vercel
-
-# 2. Login to Vercel
-vercel login
-
-# 3. Deploy preview
 vercel
-
-# 4. Deploy to production
 vercel --prod
 ```
 
-For more detailed settings, see [DEPLOYMENT.md](file:///c:/Users/parmesh/Desktop/mini%20game/DEPLOYMENT.md).
+For more details, see [DEPLOYMENT.md](file:///c:/Users/parmesh/Desktop/mini%20game/DEPLOYMENT.md).
 
 ---
 
-## 📁 File Structure
+## 📁 Project Structure
 
 ```
-├── index.html                 # Game layout, HUD, overlays, and canvas
-├── style.css                  # Responsive arcade styling, glassmorphism UI, animations
+├── index.html                 # Mini Game Arcade Homepage
+├── about.html                 # About Mini Game Arcade
+├── contact.html               # Contact & FAQ page with working validation
+├── privacy.html               # Comprehensive Privacy Policy
+├── terms.html                 # Terms of Service
+├── css/
+│   └── arcade.css             # Arcade global styles & design system
 ├── js/
-│   ├── audio.js               # Synthesized Web Audio engine (blade slash, splat, boom, combo chime, mute)
-│   ├── fruit.js               # Procedural vector fruit definitions, halves, and bombs
-│   ├── particles.js           # Juice splash droplets, background splatter decals, blade sparks, confetti
-│   ├── blade.js               # Glowing neon blade swipe trail with spline interpolation
-│   └── game.js                # Core game loop, collision detection, physics, wave spawning, state machine
-├── package.json               # Lightweight development helper scripts
-├── vercel.json                # Vercel configuration for static routing and headers
-├── .gitignore                 # Standard git ignore file
-├── README.md                  # Project overview and local testing guide
-└── DEPLOYMENT.md              # Exact Vercel deployment settings and instructions
+│   ├── games-data.js          # Central games registry & categories
+│   └── arcade.js              # Homepage search, category filters, and mobile drawer
+├── assets/
+│   └── games/
+│       └── citrus-blitz.svg   # Original vector game thumbnail
+├── games/
+│   └── citrus-blitz/          # Dedicated playable fruit-slicing game
+│       ├── index.html         # Playable page with Back to Arcade nav & controls guide
+│       ├── style.css          # Game stylesheet
+│       └── js/                # Game logic, audio, particles, blade, fruit models
+├── test-runner.js             # Automated QA test suite
+├── package.json               # NPM scripts (start, dev, build, test)
+├── vercel.json                # Vercel static routing and security headers
+├── README.md                  # Project overview and new game guide
+└── DEPLOYMENT.md              # Vercel deployment guide
 ```
 
 ---
