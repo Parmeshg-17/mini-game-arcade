@@ -382,70 +382,65 @@ it('Dedicated Bubble Pop page (games/bubble-pop/index.html) has all DOM elements
   assert(bpHtml.includes('href="../../index.html"'), 'Bubble Pop page must link back to arcade homepage');
 });
 
-// 15. Bubble Pop Cluster Flood-Fill & Gravity Physics
-it('Bubble Pop identifies clusters, computes scores, and collapses grids correctly', () => {
+// 15. Bubble Pop Hexagonal Physics, Trajectory & Match-3 Engine
+it('Bubble Pop computes hexagonal coordinates, raycast reflections, and island avalanches correctly', () => {
   const {
-    createInitialGrid,
-    findCluster,
-    hasValidMoves,
-    calculateScore,
-    applyGravityAndCollapse,
-    calculateStars
+    createLevelGrid,
+    getBubbleCenter,
+    getHexNeighbors,
+    calculateTrajectory,
+    findMatchCluster,
+    findOrphanBubbles,
+    countActiveBubbles
   } = require('./games/bubble-pop/js/board.js');
 
-  // 1. Grid generation
-  const grid = createInitialGrid(10, 8, 5);
-  assert.strictEqual(grid.length, 10, 'Grid must have 10 rows');
-  assert.strictEqual(grid[0].length, 8, 'Grid must have 8 columns');
-  assert.strictEqual(hasValidMoves(grid), true, 'Initial grid must have at least one valid cluster');
+  // 1. Level grid generation
+  const lvl1 = createLevelGrid(0);
+  assert(lvl1.grid.length >= 10, 'Grid must have at least 10 rows');
+  assert(countActiveBubbles(lvl1.grid) > 0, 'Level 1 must contain active bubbles');
 
-  // 2. Controlled test grid
-  // Row 0: [0, 0, 1]
-  // Row 1: [0, 2, 1]
-  // Row 2: [3, 2, 1]
+  // 2. Hexagonal coordinates test
+  // Even row 0, col 0
+  const c0 = getBubbleCenter(0, 0, 0, 0, 20);
+  assert.strictEqual(c0.x, 20, 'Even row 0 col 0 center X should be radius (20)');
+  // Odd row 1, col 0 (staggered by radius)
+  const c1 = getBubbleCenter(1, 0, 0, 0, 20);
+  assert.strictEqual(c1.x, 40, 'Odd row 1 col 0 center X should be staggered (40)');
+
+  // 3. Staggered hex neighbors test
+  const evenNeighbors = getHexNeighbors(2, 3);
+  assert(evenNeighbors.some(n => n.r === 1 && n.c === 2), 'Even row must connect to up-left (r-1, c-1)');
+  assert(evenNeighbors.some(n => n.r === 1 && n.c === 3), 'Even row must connect to up-right (r-1, c)');
+
+  const oddNeighbors = getHexNeighbors(1, 2);
+  assert(oddNeighbors.some(n => n.r === 0 && n.c === 2), 'Odd row must connect to up-left (r-1, c)');
+  assert(oddNeighbors.some(n => n.r === 0 && n.c === 3), 'Odd row must connect to up-right (r-1, c+1)');
+
+  // 4. Raycast Trajectory test
+  // Aiming upwards-right from center
+  const traj = calculateTrajectory(240, 540, -Math.PI / 3, 480, 620, lvl1.grid, 0, 45, 20);
+  assert(traj.segments.length > 0, 'Trajectory must produce at least one ray segment');
+
+  // 5. Match-3 cluster detection test
+  // Controlled grid: 3 connected color 0 bubbles
   const testGrid = [
-    [0, 0, 1],
-    [0, 2, 1],
-    [3, 2, 1]
+    [0, 0, null, null, null, null, null, null, null],
+    [0, 1, null, null, null, null, null, null]
   ];
+  const cluster = findMatchCluster(testGrid, 0, 0);
+  assert.strictEqual(cluster.length, 3, 'Must identify cluster of 3 connected matching bubbles');
 
-  // Cluster of 0s starting at (0, 0) should be size 3: (0,0), (0,1), (1,0)
-  const cluster0 = findCluster(testGrid, 0, 0);
-  assert.strictEqual(cluster0.length, 3, 'Color 0 cluster must have 3 cells');
-
-  // Cluster of 1s starting at (0, 2) should be size 3: (0,2), (1,2), (2,2)
-  const cluster1 = findCluster(testGrid, 0, 2);
-  assert.strictEqual(cluster1.length, 3, 'Color 1 cluster must have 3 cells');
-
-  // Singleton at (2, 0) has color 3
-  const clusterSingleton = findCluster(testGrid, 2, 0);
-  assert.strictEqual(clusterSingleton.length, 1, 'Color 3 singleton must have size 1');
-
-  // 3. Scoring Math
-  // Size 4, Combo 1 => 4^2 * 10 = 160
-  assert.strictEqual(calculateScore(4, 1), 160, 'Size 4 with 1x combo must be 160 pts');
-  // Size 5, Combo 3 => 5^2 * 10 * 3 = 750
-  assert.strictEqual(calculateScore(5, 3), 750, 'Size 5 with 3x combo must be 750 pts');
-
-  // 4. Gravity & Column Collapse
-  // Clear the 0s:
-  // [null, null, 1]
-  // [null, 2,    1]
-  // [3,    2,    1]
-  const toCollapse = [
-    [null, null, 1],
-    [null, 2,    1],
-    [3,    2,    1]
+  // 6. Orphan island detection test
+  // Disconnected bubble at row 4 without ceiling anchor
+  const orphanGrid = [
+    [0, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, 1, null, null, null, null, null, null] // Detached bubble
   ];
-  const { newGrid } = applyGravityAndCollapse(toCollapse);
-  // In col 0: cell 3 should fall to row 2
-  assert.strictEqual(newGrid[2][0], 3, 'Bubble in col 0 must drop to bottom row');
-  assert.strictEqual(newGrid[0][0], null, 'Top cell in col 0 must be empty');
-  assert.strictEqual(newGrid[1][0], null, 'Middle cell in col 0 must be empty');
-
-  // 5. Stars calculation
-  assert.strictEqual(calculateStars(5000, 0), 3, 'Perfect clear must yield 3 stars');
-  assert.strictEqual(calculateStars(2500, 6), 2, 'Good score must yield at least 2 stars');
+  const orphans = findOrphanBubbles(orphanGrid);
+  assert(orphans.some(o => o.r === 4 && o.c === 2), 'Must detect disconnected bubble as an orphan');
 });
 
 // 16. Security & Clean Static Deployment Verification

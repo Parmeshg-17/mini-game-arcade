@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Bubble Pop — Play Free on Mini Game Arcade</title>
-  <meta name="description" content="Play Bubble Pop free online. Tap matching bubble clusters to pop them in satisfying cascades, trigger combo multipliers, and clear the board.">
+  <meta name="description" content="Play Bubble Pop shooter online for free. Aim reflective lasers, ricochet off walls, match 3+ bubbles, and trigger massive avalanche drops.">
   <meta name="theme-color" content="#10120f">
 
   <!-- OpenGraph -->
-  <meta property="og:title" content="Bubble Pop — Mini Game Arcade">
-  <meta property="og:description" content="Burst vibrant bubble clusters, chain combo multipliers, and clear the arcade board.">
+  <meta property="og:title" content="Bubble Pop Shooter — Mini Game Arcade">
+  <meta property="og:description" content="Aim laser ricochets, match 3+ bubbles, and trigger island avalanches in this classic arcade shooter.">
   <meta property="og:type" content="website">
 
   <!-- Fonts -->
@@ -57,44 +57,38 @@
     <!-- Editorial Header -->
     <header class="game-editorial-header">
       <div class="game-eyebrow-row">
-        <span class="badge-arcade">PUZZLE // CASUAL</span>
-        <span class="badge-tagline">CLASSIC CLEAR &bull; 60s BLITZ RUSH</span>
+        <span class="badge-arcade">ARCADE // SHOOTER</span>
+        <span id="level-badge" class="badge-tagline">WAVE 1</span>
       </div>
       <h1 class="game-title">Bubble Pop</h1>
-      <p class="game-subheading">Burst matching bubble clusters, chain explosive cascades, and clear the arcade board.</p>
+      <p class="game-subheading">Aim laser trajectory ricochets, match 3 or more bubbles, and trigger massive island avalanches.</p>
     </header>
 
     <!-- Arcade Play Card -->
     <section class="arcade-play-card" id="bubble-stage-card" aria-label="Interactive Bubble Pop Game Stage">
 
-      <!-- Mode Selector -->
-      <div class="mode-selector-wrap">
-        <div class="segmented-control" role="tablist" aria-label="Game Mode">
-          <button id="mode-classic-btn" class="segment-btn active" role="tab" aria-selected="true" type="button">
-            <span>🧩</span>
-            <span>Classic Clear</span>
-          </button>
-          <button id="mode-blitz-btn" class="segment-btn" role="tab" aria-selected="false" type="button">
-            <span>⚡</span>
-            <span>60s Blitz Rush</span>
-          </button>
+      <!-- Top Match Progress Bar with 3-Star Milestone Track (matching reference) -->
+      <div class="stage-star-track" role="region" aria-label="Score Star Progress">
+        <div class="score-star-meter">
+          <div id="star-progress" class="star-fill-bar" style="width: 0%;"></div>
+          <div class="star-node node-1" title="1 Star">★</div>
+          <div class="star-node node-2" title="2 Stars">★</div>
+          <div class="star-node node-3" title="3 Stars">★</div>
         </div>
       </div>
 
       <!-- Match HUD -->
       <div class="match-hud-bar" role="region" aria-label="Match Status">
         <div class="hud-group">
-          <span class="hud-pill highlight-lime" title="Current Score">
+          <span class="hud-pill highlight-orange" title="Current Score">
             <span>SCORE</span>
             <span id="score-display">0</span>
           </span>
-          <span id="moves-count" class="hud-pill" title="Total moves">Moves: 0</span>
-          <span id="match-timer" class="hud-pill highlight-cyan" title="Timer">00:00</span>
-          <span id="remaining-count" class="hud-pill" title="Remaining Bubbles">Bubbles: 80</span>
+          <span id="moves-count" class="hud-pill highlight-lime" title="Shots Left">Shots: 20</span>
+          <span id="remaining-count" class="hud-pill" title="Target Remaining">Remaining: 17</span>
         </div>
 
         <div class="hud-group">
-          <span id="combo-badge" class="hud-pill highlight-orange" style="display: none;">2× COMBO</span>
           <span class="hud-pill" title="Personal Best Score">
             <span>BEST</span>
             <span id="best-score">0</span>
@@ -108,12 +102,12 @@
 
       <!-- Canvas Stage & Overlays -->
       <div class="stage-canvas-container">
-        <canvas id="bubble-canvas" width="480" height="560" aria-label="Bubble Pop Playfield"></canvas>
+        <canvas id="bubble-canvas" width="480" height="620" aria-label="Bubble Pop Playfield"></canvas>
 
         <!-- Overlay 1: Start / Ready -->
         <div id="overlay-start" class="stage-overlay show" role="dialog" aria-live="polite">
-          <h2 class="overlay-title">Pop & Cascade!</h2>
-          <p class="overlay-subtitle">Tap or click clusters of 2 or more adjacent matching bubbles to pop them. Larger clusters yield exponential combo points!</p>
+          <h2 class="overlay-title">Ready to Shoot!</h2>
+          <p class="overlay-subtitle">Aim the laser guideline, bounce shots off the walls, and match 3+ bubbles to burst clusters and trigger avalanches.</p>
           <button id="start-btn" class="btn-arcade-action" type="button">
             <span>Start Game</span>
             <span>→</span>
@@ -123,7 +117,7 @@
         <!-- Overlay 2: Paused -->
         <div id="overlay-pause" class="stage-overlay" role="dialog" aria-live="polite">
           <h2 class="overlay-title">Game Paused</h2>
-          <p class="overlay-subtitle">Take a breather. Press Resume to jump back in.</p>
+          <p class="overlay-subtitle">Press Resume or Space to continue shooting.</p>
           <div class="hud-group">
             <button id="resume-btn" class="btn-arcade-action" type="button">Resume (P)</button>
             <button id="restart-btn" class="btn-secondary-arcade" type="button">Restart (R)</button>
@@ -132,11 +126,11 @@
 
         <!-- Overlay 3: Victory / Cleared -->
         <div id="overlay-win" class="stage-overlay" role="dialog" aria-live="polite">
-          <h2 class="overlay-title">Stage Finished!</h2>
-          <p class="overlay-subtitle">Magnificent arcade popping skills!</p>
+          <h2 class="overlay-title">Wave Cleared!</h2>
+          <p class="overlay-subtitle">All ceiling clusters eradicated with precision aim!</p>
           <div class="overlay-stats-grid">
             <div class="stat-box">
-              <span class="stat-label">Final Score</span>
+              <span class="stat-label">Total Score</span>
               <span id="win-score-val" class="stat-val">0</span>
             </div>
             <div class="stat-box">
@@ -144,24 +138,20 @@
               <span id="win-stars-val" class="stat-val stars">★★★</span>
             </div>
             <div class="stat-box">
-              <span class="stat-label">Total Moves</span>
-              <span id="win-moves-val" class="stat-val">0</span>
-            </div>
-            <div class="stat-box">
-              <span class="stat-label">Time Elapsed</span>
-              <span id="win-time-val" class="stat-val">00:00</span>
+              <span class="stat-label">Shots Used</span>
+              <span id="win-shots-val" class="stat-val">0 / 20</span>
             </div>
           </div>
-          <button id="play-again-btn" class="btn-arcade-action" type="button">
-            <span>Play Again</span>
-            <span>↺</span>
-          </button>
+          <div class="hud-group">
+            <button id="next-level-btn" class="btn-arcade-action" type="button">Next Wave →</button>
+            <button id="play-again-btn" class="btn-secondary-arcade" type="button">Restart</button>
+          </div>
         </div>
 
         <!-- Overlay 4: Game Over -->
         <div id="overlay-gameover" class="stage-overlay" role="dialog" aria-live="polite">
           <h2 class="overlay-title">Game Over</h2>
-          <p class="overlay-subtitle">No more valid clusters remain on the board!</p>
+          <p class="overlay-subtitle">Out of ammo! Don't let the bubbles reach the danger line.</p>
           <div class="overlay-stats-grid">
             <div class="stat-box">
               <span class="stat-label">Final Score</span>
@@ -176,6 +166,26 @@
 
       </div>
 
+      <!-- Bottom Booster Controls Bar (matching reference screenshot!) -->
+      <div class="boosters-dock-bar" role="toolbar" aria-label="Power-up Boosters">
+        <button id="booster-bomb" class="booster-btn" type="button" title="Bomb Booster: Blasts a 3x3 radius">
+          <span class="booster-icon">💣</span>
+          <span class="booster-label">Bomb</span>
+        </button>
+        <button id="booster-rainbow" class="booster-btn" type="button" title="Rainbow Booster: Matches any color">
+          <span class="booster-icon">🌈</span>
+          <span class="booster-label">Wild</span>
+        </button>
+        <button id="booster-laser" class="booster-btn" type="button" title="Laser Sight: Infinite trajectory">
+          <span class="booster-icon">⚡</span>
+          <span class="booster-label">Laser</span>
+        </button>
+        <button id="booster-rocket" class="booster-btn" type="button" title="Rocket: Piercing shot to ceiling">
+          <span class="booster-icon">🚀</span>
+          <span class="booster-label">Rocket</span>
+        </button>
+      </div>
+
     </section>
 
     <!-- Controls & Game Rules -->
@@ -183,22 +193,23 @@
       <article class="guide-article">
         <h3><span>🎮</span> Controls & Shortcuts</h3>
         <ul>
-          <li><span class="key-box">Click / Tap</span> Tap any cluster of 2+ matching bubbles to pop.</li>
-          <li><span class="key-box">Arrow Keys</span> Navigate keyboard cursor across bubble cells.</li>
-          <li><span class="key-box">Space / Enter</span> Pop the highlighted cluster.</li>
+          <li><span class="key-box">Mouse Drag / Touch</span> Aim the trajectory laser line across the board.</li>
+          <li><span class="key-box">Click / Release</span> Fire the loaded bubble into the hex cluster.</li>
+          <li><span class="key-box">Tap Next Bubble / S</span> Swap the loaded bubble with the next in queue.</li>
+          <li><span class="key-box">Arrow Keys</span> Fine-tune shooting angle left and right.</li>
           <li><span class="key-box">P</span> Pause or resume game.</li>
-          <li><span class="key-box">R</span> Restart current match.</li>
-          <li><span class="key-box">M</span> Toggle sound effects on/off.</li>
+          <li><span class="key-box">R</span> Restart current wave.</li>
+          <li><span class="key-box">M</span> Toggle sound effects.</li>
         </ul>
       </article>
 
       <article class="guide-article">
-        <h3><span>⚡</span> Scoring Rules & Combos</h3>
+        <h3><span>⚡</span> Trick Shots & Mechanics</h3>
         <ul>
-          <li><strong>Cluster Math:</strong> Score scales quadratically: <em>N &times; N &times; 10</em> points. 5 bubbles = 250 pts, 10 bubbles = 1,000 pts!</li>
-          <li><strong>Combo Streaks:</strong> Pop clusters in rapid succession within 2.8s to ignite up to a <strong>5&times; Combo Multiplier</strong>!</li>
-          <li><strong>Board Clear Bonus:</strong> Eradicate every single bubble on the board for a colossal <strong>+2,500 Perfect Clear bonus</strong>!</li>
-          <li><strong>Gravity Physics:</strong> Popped slots cause bubbles above to slide down, and empty columns slide left.</li>
+          <li><strong>Wall Ricochets:</strong> Bounce shots off the left and right walls to slip behind obstacles!</li>
+          <li><strong>Match-3 Rule:</strong> Connect 3 or more bubbles of the same color to burst them.</li>
+          <li><strong>Avalanche Drops:</strong> Pop support clusters to drop unanchored islands for massive bonus points!</li>
+          <li><strong>Power Boosters:</strong> Activate Bomb or Wild bubbles to blast through tough formations.</li>
         </ul>
       </article>
     </section>
@@ -217,15 +228,15 @@
 
   </main>
 
-  <!-- Scripts (Root-relative paths with file:// fallback) -->
-  <script src="/games/bubble-pop/js/board.js?v=1.0.0"></script>
-  <script src="/games/bubble-pop/js/audio.js?v=1.0.0"></script>
-  <script src="/games/bubble-pop/js/game.js?v=1.0.0"></script>
+  <!-- Scripts (Root-relative paths with cache-busting and file:// fallback) -->
+  <script src="/games/bubble-pop/js/board.js?v=2.0.0"></script>
+  <script src="/games/bubble-pop/js/audio.js?v=2.0.0"></script>
+  <script src="/games/bubble-pop/js/game.js?v=2.0.0"></script>
   <script>
     if (window.location.protocol === 'file:' && typeof BubbleBoard === 'undefined') {
       ['board.js', 'audio.js', 'game.js'].forEach(function(s) {
         var scriptEl = document.createElement('script');
-        scriptEl.src = 'js/' + s + '?v=1.0.0';
+        scriptEl.src = 'js/' + s + '?v=2.0.0';
         scriptEl.async = false;
         document.body.appendChild(scriptEl);
       });

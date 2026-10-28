@@ -1,57 +1,61 @@
 /**
- * Bubble Pop — Canvas 2D Interactive Game Engine
+ * Bubble Pop — Canvas 2D Bubble Shooter Game Engine
+ * Inspired by classic Puzzle Bobble / Bust-A-Move and the reference arcade shooter.
  * Features:
- * - Cluster detection & highlighting with BFS
- * - Exponential combo scoring: N^2 * 10 * Combo
- * - Smooth gravity fall physics & column compression
- * - Particle droplets & shockwaves on pops
- * - Classic Clear & 60s Blitz modes
- * - Full mouse, touch, and accessible keyboard navigation
- * - Frame-rate independent physics (delta time normalization)
+ * - Hexagonal staggered grid geometry
+ * - Laser trajectory with wall ricochets & bounce sparks
+ * - Loaded bubble cannon with live shot counter & bubble swap
+ * - Match-3+ burst physics & falling island avalanches
+ * - 4 Boosters: Bomb, Rainbow, Laser Sight, and Rocket
+ * - Full Touch, Mouse, and Accessible Keyboard controls
+ * - Delta-time physics normalization (60Hz / 120Hz / 144Hz)
  */
 (function() {
   'use strict';
 
   // Constants
-  const ROWS = 10;
-  const COLS = 8;
-  const COMBO_TIMEOUT_SEC = 2.8;
+  const BUBBLE_RADIUS = 20;
+  const BALL_SPEED = 12.0;
 
-  // DOM Elements
+  // DOM Elements cache
   const dom = {};
 
   // Engine State
   const state = {
-    mode: 'classic', // 'classic' | 'blitz'
+    levelIndex: 0,
     status: 'ready', // 'ready' | 'playing' | 'paused' | 'cleared' | 'gameover'
     grid: [],
-    fallingBubbles: [], // Active animations { fromX, fromY, toX, toY, progress, speed, colorIndex }
+    levelInfo: null,
     score: 0,
     bestScore: 0,
-    moves: 0,
-    timer: 0,
-    combo: 1,
-    lastPopTime: 0,
-    screenShake: 0,
-    selectedCluster: [],
-    hoverCell: null,
-    keyboardCursor: { r: 5, c: 4 },
+    shotsLeft: 20,
+    totalShots: 20,
+    currentBubbleColor: 0,
+    nextBubbleColor: 1,
+    activeBooster: null, // 'bomb' | 'rainbow' | 'laser' | 'rocket'
+    aimAngle: -Math.PI / 2, // Default aiming straight up
+    isAiming: false,
+    flyingBall: null, // { x, y, vx, vy, color, isBooster }
+    fallingOrphans: [], // [{ x, y, vx, vy, color, rot, vRot }]
     particles: [],
     shockwaves: [],
     floatingTexts: [],
-    blitzRowTimer: 0
+    screenShake: 0,
+    lastTime: 0
   };
 
   let canvas = null;
   let ctx = null;
   let animFrameId = null;
-  let lastTime = 0;
   let dpr = 1;
   let canvasW = 480;
-  let canvasH = 580;
-  let cellSize = 48;
+  let canvasH = 620;
   let gridOffsetX = 0;
-  let gridOffsetY = 0;
+  let gridOffsetY = 50;
+
+  // Shooter Position
+  let shooterX = 240;
+  let shooterY = 540;
 
   // Initialize
   document.addEventListener('DOMContentLoaded', init);
@@ -61,7 +65,7 @@
     setupCanvas();
     loadBestScore();
     bindEvents();
-    startNewGame();
+    loadLevel(0);
     render();
   }
 
@@ -70,16 +74,21 @@
     dom.scoreDisplay = document.getElementById('score-display');
     dom.bestScore = document.getElementById('best-score');
     dom.movesCount = document.getElementById('moves-count');
-    dom.matchTimer = document.getElementById('match-timer');
-    dom.comboBadge = document.getElementById('combo-badge');
     dom.remainingCount = document.getElementById('remaining-count');
+    dom.levelBadge = document.getElementById('level-badge');
+    dom.starProgress = document.getElementById('star-progress');
 
-    dom.modeClassicBtn = document.getElementById('mode-classic-btn');
-    dom.modeBlitzBtn = document.getElementById('mode-blitz-btn');
     dom.audioToggleBtn = document.getElementById('audio-toggle-btn');
     dom.audioIcon = document.getElementById('audio-icon');
     dom.pauseBtn = document.getElementById('pause-btn');
 
+    // Boosters
+    dom.boosterBomb = document.getElementById('booster-bomb');
+    dom.boosterRainbow = document.getElementById('booster-rainbow');
+    dom.boosterLaser = document.getElementById('booster-laser');
+    dom.boosterRocket = document.getElementById('booster-rocket');
+
+    // Overlays
     dom.overlayStart = document.getElementById('overlay-start');
     dom.overlayPause = document.getElementById('overlay-pause');
     dom.overlayWin = document.getElementById('overlay-win');
@@ -88,12 +97,12 @@
     dom.startBtn = document.getElementById('start-btn');
     dom.resumeBtn = document.getElementById('resume-btn');
     dom.restartBtn = document.getElementById('restart-btn');
+    dom.nextLevelBtn = document.getElementById('next-level-btn');
     dom.playAgainBtn = document.getElementById('play-again-btn');
     dom.gameOverRestartBtn = document.getElementById('gameover-restart-btn');
 
     dom.winScoreVal = document.getElementById('win-score-val');
-    dom.winMovesVal = document.getElementById('win-moves-val');
-    dom.winTimeVal = document.getElementById('win-time-val');
+    dom.winShotsVal = document.getElementById('win-shots-val');
     dom.winStarsVal = document.getElementById('win-stars-val');
     dom.goScoreVal = document.getElementById('go-score-val');
     dom.srAnnouncer = document.getElementById('sr-announcer');
@@ -108,70 +117,77 @@
     dpr = window.devicePixelRatio || 1;
 
     canvasW = rect.width || 480;
-    canvasH = rect.height || 580;
+    canvasH = rect.height || 620;
 
     canvas.width = Math.floor(canvasW * dpr);
     canvas.height = Math.floor(canvasH * dpr);
     ctx.scale(dpr, dpr);
 
-    // Compute cell dimensions
-    const maxCellW = (canvasW - 24) / COLS;
-    const maxCellH = (canvasH - 24) / ROWS;
-    cellSize = Math.floor(Math.min(maxCellW, maxCellH));
+    // Grid offsets
+    gridOffsetX = Math.floor((canvasW - (BubbleBoard.EVEN_COLS * BUBBLE_RADIUS * 2)) / 2);
+    gridOffsetY = 45;
 
-    gridOffsetX = Math.floor((canvasW - cellSize * COLS) / 2);
-    gridOffsetY = Math.floor((canvasH - cellSize * ROWS) / 2);
+    shooterX = Math.floor(canvasW / 2);
+    shooterY = Math.floor(canvasH - 72);
   }
 
   function loadBestScore() {
-    const key = `arcade_bubblepop_best_${state.mode}`;
-    state.bestScore = parseInt(localStorage.getItem(key) || '0', 10);
+    state.bestScore = parseInt(localStorage.getItem('arcade_bubbleshooter_best') || '0', 10);
     if (dom.bestScore) dom.bestScore.textContent = state.bestScore;
   }
 
   function saveBestScore() {
     if (state.score > state.bestScore) {
       state.bestScore = state.score;
-      const key = `arcade_bubblepop_best_${state.mode}`;
       try {
-        localStorage.setItem(key, state.bestScore.toString());
+        localStorage.setItem('arcade_bubbleshooter_best', state.bestScore.toString());
       } catch (e) {}
       if (dom.bestScore) dom.bestScore.textContent = state.bestScore;
     }
   }
 
-  function startNewGame() {
+  function loadLevel(idx) {
+    state.levelIndex = idx;
     const Board = window.BubbleBoard;
-    state.grid = Board ? Board.createInitialGrid(ROWS, COLS, 5) : createFallbackGrid();
-    state.fallingBubbles = [];
-    state.score = 0;
-    state.moves = 0;
-    state.combo = 1;
-    state.lastPopTime = 0;
-    state.timer = state.mode === 'blitz' ? 60 : 0;
-    state.blitzRowTimer = 0;
-    state.screenShake = 0;
+    const lvl = Board ? Board.createLevelGrid(idx) : { levelInfo: { moves: 22, name: 'Level 1' }, grid: [] };
+
+    state.levelInfo = lvl.levelInfo;
+    state.grid = lvl.grid;
+    state.shotsLeft = lvl.levelInfo.moves || 22;
+    state.totalShots = state.shotsLeft;
+    state.flyingBall = null;
+    state.fallingOrphans = [];
     state.particles = [];
     state.shockwaves = [];
     state.floatingTexts = [];
-    state.selectedCluster = [];
-    state.keyboardCursor = { r: Math.floor(ROWS / 2), c: Math.floor(COLS / 2) };
+    state.activeBooster = null;
+    state.aimAngle = -Math.PI / 2;
+    state.isAiming = true;
     state.status = 'ready';
+
+    // Pick initial colors from grid
+    pickNextColors();
 
     updateHUD();
     showOverlay(dom.overlayStart);
   }
 
-  function createFallbackGrid() {
-    const g = [];
-    for (let r = 0; r < ROWS; r++) {
-      const row = [];
-      for (let c = 0; c < COLS; c++) {
-        row.push(Math.floor(Math.random() * 5));
-      }
-      g.push(row);
-    }
-    return g;
+  function pickNextColors() {
+    const Board = window.BubbleBoard;
+    const remaining = Board ? Board.getRemainingColors(state.grid) : [0, 1];
+    const available = remaining.length > 0 ? remaining : (state.levelInfo?.activeColors || [0, 1]);
+
+    state.currentBubbleColor = available[Math.floor(Math.random() * available.length)];
+    state.nextBubbleColor = available[Math.floor(Math.random() * available.length)];
+  }
+
+  function swapBubbles() {
+    if (state.flyingBall || state.status !== 'playing') return;
+    const tmp = state.currentBubbleColor;
+    state.currentBubbleColor = state.nextBubbleColor;
+    state.nextBubbleColor = tmp;
+    window.BubbleAudio?.playSwap();
+    render();
   }
 
   function startGameplay() {
@@ -180,9 +196,9 @@
     startLoop();
   }
 
-  // Loop & Delta-Time Normalization
+  // Loop & Delta Time
   function startLoop() {
-    lastTime = performance.now();
+    state.lastTime = performance.now();
     if (!animFrameId) {
       animFrameId = requestAnimationFrame(gameLoop);
     }
@@ -193,25 +209,24 @@
       cancelAnimationFrame(animFrameId);
       animFrameId = null;
     }
-    lastTime = 0;
+    state.lastTime = 0;
   }
 
   function gameLoop(timestamp) {
     const currentTime = timestamp || performance.now();
-    if (!lastTime) lastTime = currentTime;
-    let dt = (currentTime - lastTime) / 1000;
-    lastTime = currentTime;
+    if (!state.lastTime) state.lastTime = currentTime;
+    let dt = (currentTime - state.lastTime) / 1000;
+    state.lastTime = currentTime;
 
-    // Safety clamp dt against background tab spikes
     if (dt > 0.05) dt = 0.05;
     const timeScale = dt * 60;
 
     if (state.status === 'playing') {
-      update(timeScale, dt);
+      update(timeScale);
     }
     render();
 
-    if (state.status === 'playing' || state.particles.length > 0 || state.fallingBubbles.length > 0) {
+    if (state.status === 'playing' || state.flyingBall || state.fallingOrphans.length > 0 || state.particles.length > 0) {
       animFrameId = requestAnimationFrame(gameLoop);
     } else {
       animFrameId = null;
@@ -219,226 +234,298 @@
   }
 
   // Update
-  function update(timeScale, dt) {
-    // 1. Timer
-    if (state.mode === 'classic') {
-      state.timer += dt;
-    } else if (state.mode === 'blitz') {
-      state.timer -= dt;
-      if (state.timer <= 0) {
-        state.timer = 0;
-        handleGameOver('Time Expired!');
-        return;
-      }
-
-      // Blitz top row descent timer
-      state.blitzRowTimer += dt;
-      if (state.blitzRowTimer >= 14) {
-        state.blitzRowTimer = 0;
-        insertBlitzRow();
-      }
+  function update(timeScale) {
+    // 1. Update Flying Ball
+    if (state.flyingBall) {
+      updateFlyingBall(timeScale);
     }
 
-    // 2. Combo decay
-    if (state.combo > 1 && (performance.now() - state.lastPopTime) / 1000 > COMBO_TIMEOUT_SEC) {
-      state.combo = 1;
-      updateHUD();
-    }
+    // 2. Update Falling Orphan Bubbles
+    for (let i = state.fallingOrphans.length - 1; i >= 0; i--) {
+      const orb = state.fallingOrphans[i];
+      orb.x += orb.vx * timeScale;
+      orb.y += orb.vy * timeScale;
+      orb.vy += 0.45 * timeScale; // Gravity
+      orb.rot += orb.vRot * timeScale;
 
-    // 3. Falling bubble animations
-    for (let i = state.fallingBubbles.length - 1; i >= 0; i--) {
-      const fb = state.fallingBubbles[i];
-      fb.progress += fb.speed * timeScale;
-      if (fb.progress >= 1.0) {
-        fb.progress = 1.0;
-        state.fallingBubbles.splice(i, 1);
+      if (orb.y > canvasH + 40) {
+        state.fallingOrphans.splice(i, 1);
       }
     }
 
-    // 4. Droplet particles
+    // 3. Update Particles
     for (let i = state.particles.length - 1; i >= 0; i--) {
       const p = state.particles[i];
       p.x += p.vx * timeScale;
       p.y += p.vy * timeScale;
-      p.vy += 0.22 * timeScale; // Gravity
+      p.vy += 0.2 * timeScale;
       p.alpha -= p.decay * timeScale;
       if (p.alpha <= 0) {
         state.particles.splice(i, 1);
       }
     }
 
-    // 5. Shockwaves
+    // 4. Update Shockwaves
     for (let i = state.shockwaves.length - 1; i >= 0; i--) {
       const sw = state.shockwaves[i];
-      sw.radius += 2.8 * timeScale;
-      sw.alpha -= 0.045 * timeScale;
+      sw.radius += 2.5 * timeScale;
+      sw.alpha -= 0.04 * timeScale;
       if (sw.alpha <= 0 || sw.radius >= sw.maxRadius) {
         state.shockwaves.splice(i, 1);
       }
     }
 
-    // 6. Floating Score Texts
+    // 5. Update Floating Texts
     for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
       const ft = state.floatingTexts[i];
       ft.y += ft.vy * timeScale;
-      ft.alpha -= 0.022 * timeScale;
+      ft.alpha -= 0.02 * timeScale;
       if (ft.alpha <= 0) {
         state.floatingTexts.splice(i, 1);
       }
     }
 
-    // 7. Screen Shake decay
+    // 6. Screen Shake
     if (state.screenShake > 0) {
       state.screenShake *= Math.pow(0.85, timeScale);
       if (state.screenShake < 0.2) state.screenShake = 0;
+    }
+  }
+
+  function updateFlyingBall(timeScale) {
+    const ball = state.flyingBall;
+    ball.x += ball.vx * timeScale;
+    ball.y += ball.vy * timeScale;
+
+    const leftWall = gridOffsetX + BUBBLE_RADIUS;
+    const rightWall = canvasW - gridOffsetX - BUBBLE_RADIUS;
+    const ceiling = gridOffsetY + BUBBLE_RADIUS;
+
+    // Wall bounce
+    if (ball.x <= leftWall && ball.vx < 0) {
+      ball.x = leftWall;
+      ball.vx = -ball.vx;
+      window.BubbleAudio?.playWallBounce();
+      spawnWallSparks(leftWall, ball.y);
+    } else if (ball.x >= rightWall && ball.vx > 0) {
+      ball.x = rightWall;
+      ball.vx = -ball.vx;
+      window.BubbleAudio?.playWallBounce();
+      spawnWallSparks(rightWall, ball.y);
+    }
+
+    // Ceiling Collision
+    if (ball.y <= ceiling) {
+      snapBallToGrid(ball.x, ceiling);
+      return;
+    }
+
+    // Check collision with existing bubbles
+    for (let r = 0; r < state.grid.length; r++) {
+      const cols = (r % 2 === 0) ? BubbleBoard.EVEN_COLS : BubbleBoard.ODD_COLS;
+      for (let c = 0; c < cols; c++) {
+        if (state.grid[r][c] === null) continue;
+        const bPos = BubbleBoard.getBubbleCenter(r, c, gridOffsetX, gridOffsetY, BUBBLE_RADIUS);
+        const distSq = (ball.x - bPos.x) ** 2 + (ball.y - bPos.y) ** 2;
+
+        if (distSq <= (BUBBLE_RADIUS * 1.82) ** 2) {
+          snapBallToGrid(ball.x, ball.y);
+          return;
+        }
+      }
+    }
+  }
+
+  function fireBall() {
+    if (state.flyingBall || state.status !== 'playing' || state.shotsLeft <= 0) return;
+
+    // Launch flying ball
+    const speed = BALL_SPEED;
+    state.flyingBall = {
+      x: shooterX,
+      y: shooterY,
+      vx: speed * Math.cos(state.aimAngle),
+      vy: speed * Math.sin(state.aimAngle),
+      color: state.currentBubbleColor,
+      booster: state.activeBooster
+    };
+
+    state.activeBooster = null;
+    clearBoosterButtons();
+    window.BubbleAudio?.playShot();
+
+    state.shotsLeft--;
+    updateHUD();
+  }
+
+  function snapBallToGrid(hitX, hitY) {
+    const ball = state.flyingBall;
+    state.flyingBall = null;
+
+    const Board = window.BubbleBoard;
+    const slot = Board.findBestVacantCell(hitX, hitY, state.grid, gridOffsetX, gridOffsetY, BUBBLE_RADIUS);
+
+    if (!slot) {
+      // Emergency: could not attach, place in top vacant or game over
+      return;
+    }
+
+    // Check Booster Special Effect
+    if (ball.booster === 'bomb') {
+      window.BubbleAudio?.playBomb();
+      triggerBombExplosion(slot.r, slot.c);
+    } else {
+      // Normal placement
+      state.grid[slot.r][slot.c] = ball.color;
+      window.BubbleAudio?.playSnap();
+
+      // Check Match-3+
+      const cluster = Board.findMatchCluster(state.grid, slot.r, slot.c);
+      if (cluster.length >= 3) {
+        popCluster(cluster);
+      }
+    }
+
+    // Check Floating Orphans (Avalanche)
+    checkAndDropOrphans();
+
+    // Check Win / Loss conditions
+    checkGameStatus();
+
+    // Pick next colors
+    state.currentBubbleColor = state.nextBubbleColor;
+    const remaining = Board.getRemainingColors(state.grid);
+    if (remaining.length > 0) {
+      state.nextBubbleColor = remaining[Math.floor(Math.random() * remaining.length)];
     }
 
     updateHUD();
   }
 
-  function insertBlitzRow() {
-    const Board = window.BubbleBoard;
-    if (!Board) return;
-    state.grid = Board.insertTopRow(state.grid, 5);
-    window.BubbleAudio?.playCascade();
-    state.screenShake = 4;
-    // Re-evaluate hover cluster
-    refreshHoverCluster();
-  }
-
-  // Pop Cluster
   function popCluster(cluster) {
-    if (!cluster || cluster.length < 2) return;
-
     const Board = window.BubbleBoard;
     const count = cluster.length;
-
-    // Check combo
-    const timeSinceLast = (performance.now() - state.lastPopTime) / 1000;
-    if (timeSinceLast <= COMBO_TIMEOUT_SEC) {
-      state.combo = Math.min(5, state.combo + 1);
-    } else {
-      state.combo = 1;
-    }
-    state.lastPopTime = performance.now();
-
-    // Compute score
-    const points = Board ? Board.calculateScore(count, state.combo) : count * count * 10 * state.combo;
+    const points = count * 100 + (count >= 5 ? 250 : 0);
     state.score += points;
-    state.moves++;
     saveBestScore();
 
-    // Audio
     window.BubbleAudio?.playPop(count);
-    if (state.combo >= 2) {
-      window.BubbleAudio?.playCombo(state.combo);
-    }
 
-    // Blitz bonus time for large clusters
-    if (state.mode === 'blitz' && count >= 4) {
-      state.timer = Math.min(75, state.timer + 2.5);
-      spawnFloatingText(canvasW / 2, canvasH / 2 - 30, '+2.5s BONUS!', '#38bdf8');
-    }
-
-    // Center of cluster for floating text & shockwave
     let avgX = 0;
     let avgY = 0;
-    const bubbleTheme = (Board?.BUBBLE_THEMES || [])[cluster[0].colorIndex] || { fill: '#d5ff55' };
+    const theme = Board.BUBBLE_COLORS[cluster[0].color] || { fill: '#ff784f' };
 
     cluster.forEach(cell => {
-      const cx = gridOffsetX + cell.col * cellSize + cellSize / 2;
-      const cy = gridOffsetY + cell.row * cellSize + cellSize / 2;
-      avgX += cx;
-      avgY += cy;
-
-      // Burst droplets
-      spawnParticles(cx, cy, bubbleTheme.fill, 8);
-
-      // Clear cell
-      state.grid[cell.row][cell.col] = null;
+      const pos = Board.getBubbleCenter(cell.r, cell.c, gridOffsetX, gridOffsetY, BUBBLE_RADIUS);
+      avgX += pos.x;
+      avgY += pos.y;
+      spawnParticles(pos.x, pos.y, theme.fill, 8);
+      state.grid[cell.r][cell.c] = null;
     });
 
     avgX /= count;
     avgY /= count;
 
-    // Shockwave
-    state.shockwaves.push({
-      x: avgX,
-      y: avgY,
-      radius: 12,
-      maxRadius: Math.min(100, count * 9),
-      color: bubbleTheme.fill,
-      alpha: 0.8
+    // Shockwave & Text
+    state.shockwaves.push({ x: avgX, y: avgY, radius: 10, maxRadius: count * 8, color: theme.fill, alpha: 0.8 });
+    spawnFloatingText(avgX, avgY - 10, `+${points}`, theme.fill);
+    state.screenShake = Math.min(8, 2 + count * 0.5);
+
+    if (dom.srAnnouncer) {
+      dom.srAnnouncer.textContent = `Popped ${count} bubbles! Score: ${state.score}`;
+    }
+  }
+
+  function triggerBombExplosion(centerR, centerC) {
+    const Board = window.BubbleBoard;
+    const toPop = [{ r: centerR, c: centerC }];
+    const neighbors = Board.getHexNeighbors(centerR, centerC, state.grid.length);
+
+    neighbors.forEach(n => {
+      toPop.push(n);
+      // 2nd ring neighbors
+      const secondRing = Board.getHexNeighbors(n.r, n.c, state.grid.length);
+      secondRing.forEach(sn => toPop.push(sn));
     });
 
-    // Floating Score
-    const label = state.combo > 1 ? `+${points} (${state.combo}x COMBO!)` : `+${points}`;
-    spawnFloatingText(avgX, avgY - 10, label, bubbleTheme.fill);
+    let poppedCount = 0;
+    const pos = Board.getBubbleCenter(centerR, centerC, gridOffsetX, gridOffsetY, BUBBLE_RADIUS);
 
-    // Screen Shake
-    state.screenShake = Math.min(9, 2 + count * 0.45);
-
-    // Gravity & Column Collapse
-    if (Board) {
-      const result = Board.applyGravityAndCollapse(state.grid);
-      state.grid = result.newGrid;
-
-      // Trigger cascade audio if bubbles moved
-      if (result.drops.length > 0 || result.slides.length > 0) {
-        window.BubbleAudio?.playCascade();
+    toPop.forEach(cell => {
+      if (state.grid[cell.r] && state.grid[cell.r][cell.c] !== null) {
+        state.grid[cell.r][cell.c] = null;
+        poppedCount++;
       }
-    }
+    });
 
-    // Screen reader announcement
-    if (dom.srAnnouncer) {
-      dom.srAnnouncer.textContent = `Popped ${count} bubbles! Score: ${state.score}. Moves: ${state.moves}`;
-    }
+    const pts = Math.max(300, poppedCount * 120);
+    state.score += pts;
+    saveBestScore();
 
-    // Check board state
-    checkBoardState();
-
-    // Recompute cluster selection
-    refreshHoverCluster();
+    spawnParticles(pos.x, pos.y, '#ff784f', 24);
+    state.shockwaves.push({ x: pos.x, y: pos.y, radius: 10, maxRadius: 110, color: '#ff784f', alpha: 0.9 });
+    spawnFloatingText(pos.x, pos.y, `BOOM! +${pts}`, '#ff784f');
+    state.screenShake = 10;
   }
 
-  function checkBoardState() {
+  function checkAndDropOrphans() {
     const Board = window.BubbleBoard;
-    if (!Board) return;
+    const orphans = Board.findOrphanBubbles(state.grid);
 
-    const remaining = Board.countRemainingBubbles(state.grid);
-    const hasMoves = Board.hasValidMoves(state.grid);
+    if (orphans.length > 0) {
+      window.BubbleAudio?.playOrphanFall();
+      const bonus = orphans.length * 150;
+      state.score += bonus;
+      saveBestScore();
+
+      orphans.forEach(orb => {
+        const pos = Board.getBubbleCenter(orb.r, orb.c, gridOffsetX, gridOffsetY, BUBBLE_RADIUS);
+        state.fallingOrphans.push({
+          x: pos.x,
+          y: pos.y,
+          vx: (Math.random() - 0.5) * 4,
+          vy: Math.random() * -2 - 1,
+          color: orb.color,
+          rot: 0,
+          vRot: (Math.random() - 0.5) * 0.15
+        });
+        state.grid[orb.r][orb.c] = null;
+      });
+
+      spawnFloatingText(canvasW / 2, canvasH / 2, `AVALANCHE! +${bonus}`, '#38bdf8');
+    }
+  }
+
+  function checkGameStatus() {
+    const Board = window.BubbleBoard;
+    const remaining = Board.countActiveBubbles(state.grid);
 
     if (remaining === 0) {
-      // Perfect Clear Victory!
-      const clearBonus = 2500;
-      state.score += clearBonus;
-      saveBestScore();
-      spawnFloatingText(canvasW / 2, canvasH / 2, 'PERFECT CLEAR! +2500', '#d5ff55');
-      handleVictory(true);
-    } else if (!hasMoves) {
-      // No more valid moves
-      if (state.mode === 'classic') {
-        handleVictory(false);
-      } else {
-        handleGameOver('No More Moves!');
+      // Wave Cleared!
+      handleLevelCleared();
+    } else if (state.shotsLeft <= 0 && !state.flyingBall) {
+      // Out of shots
+      handleGameOver('Out of Ammo!');
+    } else {
+      // Check if bubbles reached danger ceiling limit
+      for (let c = 0; c < state.grid[state.grid.length - 2]?.length; c++) {
+        if (state.grid[state.grid.length - 2][c] !== null) {
+          handleGameOver('Bubbles reached the danger line!');
+          return;
+        }
       }
     }
   }
 
-  function handleVictory(isPerfect) {
+  function handleLevelCleared() {
     state.status = 'cleared';
     stopLoop();
     window.BubbleAudio?.playWin();
     launchConfetti();
 
-    const Board = window.BubbleBoard;
-    const remaining = Board ? Board.countRemainingBubbles(state.grid) : 0;
-    const stars = Board ? Board.calculateStars(state.score, remaining) : 3;
-
     if (dom.winScoreVal) dom.winScoreVal.textContent = state.score;
-    if (dom.winMovesVal) dom.winMovesVal.textContent = state.moves;
-    if (dom.winTimeVal) dom.winTimeVal.textContent = formatTime(state.timer);
-    if (dom.winStarsVal) dom.winStarsVal.textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+    if (dom.winShotsVal) dom.winShotsVal.textContent = `${state.totalShots - state.shotsLeft} / ${state.totalShots}`;
+    if (dom.winStarsVal) dom.winStarsVal.textContent = state.shotsLeft >= 6 ? '★★★' : (state.shotsLeft >= 3 ? '★★☆' : '★☆☆');
 
     showOverlay(dom.overlayWin);
   }
@@ -449,23 +536,23 @@
     window.BubbleAudio?.playGameOver();
 
     if (dom.goScoreVal) dom.goScoreVal.textContent = state.score;
-    const subtitle = dom.overlayGameOver?.querySelector('.overlay-subtitle');
-    if (subtitle) subtitle.textContent = reason || 'No more valid bubble clusters remain!';
+    const sub = dom.overlayGameOver?.querySelector('.overlay-subtitle');
+    if (sub) sub.textContent = reason || 'No more moves remaining!';
 
     showOverlay(dom.overlayGameOver);
   }
 
-  // Particle Spawner
+  // Spawners
   function spawnParticles(x, y, color, count) {
     for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 4.5 + 1.2;
+      const speed = Math.random() * 5 + 1.5;
       state.particles.push({
         x,
         y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed - 1.2,
-        size: Math.random() * 4.5 + 2,
+        size: Math.random() * 4 + 2,
         color,
         alpha: 1,
         decay: Math.random() * 0.03 + 0.025
@@ -473,15 +560,25 @@
     }
   }
 
+  function spawnWallSparks(x, y) {
+    for (let i = 0; i < 6; i++) {
+      const angle = (Math.random() - 0.5) * Math.PI;
+      const speed = Math.random() * 3 + 1;
+      state.particles.push({
+        x,
+        y,
+        vx: (x < canvasW / 2 ? 1 : -1) * Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: Math.random() * 3 + 1.5,
+        color: '#ff784f',
+        alpha: 1,
+        decay: 0.04
+      });
+    }
+  }
+
   function spawnFloatingText(x, y, text, color) {
-    state.floatingTexts.push({
-      x,
-      y,
-      text,
-      color,
-      alpha: 1,
-      vy: -1.3
-    });
+    state.floatingTexts.push({ x, y, text, color, alpha: 1, vy: -1.3 });
   }
 
   // Rendering
@@ -497,18 +594,31 @@
       ctx.translate(sx, sy);
     }
 
-    // Clear Background
+    // Background
     ctx.fillStyle = '#10120f';
     ctx.fillRect(0, 0, canvasW, canvasH);
 
-    // Board Grid Backdrop
-    drawBoardBackdrop();
+    // Playfield Pillars & Borders
+    drawPlayfieldFrame();
 
-    // Bubbles
-    drawBubbles();
+    // Grid Bubbles
+    drawGridBubbles();
 
-    // Keyboard Focus Indicator
-    drawKeyboardCursor();
+    // Falling Orphan Bubbles
+    drawFallingOrphans();
+
+    // Aiming Trajectory & Wall Reflection Points (matching screenshot!)
+    if (state.isAiming && !state.flyingBall && state.status === 'playing') {
+      drawAimingTrajectory();
+    }
+
+    // Flying Ball
+    if (state.flyingBall) {
+      drawGlossyBubble(state.flyingBall.x, state.flyingBall.y, BUBBLE_RADIUS, state.flyingBall.color, false);
+    }
+
+    // Shooter Platform & Loaded Cannon
+    drawShooter();
 
     // Shockwaves & Particles
     drawShockwaves();
@@ -520,189 +630,178 @@
     ctx.restore();
   }
 
-  function drawBoardBackdrop() {
-    const bw = COLS * cellSize;
-    const bh = ROWS * cellSize;
+  function drawPlayfieldFrame() {
+    const leftWall = gridOffsetX + BUBBLE_RADIUS;
+    const rightWall = canvasW - gridOffsetX - BUBBLE_RADIUS;
 
-    // Dark inset container
-    ctx.fillStyle = '#151814';
+    // Side wall borders with cyber glow
     ctx.strokeStyle = 'rgba(244, 242, 233, 0.08)';
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.roundRect(gridOffsetX - 6, gridOffsetY - 6, bw + 12, bh + 12, 12);
-    ctx.fill();
+    ctx.moveTo(leftWall - BUBBLE_RADIUS, 0);
+    ctx.lineTo(leftWall - BUBBLE_RADIUS, canvasH);
+    ctx.moveTo(rightWall + BUBBLE_RADIUS, 0);
+    ctx.lineTo(rightWall + BUBBLE_RADIUS, canvasH);
     ctx.stroke();
 
-    // Subtle cell guide dots
-    ctx.fillStyle = 'rgba(244, 242, 233, 0.04)';
-    for (let r = 0; r <= ROWS; r++) {
-      for (let c = 0; c <= COLS; c++) {
-        ctx.beginPath();
-        ctx.arc(gridOffsetX + c * cellSize, gridOffsetY + r * cellSize, 1.2, 0, Math.PI * 2);
-        ctx.fill();
+    // Danger line at bottom
+    ctx.strokeStyle = 'rgba(255, 120, 79, 0.2)';
+    ctx.setLineDash([6, 6]);
+    ctx.beginPath();
+    ctx.moveTo(leftWall - BUBBLE_RADIUS, shooterY - 45);
+    ctx.lineTo(rightWall + BUBBLE_RADIUS, shooterY - 45);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function drawGridBubbles() {
+    const Board = window.BubbleBoard;
+    for (let r = 0; r < state.grid.length; r++) {
+      const cols = (r % 2 === 0) ? Board.EVEN_COLS : Board.ODD_COLS;
+      for (let c = 0; c < cols; c++) {
+        const color = state.grid[r][c];
+        if (color === null) continue;
+        const pos = Board.getBubbleCenter(r, c, gridOffsetX, gridOffsetY, BUBBLE_RADIUS);
+        drawGlossyBubble(pos.x, pos.y, BUBBLE_RADIUS, color, false);
       }
     }
   }
 
-  function drawBubbles() {
-    const Board = window.BubbleBoard;
-    const themes = Board?.BUBBLE_THEMES || [];
-    const isSelectedSet = new Set(state.selectedCluster.map(c => `${c.row},${c.col}`));
-    const now = performance.now() / 1000;
-
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        const colorIdx = state.grid[r]?.[c];
-        if (colorIdx === null || colorIdx === undefined) continue;
-
-        const theme = themes[colorIdx] || { fill: '#d5ff55', glow: '#e2ff7a', symbol: '◆' };
-        const cx = gridOffsetX + c * cellSize + cellSize / 2;
-        const cy = gridOffsetY + r * cellSize + cellSize / 2;
-        const baseRadius = (cellSize - 6) / 2;
-
-        const inCluster = isSelectedSet.has(`${r},${c}`);
-        let radius = baseRadius;
-        if (inCluster && state.selectedCluster.length >= 2) {
-          // Pulsing scale
-          radius += Math.sin(now * 9) * 1.8 + 1.2;
-        }
-
-        // 1. Cluster Highlight Ring
-        if (inCluster && state.selectedCluster.length >= 2) {
-          ctx.save();
-          ctx.strokeStyle = theme.glow;
-          ctx.lineWidth = 2.5;
-          ctx.shadowColor = theme.glow;
-          ctx.shadowBlur = 12;
-          ctx.beginPath();
-          ctx.arc(cx, cy, radius + 2.5, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.restore();
-        }
-
-        // 2. Glossy Bubble Sphere Body
-        ctx.save();
-        const grad = ctx.createRadialGradient(
-          cx - radius * 0.35,
-          cy - radius * 0.35,
-          radius * 0.1,
-          cx,
-          cy,
-          radius
-        );
-        grad.addColorStop(0, '#ffffff');
-        grad.addColorStop(0.25, theme.glow);
-        grad.addColorStop(0.85, theme.fill);
-        grad.addColorStop(1, 'rgba(16, 18, 15, 0.7)');
-
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Rim border
-        ctx.strokeStyle = theme.glow;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        // 3. Specular Highlight (Crescent shine on top-left)
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
-        ctx.beginPath();
-        ctx.arc(cx - radius * 0.32, cy - radius * 0.32, radius * 0.26, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 4. Accessible Symbol Glyph
-        ctx.fillStyle = '#10120f';
-        ctx.font = `bold ${Math.floor(cellSize * 0.34)}px monospace`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(theme.symbol, cx + 0.5, cy + 1);
-
-        ctx.restore();
-      }
-    }
-
-    // Hover Cluster Score Badge
-    if (state.selectedCluster.length >= 2) {
-      drawClusterPreviewBadge();
-    }
-  }
-
-  function drawClusterPreviewBadge() {
-    const Board = window.BubbleBoard;
-    const count = state.selectedCluster.length;
-    const points = Board ? Board.calculateScore(count, state.combo) : count * count * 10 * state.combo;
-
-    // Find center cell of cluster
-    let sumX = 0;
-    let sumY = 0;
-    state.selectedCluster.forEach(c => {
-      sumX += gridOffsetX + c.col * cellSize + cellSize / 2;
-      sumY += gridOffsetY + c.row * cellSize + cellSize / 2;
+  function drawFallingOrphans() {
+    state.fallingOrphans.forEach(orb => {
+      drawGlossyBubble(orb.x, orb.y, BUBBLE_RADIUS, orb.color, false);
     });
-    const avgX = sumX / count;
-    const avgY = sumY / count;
+  }
+
+  function drawGlossyBubble(x, y, radius, colorIdx, isGhost) {
+    const Board = window.BubbleBoard;
+    const theme = (Board?.BUBBLE_COLORS || [])[colorIdx] || { fill: '#ff784f', glow: '#ffa07a', symbol: '●' };
 
     ctx.save();
-    const text = `+${points} (${count})`;
-    ctx.font = 'bold 12px "JetBrains Mono", monospace';
-    const textW = ctx.measureText(text).width;
-    const badgeW = textW + 16;
-    const badgeH = 22;
-    const badgeY = Math.max(16, avgY - cellSize * 0.85);
+    if (isGhost) {
+      ctx.globalAlpha = 0.45;
+      ctx.strokeStyle = theme.glow;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+      return;
+    }
 
-    ctx.fillStyle = '#20241e';
-    ctx.strokeStyle = '#d5ff55';
-    ctx.lineWidth = 1.5;
-    ctx.shadowColor = '#d5ff55';
+    // Outer Glow
+    ctx.shadowColor = theme.glow;
     ctx.shadowBlur = 8;
 
-    ctx.beginPath();
-    ctx.roundRect(avgX - badgeW / 2, badgeY - badgeH / 2, badgeW, badgeH, 6);
-    ctx.fill();
-    ctx.stroke();
+    // Radial Gradient
+    const grad = ctx.createRadialGradient(
+      x - radius * 0.35,
+      y - radius * 0.35,
+      radius * 0.1,
+      x,
+      y,
+      radius
+    );
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.3, theme.glow);
+    grad.addColorStop(0.85, theme.fill);
+    grad.addColorStop(1, '#10120f');
 
-    ctx.fillStyle = '#d5ff55';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, avgX, badgeY + 1);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Specular Highlight
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    ctx.beginPath();
+    ctx.arc(x - radius * 0.32, y - radius * 0.32, radius * 0.25, 0, Math.PI * 2);
+    ctx.fill();
 
     ctx.restore();
   }
 
-  function drawKeyboardCursor() {
-    if (!state.keyboardCursor) return;
-    const r = state.keyboardCursor.r;
-    const c = state.keyboardCursor.c;
-    const x = gridOffsetX + c * cellSize;
-    const y = gridOffsetY + r * cellSize;
+  function drawAimingTrajectory() {
+    const Board = window.BubbleBoard;
+    const traj = Board.calculateTrajectory(
+      shooterX,
+      shooterY,
+      state.aimAngle,
+      canvasW,
+      canvasH,
+      state.grid,
+      gridOffsetX,
+      gridOffsetY,
+      BUBBLE_RADIUS
+    );
 
     ctx.save();
-    ctx.strokeStyle = '#d5ff55';
+
+    // 1. Draw Laser Segments
+    ctx.strokeStyle = '#ff784f';
     ctx.lineWidth = 2.5;
-    ctx.shadowColor = '#d5ff55';
+    ctx.shadowColor = '#ff784f';
     ctx.shadowBlur = 10;
 
-    // Corner brackets
-    const arm = 9;
+    traj.segments.forEach((seg, idx) => {
+      ctx.beginPath();
+      ctx.moveTo(seg.x1, seg.y1);
+      ctx.lineTo(seg.x2, seg.y2);
+      ctx.stroke();
+    });
+
+    // 2. Draw Bright Ricochet Sparks at Wall Bounce Points (exactly as in screenshot!)
+    traj.bouncePoints.forEach(bp => {
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#ff784f';
+      ctx.shadowBlur = 14;
+      ctx.beginPath();
+      ctx.arc(bp.x, bp.y, 5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // 3. Draw Target Landing Ghost Bubble
+    if (traj.targetSlot) {
+      drawGlossyBubble(traj.targetSlot.x, traj.targetSlot.y, BUBBLE_RADIUS, state.currentBubbleColor, true);
+    }
+
+    ctx.restore();
+  }
+
+  function drawShooter() {
+    ctx.save();
+
+    // 1. Next Bubble Queue (behind/right of shooter)
+    const nextX = shooterX + 32;
+    const nextY = shooterY + 16;
+    drawGlossyBubble(nextX, nextY, BUBBLE_RADIUS * 0.72, state.nextBubbleColor, false);
+
+    // Swap Icon / Reticle Ring
+    ctx.strokeStyle = 'rgba(244, 242, 233, 0.25)';
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
-    // Top-Left
-    ctx.moveTo(x + arm, y + 2);
-    ctx.lineTo(x + 2, y + 2);
-    ctx.lineTo(x + 2, y + arm);
-    // Top-Right
-    ctx.moveTo(x + cellSize - arm, y + 2);
-    ctx.lineTo(x + cellSize - 2, y + 2);
-    ctx.lineTo(x + cellSize - 2, y + arm);
-    // Bottom-Left
-    ctx.moveTo(x + 2, y + cellSize - arm);
-    ctx.lineTo(x + 2, y + cellSize - 2);
-    ctx.lineTo(x + arm, y + cellSize - 2);
-    // Bottom-Right
-    ctx.moveTo(x + cellSize - arm, y + cellSize - 2);
-    ctx.lineTo(x + cellSize - 2, y + cellSize - 2);
-    ctx.lineTo(x + cellSize - 2, y + cellSize - arm);
+    ctx.arc(nextX, nextY, BUBBLE_RADIUS * 0.88, 0, Math.PI * 2);
     ctx.stroke();
+
+    // 2. Main Cannon Ring
+    ctx.strokeStyle = 'rgba(255, 120, 79, 0.4)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(shooterX, shooterY, BUBBLE_RADIUS + 6, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // 3. Current Loaded Bubble
+    drawGlossyBubble(shooterX, shooterY, BUBBLE_RADIUS, state.currentBubbleColor, false);
+
+    // 4. Ammo Count inside Loaded Bubble (like "19" in the reference image!)
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 15px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 4;
+    ctx.fillText(state.shotsLeft.toString(), shooterX, shooterY + 1);
 
     ctx.restore();
   }
@@ -750,33 +849,29 @@
   function updateHUD() {
     if (dom.scoreDisplay) dom.scoreDisplay.textContent = state.score;
     if (dom.bestScore) dom.bestScore.textContent = state.bestScore;
-    if (dom.movesCount) dom.movesCount.textContent = `Moves: ${state.moves}`;
+    if (dom.movesCount) dom.movesCount.textContent = `Shots: ${state.shotsLeft}`;
 
-    if (dom.matchTimer) {
-      dom.matchTimer.textContent = formatTime(state.timer);
-    }
-
-    if (dom.comboBadge) {
-      if (state.combo >= 2) {
-        dom.comboBadge.textContent = `${state.combo}× COMBO`;
-        dom.comboBadge.style.display = 'inline-block';
-      } else {
-        dom.comboBadge.style.display = 'none';
-      }
+    if (dom.levelBadge) {
+      dom.levelBadge.textContent = `WAVE ${state.levelIndex + 1}`;
     }
 
     if (dom.remainingCount) {
       const Board = window.BubbleBoard;
-      const count = Board ? Board.countRemainingBubbles(state.grid) : 0;
-      dom.remainingCount.textContent = `Bubbles: ${count}`;
+      const rem = Board ? Board.countActiveBubbles(state.grid) : 0;
+      dom.remainingCount.textContent = `Remaining: ${rem}`;
+    }
+
+    if (dom.starProgress) {
+      const target = state.levelInfo?.targetScore || 2500;
+      const pct = Math.min(100, Math.floor((state.score / target) * 100));
+      dom.starProgress.style.width = `${pct}%`;
     }
   }
 
-  function formatTime(sec) {
-    const total = Math.max(0, Math.floor(sec));
-    const m = Math.floor(total / 60);
-    const s = total % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  function clearBoosterButtons() {
+    [dom.boosterBomb, dom.boosterRainbow, dom.boosterLaser, dom.boosterRocket].forEach(b => {
+      b?.classList.remove('active');
+    });
   }
 
   function showOverlay(targetEl) {
@@ -796,80 +891,33 @@
     if (!dom.audioIcon) return;
     const muted = isMuted !== undefined ? isMuted : window.BubbleAudio?.isMuted();
     dom.audioIcon.textContent = muted ? '🔇' : '🔊';
-    dom.audioToggleBtn?.setAttribute('aria-label', muted ? 'Unmute Audio' : 'Mute Audio');
   }
 
-  // Input Events
+  // Events & Aiming
   function bindEvents() {
     window.addEventListener('resize', () => {
       setupCanvas();
       render();
     });
 
-    // Canvas Mouse Movement & Clicks
-    dom.canvas?.addEventListener('mousemove', e => {
-      if (state.status !== 'playing') return;
-      const cell = getCellFromCoords(e.clientX, e.clientY);
-      if (cell) {
-        state.hoverCell = cell;
-        state.keyboardCursor = cell;
-        refreshHoverCluster();
-      }
-    });
+    // Pointer Aiming on Canvas
+    dom.canvas?.addEventListener('mousemove', handlePointerMove);
+    dom.canvas?.addEventListener('click', handlePointerClick);
 
-    dom.canvas?.addEventListener('mouseleave', () => {
-      state.hoverCell = null;
-      state.selectedCluster = [];
-    });
+    dom.canvas?.addEventListener('touchstart', handleTouchAim, { passive: false });
+    dom.canvas?.addEventListener('touchmove', handleTouchAim, { passive: false });
+    dom.canvas?.addEventListener('touchend', handleTouchRelease, { passive: false });
 
-    dom.canvas?.addEventListener('click', e => {
-      if (state.status === 'ready') {
-        startGameplay();
-        return;
-      }
-      if (state.status !== 'playing') return;
-
-      const cell = getCellFromCoords(e.clientX, e.clientY);
-      if (cell) {
-        const Board = window.BubbleBoard;
-        const cluster = Board ? Board.findCluster(state.grid, cell.row, cell.col) : [];
-        if (cluster.length >= 2) {
-          popCluster(cluster);
-        } else {
-          // Singleton bubble click blip
-          window.BubbleAudio?.playClick();
-        }
-      }
-    });
-
-    // Touch Support
-    dom.canvas?.addEventListener('touchstart', e => {
-      if (e.touches && e.touches.length > 0) {
-        if (state.status === 'ready') {
-          startGameplay();
-          return;
-        }
-        const touch = e.touches[0];
-        const cell = getCellFromCoords(touch.clientX, touch.clientY);
-        if (cell) {
-          state.hoverCell = cell;
-          state.keyboardCursor = cell;
-          refreshHoverCluster();
-        }
-      }
-    }, { passive: true });
-
-    dom.canvas?.addEventListener('touchend', e => {
-      if (state.status !== 'playing') return;
-      if (state.selectedCluster.length >= 2) {
-        popCluster(state.selectedCluster);
-      }
-    });
-
-    // Keyboard Events
+    // Keyboard
     window.addEventListener('keydown', handleKeydown);
 
-    // Overlay Buttons
+    // Boosters
+    dom.boosterBomb?.addEventListener('click', () => toggleBooster('bomb', dom.boosterBomb));
+    dom.boosterRainbow?.addEventListener('click', () => toggleBooster('rainbow', dom.boosterRainbow));
+    dom.boosterLaser?.addEventListener('click', () => toggleBooster('laser', dom.boosterLaser));
+    dom.boosterRocket?.addEventListener('click', () => toggleBooster('rocket', dom.boosterRocket));
+
+    // Overlays
     dom.startBtn?.addEventListener('click', () => {
       window.BubbleAudio?.playClick();
       startGameplay();
@@ -885,22 +933,26 @@
 
     dom.restartBtn?.addEventListener('click', () => {
       window.BubbleAudio?.playClick();
-      startNewGame();
+      loadLevel(state.levelIndex);
+    });
+
+    dom.nextLevelBtn?.addEventListener('click', () => {
+      window.BubbleAudio?.playClick();
+      loadLevel(state.levelIndex + 1);
     });
 
     dom.playAgainBtn?.addEventListener('click', () => {
       window.BubbleAudio?.playClick();
-      startNewGame();
+      loadLevel(0);
     });
 
     dom.gameOverRestartBtn?.addEventListener('click', () => {
       window.BubbleAudio?.playClick();
-      startNewGame();
+      loadLevel(state.levelIndex);
     });
 
     dom.pauseBtn?.addEventListener('click', togglePause);
 
-    // Audio Toggle
     if (dom.audioToggleBtn) {
       updateAudioIcon();
       dom.audioToggleBtn.addEventListener('click', () => {
@@ -908,120 +960,139 @@
         updateAudioIcon(isMuted);
       });
     }
-
-    // Mode Toggle
-    dom.modeClassicBtn?.addEventListener('click', () => {
-      if (state.mode === 'classic') return;
-      setMode('classic');
-    });
-
-    dom.modeBlitzBtn?.addEventListener('click', () => {
-      if (state.mode === 'blitz') return;
-      setMode('blitz');
-    });
   }
 
-  function setMode(newMode) {
-    state.mode = newMode;
-    dom.modeClassicBtn?.classList.toggle('active', newMode === 'classic');
-    dom.modeClassicBtn?.setAttribute('aria-selected', newMode === 'classic');
-    dom.modeBlitzBtn?.classList.toggle('active', newMode === 'blitz');
-    dom.modeBlitzBtn?.setAttribute('aria-selected', newMode === 'blitz');
-    loadBestScore();
-    startNewGame();
-  }
-
-  function getCellFromCoords(clientX, clientY) {
-    if (!canvas) return null;
+  function handlePointerMove(e) {
+    if (state.status !== 'playing') return;
     const rect = canvas.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
 
-    const col = Math.floor((x - gridOffsetX) / cellSize);
-    const row = Math.floor((y - gridOffsetY) / cellSize);
-
-    if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
-      return { row, col };
-    }
-    return null;
+    updateAimAngle(mx, my);
   }
 
-  function refreshHoverCluster() {
-    const target = state.hoverCell || state.keyboardCursor;
-    if (!target) {
-      state.selectedCluster = [];
+  function handlePointerClick(e) {
+    if (state.status === 'ready') {
+      startGameplay();
       return;
     }
-    const Board = window.BubbleBoard;
-    state.selectedCluster = Board ? Board.findCluster(state.grid, target.row, target.col) : [];
+    if (state.status !== 'playing') return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    // Check if clicked the Next Bubble Queue (swap)
+    const distToSwap = Math.hypot(mx - (shooterX + 32), my - (shooterY + 16));
+    if (distToSwap <= 22) {
+      swapBubbles();
+      return;
+    }
+
+    updateAimAngle(mx, my);
+    fireBall();
+  }
+
+  function handleTouchAim(e) {
+    e.preventDefault();
+    if (e.touches && e.touches.length > 0) {
+      const rect = canvas.getBoundingClientRect();
+      const tx = e.touches[0].clientX - rect.left;
+      const ty = e.touches[0].clientY - rect.top;
+      updateAimAngle(tx, ty);
+    }
+  }
+
+  function handleTouchRelease(e) {
+    e.preventDefault();
+    if (state.status === 'ready') {
+      startGameplay();
+      return;
+    }
+    if (state.status === 'playing') {
+      fireBall();
+    }
+  }
+
+  function updateAimAngle(targetX, targetY) {
+    const dx = targetX - shooterX;
+    const dy = targetY - shooterY;
+    let angle = Math.atan2(dy, dx);
+
+    // Clamp angle so cannon only aims upwards (between -165deg and -15deg)
+    const minAngle = -Math.PI * 0.92;
+    const maxAngle = -Math.PI * 0.08;
+
+    if (angle > 0) {
+      angle = dx < 0 ? minAngle : maxAngle;
+    } else {
+      angle = Math.max(minAngle, Math.min(maxAngle, angle));
+    }
+
+    state.aimAngle = angle;
+    if (state.status === 'playing' && !animFrameId) {
+      render();
+    }
+  }
+
+  function toggleBooster(type, buttonEl) {
+    window.BubbleAudio?.playClick();
+    if (state.activeBooster === type) {
+      state.activeBooster = null;
+      buttonEl?.classList.remove('active');
+    } else {
+      clearBoosterButtons();
+      state.activeBooster = type;
+      buttonEl?.classList.add('active');
+    }
   }
 
   function handleKeydown(e) {
     if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
 
-    // Movement: Arrows
-    let moved = false;
-    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
-      state.keyboardCursor.r = Math.max(0, state.keyboardCursor.r - 1);
-      moved = true;
-    } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
-      state.keyboardCursor.r = Math.min(ROWS - 1, state.keyboardCursor.r + 1);
-      moved = true;
-    } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-      state.keyboardCursor.c = Math.max(0, state.keyboardCursor.c - 1);
-      moved = true;
-    } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-      state.keyboardCursor.c = Math.min(COLS - 1, state.keyboardCursor.c + 1);
-      moved = true;
-    }
-
-    if (moved) {
-      e.preventDefault();
-      state.hoverCell = { ...state.keyboardCursor };
-      refreshHoverCluster();
+    // Aim left/right
+    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+      state.aimAngle = Math.max(-Math.PI * 0.92, state.aimAngle - 0.05);
       render();
-      return;
+    } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+      state.aimAngle = Math.min(-Math.PI * 0.08, state.aimAngle + 0.05);
+      render();
     }
 
-    // Space / Enter: Pop Cluster
+    // Fire
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
       if (state.status === 'ready') {
         startGameplay();
-        return;
+      } else if (state.status === 'playing') {
+        fireBall();
       }
-      if (state.status === 'playing') {
-        refreshHoverCluster();
-        if (state.selectedCluster.length >= 2) {
-          popCluster(state.selectedCluster);
-        } else {
-          window.BubbleAudio?.playClick();
-        }
-      }
-      return;
     }
 
-    // P: Toggle Pause
+    // Swap
+    if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      swapBubbles();
+    }
+
+    // Pause
     if (e.key === 'p' || e.key === 'P') {
       e.preventDefault();
       togglePause();
-      return;
     }
 
-    // R: Restart Game
+    // Restart
     if (e.key === 'r' || e.key === 'R') {
       e.preventDefault();
       window.BubbleAudio?.playClick();
-      startNewGame();
-      return;
+      loadLevel(state.levelIndex);
     }
 
-    // M: Toggle Sound
+    // Mute
     if (e.key === 'm' || e.key === 'M') {
       e.preventDefault();
       const isMuted = window.BubbleAudio?.toggleMute();
       updateAudioIcon(isMuted);
-      return;
     }
   }
 
@@ -1038,7 +1109,7 @@
   }
 
   function launchConfetti() {
-    const colors = ['#d5ff55', '#ff784f', '#38bdf8', '#a855f7', '#fbbf24'];
+    const colors = ['#ff784f', '#38bdf8', '#d5ff55', '#a855f7', '#fbbf24'];
     for (let i = 0; i < 45; i++) {
       const angle = Math.random() * Math.PI * 2;
       const speed = Math.random() * 7 + 2;

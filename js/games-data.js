@@ -60,14 +60,14 @@ const ARCADE_GAMES = [
     id: 'bubble-pop',
     title: 'Bubble Pop',
     category: 'Casual',
-    tags: ['casual', 'puzzle', 'bubble', 'pop', 'arcade', 'matching', 'cluster', 'cascade', 'physics'],
+    tags: ['casual', 'puzzle', 'bubble', 'pop', 'shooter', 'aim', 'ricochet', 'match-3', 'arcade'],
     badge: 'New',
-    tagline: 'Pop clusters. Chain cascades. Clear the board.',
-    description: 'A vibrant, addictive bubble-bursting arcade challenge. Tap adjacent matching bubble clusters to trigger explosive cascades, ignite combo multipliers, and clear the board across Classic and 60s Blitz modes.',
+    tagline: 'Aim laser ricochets. Match 3+ bubbles. Trigger avalanches.',
+    description: 'A classic arcade bubble shooter featuring reflective laser aiming, hexagonal grid snapping, Match-3 bursting, and falling island avalanches. Aim ricochet trick shots off side walls, swap colors, and deploy power boosters.',
     route: 'games/bubble-pop/index.html',
     thumbnail: 'assets/games/bubble-pop.svg',
-    controlsSummary: 'Click or Tap bubble clusters • Arrow keys + Space/Enter • P to Pause • R to Restart • M to Mute',
-    features: ['Classic & 60s Blitz Modes', 'Cascading Gravity Physics', 'Timer & Move Counter', 'Star Ratings & High Scores']
+    controlsSummary: 'Mouse Drag or Touch to aim • Click/Release to fire • Tap Next Bubble or S to Swap • P to Pause • R to Restart',
+    features: ['Laser Ricochet Aiming', 'Hexagonal Grid & Avalanches', 'Ammo Counter & Bubble Swap', 'Bomb & Power Boosters']
   }
 ];
 
