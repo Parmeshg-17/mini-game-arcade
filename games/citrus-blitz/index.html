@@ -17,7 +17,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
+  <!-- Root-relative stylesheet link with file:// fallback -->
+  <link rel="stylesheet" href="/games/citrus-blitz/style.css" id="game-stylesheet">
+  <script>
+    // Fallback if loaded via file:/// protocol
+    if (window.location.protocol === 'file:') {
+      const link = document.getElementById('game-stylesheet');
+      if (link) link.href = 'style.css';
+    }
+  </script>
 </head>
 <body class="game-page-body">
 
@@ -313,11 +321,22 @@
     </div>
   </section>
 
-  <!-- Scripts -->
-  <script src="js/audio.js"></script>
-  <script src="js/particles.js"></script>
-  <script src="js/blade.js"></script>
-  <script src="js/fruit.js"></script>
-  <script src="js/game.js"></script>
+  <!-- Scripts (Root-relative paths with file:// fallback) -->
+  <script src="/games/citrus-blitz/js/audio.js"></script>
+  <script src="/games/citrus-blitz/js/particles.js"></script>
+  <script src="/games/citrus-blitz/js/blade.js"></script>
+  <script src="/games/citrus-blitz/js/fruit.js"></script>
+  <script src="/games/citrus-blitz/js/game.js"></script>
+  <script>
+    // Fallback if loaded via file:/// protocol where root-relative paths fail
+    if (window.location.protocol === 'file:' && typeof CitrusBlitz === 'undefined') {
+      ['audio.js', 'particles.js', 'blade.js', 'fruit.js', 'game.js'].forEach(function(s) {
+        var scriptEl = document.createElement('script');
+        scriptEl.src = 'js/' + s;
+        scriptEl.async = false;
+        document.body.appendChild(scriptEl);
+      });
+    }
+  </script>
 </body>
 </html>
