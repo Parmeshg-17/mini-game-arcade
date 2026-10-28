@@ -42,6 +42,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/memory-match.svg',
     controlsSummary: 'Click or Tap to flip cards • Arrow keys + Enter/Space • R to Restart • M to Mute',
     features: ['3 Modes: Easy, Med & Hard', '3D Card Flip Animation', 'Timer & Move Counter', 'Star Rating & High Scores']
+  },
+  {
+    id: 'brick-breaker',
+    title: 'Brick Breaker',
+    category: 'Action',
+    tags: ['action', 'arcade', 'retro', 'bricks', 'breakout', 'ball', 'paddle', 'physics'],
+    badge: 'New',
+    tagline: 'Shatter neon bricks. Catch power-ups. Survive 3 waves.',
+    description: 'A responsive retro-arcade breakout experience engineered with 100% Canvas 2D physics. Features angle-deflecting paddle rebounds, multi-ball chaos, expanding paddles, particle shatter bursts, and combo score multipliers.',
+    route: 'games/brick-breaker/index.html',
+    thumbnail: 'assets/games/brick-breaker.svg',
+    controlsSummary: 'Mouse Drag or Touch • Arrow keys / A & D • Space to Launch/Pause • R to Restart • M to Mute',
+    features: ['3 Progressive Waves', 'Multi-Ball & Power-Ups', 'Angle Reflection Physics', 'Combo Streaks & High Scores']
   }
 ];
 

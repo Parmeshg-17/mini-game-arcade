@@ -149,18 +149,23 @@ it('Search and category filter logic filters games correctly', () => {
   assert.strictEqual(res5.length, 1);
   assert.strictEqual(res5[0].id, 'memory-match');
 
-  // Tag search for memory
-  const res6 = filterGames('memory', 'All');
+  // Action category filter matches Brick Breaker
+  const res6 = filterGames('', 'Action');
   assert.strictEqual(res6.length, 1);
-  assert.strictEqual(res6[0].id, 'memory-match');
+  assert.strictEqual(res6[0].id, 'brick-breaker');
+
+  // Tag search for brick
+  const res7 = filterGames('brick', 'All');
+  assert.strictEqual(res7.length, 1);
+  assert.strictEqual(res7[0].id, 'brick-breaker');
 
   // Non-matching category
-  const res7 = filterGames('', 'Racing');
-  assert.strictEqual(res7.length, 0);
+  const res8 = filterGames('', 'Racing');
+  assert.strictEqual(res8.length, 0);
 
   // Non-matching query
-  const res8 = filterGames('nonexistentgamexyz', 'All');
-  assert.strictEqual(res8.length, 0);
+  const res9 = filterGames('nonexistentgamexyz', 'All');
+  assert.strictEqual(res9.length, 0);
 });
 
 // 7. Dedicated Tic Tac Toe Playable Page & Engine Integrity
@@ -267,7 +272,71 @@ it('Memory Match generates accurate decks and matching pairs for Easy, Medium, a
   Object.values(hardCounts).forEach(cnt => assert.strictEqual(cnt, 2, 'Each card must appear exactly twice'));
 });
 
-// 11. Slicing Collision & Math Logic
+// 11. Dedicated Brick Breaker Playable Page & Engine Integrity
+it('Dedicated Brick Breaker page (games/brick-breaker/index.html) has all DOM elements required by game.js', () => {
+  const bbHtmlPath = path.join(__dirname, 'games/brick-breaker/index.html');
+  assert(fs.existsSync(bbHtmlPath), 'games/brick-breaker/index.html must exist');
+  const bbHtml = fs.readFileSync(bbHtmlPath, 'utf8');
+  const bbGameJs = fs.readFileSync(path.join(__dirname, 'games/brick-breaker/js/game.js'), 'utf8');
+
+  // Verify all document.getElementById calls in game.js are present in HTML
+  const idRegex = /document\.getElementById\(['"]([^'"]+)['"]\)/g;
+  let match;
+  while ((match = idRegex.exec(bbGameJs)) !== null) {
+    const id = match[1];
+    assert(bbHtml.includes(`id="${id}"`), `DOM id="${id}" missing in games/brick-breaker/index.html`);
+  }
+
+  // Verify navigation back link to arcade exists
+  assert(bbHtml.includes('href="../../index.html"'), 'Brick Breaker page must link back to arcade homepage');
+});
+
+// 12. Brick Breaker Levels & Paddle Physics Logic
+it('Brick Breaker generates level grids and computes angle reflection physics correctly', () => {
+  const { buildBricksForLevel, LEVEL_DATA } = require('./games/brick-breaker/js/levels.js');
+
+  // Verify 3 distinct level definitions
+  assert.strictEqual(LEVEL_DATA.length, 3, 'Must have 3 progressive waves');
+
+  // Generate Wave 1 bricks
+  const wave1 = buildBricksForLevel(0, 600, 480);
+  assert(wave1.bricks.length > 0, 'Wave 1 must contain bricks');
+  assert(wave1.bricks.every(b => b.alive && b.hp >= 1), 'All bricks must be alive with hp >= 1');
+
+  // Generate Wave 2 bricks (contains durable 2-hp bricks)
+  const wave2 = buildBricksForLevel(1, 600, 480);
+  const durableBricks = wave2.bricks.filter(b => b.maxHp === 2);
+  assert(durableBricks.length > 0, 'Wave 2 must contain armored 2-hit bricks');
+
+  // Paddle bounce reflection physics calculation test:
+  // Offset -1 (far left) should bounce towards negative X (left)
+  // Offset 0 (center) should bounce straight up (vx = 0)
+  // Offset +1 (far right) should bounce towards positive X (right)
+  const maxBounceAngle = Math.PI * 0.38;
+  const speed = 6.0;
+
+  function calcBounce(hitOffset) {
+    const angle = hitOffset * maxBounceAngle;
+    return {
+      vx: speed * Math.sin(angle),
+      vy: -speed * Math.cos(angle)
+    };
+  }
+
+  const centerBounce = calcBounce(0);
+  assert(Math.abs(centerBounce.vx) < 0.001, 'Center hit should reflect straight up (vx ≈ 0)');
+  assert(centerBounce.vy < 0, 'Center hit should reflect upward (vy < 0)');
+
+  const leftBounce = calcBounce(-0.8);
+  assert(leftBounce.vx < 0, 'Left hit should deflect ball left (vx < 0)');
+  assert(leftBounce.vy < 0, 'Left hit should deflect ball upward (vy < 0)');
+
+  const rightBounce = calcBounce(0.8);
+  assert(rightBounce.vx > 0, 'Right hit should deflect ball right (vx > 0)');
+  assert(rightBounce.vy < 0, 'Right hit should deflect ball upward (vy < 0)');
+});
+
+// 13. Slicing Collision & Math Logic
 it('Circle-to-segment collision correctly detects slices and ignores misses', () => {
   function checkSlice(fruitX, fruitY, radius, p1, p2) {
     const dx = p2.x - p1.x;

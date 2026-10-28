@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bbBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#181c16"/>
+      <stop offset="50%" stop-color="#121511"/>
+      <stop offset="100%" stop-color="#0c0e0b"/>
+    </linearGradient>
+
+    <!-- Brick Gradients -->
+    <linearGradient id="brickLime" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8ff8c"/>
+      <stop offset="100%" stop-color="#d5ff55"/>
+    </linearGradient>
+
+    <linearGradient id="brickCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+
+    <linearGradient id="brickCoral" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffa085"/>
+      <stop offset="100%" stop-color="#ff784f"/>
+    </linearGradient>
+
+    <linearGradient id="brickAmber" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+
+    <!-- Paddle Gradient -->
+    <linearGradient id="paddleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="30%" stop-color="#d5ff55"/>
+      <stop offset="70%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+
+    <!-- Ball Gradient -->
+    <radialGradient id="energyBall" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#d5ff55"/>
+      <stop offset="100%" stop-color="#84cc16"/>
+    </radialGradient>
+
+    <!-- Glow Filter -->
+    <filter id="neonGlowBB" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="softGlowBB" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Card Background -->
+  <rect width="640" height="380" rx="16" fill="url(#bbBg)"/>
+
+  <!-- Subtle Subtle Grid Lines -->
+  <g opacity="0.06" stroke="#f4f2e9" stroke-width="1">
+    <line x1="0" y1="95" x2="640" y2="95"/>
+    <line x1="0" y1="190" x2="640" y2="190"/>
+    <line x1="0" y1="285" x2="640" y2="285"/>
+    <line x1="160" y1="0" x2="160" y2="380"/>
+    <line x1="320" y1="0" x2="320" y2="380"/>
+    <line x1="480" y1="0" x2="480" y2="380"/>
+  </g>
+
+  <!-- Corner Crosshairs -->
+  <g stroke="#d5ff55" stroke-width="1.5" opacity="0.4">
+    <path d="M 28 20 L 28 36 M 20 28 L 36 28"/>
+    <path d="M 612 20 L 612 36 M 604 28 L 620 28"/>
+    <path d="M 28 344 L 28 360 M 20 352 L 36 352"/>
+    <path d="M 612 344 L 612 360 M 604 352 L 620 352"/>
+  </g>
+
+  <!-- Arcade Playfield Container Frame -->
+  <g transform="translate(130, 40)">
+    <!-- Playfield Backdrop -->
+    <rect x="-10" y="-10" width="400" height="310" rx="16" fill="#141812" stroke="rgba(244,242,233,0.12)" stroke-width="1.5"/>
+
+    <!-- Row 1: Coral Bricks (Top Row) -->
+    <g>
+      <rect x="15" y="20" width="55" height="18" rx="4" fill="url(#brickCoral)" opacity="0.9"/>
+      <rect x="76" y="20" width="55" height="18" rx="4" fill="url(#brickCoral)" opacity="0.9"/>
+      <rect x="137" y="20" width="55" height="18" rx="4" fill="url(#brickCoral)" opacity="0.9"/>
+      <rect x="198" y="20" width="55" height="18" rx="4" fill="url(#brickCoral)" opacity="0.9"/>
+      <rect x="259" y="20" width="55" height="18" rx="4" fill="url(#brickCoral)" opacity="0.9"/>
+      <rect x="320" y="20" width="55" height="18" rx="4" fill="url(#brickCoral)" opacity="0.9"/>
+    </g>
+
+    <!-- Row 2: Amber Bricks -->
+    <g>
+      <rect x="15" y="44" width="55" height="18" rx="4" fill="url(#brickAmber)" opacity="0.9"/>
+      <rect x="76" y="44" width="55" height="18" rx="4" fill="url(#brickAmber)" opacity="0.9"/>
+      <rect x="137" y="44" width="55" height="18" rx="4" fill="url(#brickAmber)" opacity="0.9"/>
+      <!-- Smashed Brick at (198, 44) with shatter effect -->
+      <g transform="translate(198, 44)" filter="url(#neonGlowBB)">
+        <!-- Shattered Fragments -->
+        <polygon points="4,2 18,1 12,12" fill="#fde047"/>
+        <polygon points="22,3 34,1 28,15" fill="#eab308"/>
+        <polygon points="38,2 52,4 44,14" fill="#fde047"/>
+        <polygon points="8,14 20,13 14,17" fill="#eab308"/>
+        <polygon points="26,14 42,12 36,17" fill="#fde047"/>
+      </g>
+      <rect x="259" y="44" width="55" height="18" rx="4" fill="url(#brickAmber)" opacity="0.9"/>
+      <rect x="320" y="44" width="55" height="18" rx="4" fill="url(#brickAmber)" opacity="0.9"/>
+    </g>
+
+    <!-- Row 3: Electric Lime Bricks -->
+    <g>
+      <rect x="15" y="68" width="55" height="18" rx="4" fill="url(#brickLime)" opacity="0.9"/>
+      <rect x="76" y="68" width="55" height="18" rx="4" fill="url(#brickLime)" opacity="0.9"/>
+      <rect x="137" y="68" width="55" height="18" rx="4" fill="url(#brickLime)" opacity="0.9"/>
+      <!-- Empty space where ball passed -->
+      <rect x="259" y="68" width="55" height="18" rx="4" fill="url(#brickLime)" opacity="0.9"/>
+      <rect x="320" y="68" width="55" height="18" rx="4" fill="url(#brickLime)" opacity="0.9"/>
+    </g>
+
+    <!-- Row 4: Cyan Bricks -->
+    <g>
+      <rect x="15" y="92" width="55" height="18" rx="4" fill="url(#brickCyan)" opacity="0.9"/>
+      <rect x="76" y="92" width="55" height="18" rx="4" fill="url(#brickCyan)" opacity="0.9"/>
+      <rect x="137" y="92" width="55" height="18" rx="4" fill="url(#brickCyan)" opacity="0.9"/>
+      <rect x="198" y="92" width="55" height="18" rx="4" fill="url(#brickCyan)" opacity="0.9"/>
+      <rect x="259" y="92" width="55" height="18" rx="4" fill="url(#brickCyan)" opacity="0.9"/>
+      <rect x="320" y="92" width="55" height="18" rx="4" fill="url(#brickCyan)" opacity="0.9"/>
+    </g>
+
+    <!-- Ball Trajectory Trail Line -->
+    <path d="M 218 245 Q 200 170 216 58" fill="none" stroke="#d5ff55" stroke-width="2" stroke-dasharray="4 6" opacity="0.4"/>
+
+    <!-- Energy Ball Motion Trail Particles -->
+    <circle cx="218" cy="225" r="4" fill="#d5ff55" opacity="0.15"/>
+    <circle cx="212" cy="180" r="5" fill="#d5ff55" opacity="0.3"/>
+    <circle cx="206" cy="130" r="6" fill="#d5ff55" opacity="0.5"/>
+    <circle cx="210" cy="85" r="7" fill="#d5ff55" opacity="0.7" filter="url(#softGlowBB)"/>
+
+    <!-- The Glowing Energy Ball (Impacting at Row 2) -->
+    <g transform="translate(216, 52)" filter="url(#neonGlowBB)">
+      <circle cx="0" cy="0" r="14" fill="#d5ff55" opacity="0.4"/>
+      <circle cx="0" cy="0" r="9" fill="url(#energyBall)"/>
+      <circle cx="-3" cy="-3" r="3" fill="#ffffff"/>
+    </g>
+
+    <!-- Shatter Sparks radiating from impact point -->
+    <g stroke="#ffffff" stroke-width="2" opacity="0.8">
+      <line x1="216" y1="52" x2="204" y2="38"/>
+      <line x1="216" y1="52" x2="232" y2="40"/>
+      <line x1="216" y1="52" x2="228" y2="66"/>
+      <line x1="216" y1="52" x2="198" y2="58"/>
+    </g>
+    <circle cx="200" cy="35" r="2.5" fill="#eab308" filter="url(#softGlowBB)"/>
+    <circle cx="236" cy="38" r="2" fill="#d5ff55" filter="url(#softGlowBB)"/>
+    <circle cx="230" cy="72" r="2.5" fill="#ffffff" filter="url(#softGlowBB)"/>
+
+    <!-- Floating Combo Badge -->
+    <g transform="translate(240, 95)" filter="url(#softGlowBB)">
+      <rect width="68" height="22" rx="4" fill="#171a16" stroke="#d5ff55" stroke-width="1"/>
+      <text x="34" y="15" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="800" fill="#d5ff55" text-anchor="middle">COMBO ×4</text>
+    </g>
+
+    <!-- Player Paddle -->
+    <g transform="translate(160, 260)" filter="url(#neonGlowBB)">
+      <!-- Paddle Glow Underlay -->
+      <rect x="0" y="0" width="100" height="14" rx="7" fill="#d5ff55" opacity="0.4"/>
+      <!-- Paddle Core Body -->
+      <rect x="0" y="0" width="100" height="14" rx="7" fill="url(#paddleGrad)"/>
+      <!-- Core Laser Stripe -->
+      <rect x="15" y="4" width="70" height="4" rx="2" fill="#ffffff" opacity="0.8"/>
+    </g>
+
+    <!-- Motion Lines under Paddle -->
+    <line x1="140" y1="282" x2="180" y2="282" stroke="rgba(56,189,248,0.5)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="240" y1="282" x2="280" y2="282" stroke="rgba(56,189,248,0.5)" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Left Accent Badge -->
+  <g transform="translate(32, 160)">
+    <rect width="78" height="44" rx="8" fill="#171a16" stroke="rgba(213,255,85,0.3)" stroke-width="1"/>
+    <circle cx="16" cy="16" r="3.5" fill="#d5ff55"/>
+    <text x="26" y="20" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700" fill="#d5ff55">NEON</text>
+    <text x="16" y="34" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="600" fill="#a7ada0">PHYSICS</text>
+  </g>
+
+  <!-- Right Accent Badge -->
+  <g transform="translate(545, 160)">
+    <rect width="68" height="44" rx="8" fill="#171a16" stroke="rgba(56,189,248,0.3)" stroke-width="1"/>
+    <circle cx="16" cy="16" r="3.5" fill="#38bdf8"/>
+    <text x="26" y="20" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700" fill="#38bdf8">3 WAVES</text>
+    <text x="16" y="34" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="600" fill="#f4f2e9">POWERUPS</text>
+  </g>
+</svg>

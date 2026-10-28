@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Brick Breaker — Play Free on Mini Game Arcade</title>
+  <meta name="description" content="Play Brick Breaker online for free in your browser. Smash neon bricks, chain combos, collect power-ups, and clear 3 action-packed waves.">
+  <meta name="theme-color" content="#10120f">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="Brick Breaker — Mini Game Arcade">
+  <meta property="og:description" content="Smash neon bricks, collect power-ups, and conquer 3 arcade waves on desktop and mobile.">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Root-relative stylesheet link with file:// fallback -->
+  <link rel="stylesheet" href="/games/brick-breaker/style.css" id="game-stylesheet">
+  <script>
+    // Fallback if loaded via file:/// protocol
+    if (window.location.protocol === 'file:') {
+      const link = document.getElementById('game-stylesheet');
+      if (link) link.href = 'style.css';
+    }
+  </script>
+</head>
+<body class="game-page-body">
+
+  <!-- Arcade Top Navigation Bar -->
+  <nav class="arcade-nav-bar" aria-label="Game page navigation">
+    <div class="nav-content-container">
+      <a href="../../index.html" class="back-link">
+        <span class="back-arrow">←</span>
+        <span>Back to Arcade</span>
+      </a>
+
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="crumb-separator">/</span>
+        <a href="../../index.html#games-section">Games</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-current">Brick Breaker</span>
+      </div>
+
+      <a href="#controls-guide" class="nav-guide-link">Controls & Rules</a>
+    </div>
+  </nav>
+
+  <!-- Main Stage Container -->
+  <main class="game-stage-wrapper">
+
+    <!-- Game Editorial Header -->
+    <header class="game-editorial-header">
+      <div class="game-eyebrow-row">
+        <span class="badge-arcade">ACTION // ARCADE</span>
+        <span class="badge-tagline">3 WAVES &bull; POWER-UPS &bull; NEON PHYSICS</span>
+      </div>
+      <h1 class="game-title">Brick Breaker</h1>
+      <p class="game-subheading">Launch the energy orb, angle your paddle reflections, shatter armored bricks, and trigger multi-ball chaos.</p>
+    </header>
+
+    <!-- Arcade Play Card -->
+    <section class="arcade-play-card" id="bb-stage-card" aria-label="Interactive Brick Breaker Game Stage">
+
+      <!-- Match HUD Bar -->
+      <div class="match-hud-bar" role="region" aria-label="Match Status">
+        <div class="hud-group">
+          <span class="hud-pill highlight-lime">SCORE: <strong id="score-display">0</strong></span>
+          <span class="hud-pill">BEST: <strong id="best-display">0</strong></span>
+          <span class="hud-pill highlight-coral">SHIELDS: <strong id="lives-display">♥♥♥</strong></span>
+        </div>
+
+        <div class="hud-group">
+          <span id="level-badge" class="hud-pill highlight-cyan">WAVE 1</span>
+          <span id="combo-badge" class="combo-badge" style="display: none;">COMBO ×2</span>
+          <button id="audio-toggle-btn" class="audio-btn" type="button" aria-label="Toggle Sound" title="Sound Toggle (M)">
+            <span id="audio-icon">🔊</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas Stage Frame -->
+      <div class="canvas-wrapper">
+        <!-- Confetti Canvas -->
+        <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+        <!-- Main Game Canvas -->
+        <canvas id="bb-canvas" class="bb-canvas" width="600" height="480"></canvas>
+
+        <!-- Overlay 1: Start / Instructions -->
+        <div id="overlay-start" class="stage-overlay show" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Ready to Launch</h2>
+          <p class="overlay-subtitle">Click canvas, tap screen, or press <span class="key-kbd">Space</span> to launch energy orb.</p>
+          <button id="start-btn" class="btn-arcade-action" type="button">
+            <span>Launch Orb</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        <!-- Overlay 2: Pause -->
+        <div id="overlay-pause" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Game Paused</h2>
+          <p class="overlay-subtitle">Take a breather. Press <span class="key-kbd">Space</span> or <span class="key-kbd">P</span> to resume.</p>
+          <button id="resume-btn" class="btn-arcade-action" type="button">
+            <span>Resume Play</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        <!-- Overlay 3: Game Over -->
+        <div id="overlay-gameover" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title title-coral">Defenses Down!</h2>
+          <p class="overlay-subtitle">Your shields were depleted before clearing the wave.</p>
+          <div class="overlay-stats-row">
+            <div class="stat-box">
+              <span class="stat-label">Final Score</span>
+              <span id="final-score-val" class="stat-val">0</span>
+            </div>
+          </div>
+          <button id="restart-btn" class="btn-arcade-action btn-coral" type="button">
+            <span>Try Again (R)</span>
+            <span>↺</span>
+          </button>
+        </div>
+
+        <!-- Overlay 4: Stage Cleared / Victory -->
+        <div id="overlay-win" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Wave Cleared!</h2>
+          <p class="overlay-subtitle">All brick bastions eradicated with precision!</p>
+          <div class="overlay-stats-row">
+            <div class="stat-box">
+              <span class="stat-label">Total Score</span>
+              <span id="win-score-val" class="stat-val">0</span>
+            </div>
+          </div>
+          <div class="hud-group">
+            <button id="next-level-btn" class="btn-arcade-action" type="button">
+              <span>Next Wave</span>
+              <span>→</span>
+            </button>
+            <button id="play-again-btn" class="btn-secondary-arcade" type="button">
+              <span>Restart Campaign</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage Bottom Bar -->
+      <div class="stage-bottom-bar">
+        <span class="touch-hint-pill">Controls: Drag mouse/touch &bull; Left/Right Arrows &bull; Space Launch &bull; R Restart</span>
+      </div>
+
+    </section>
+
+    <!-- Controls & Game Information Section -->
+    <section id="controls-guide" class="game-info-section">
+      <div class="info-cards-grid">
+
+        <!-- Controls Guide -->
+        <article class="info-card">
+          <div class="info-card-header">
+            <span class="info-icon">[ ⌨ ]</span>
+            <h3 class="info-card-title">Paddle Controls</h3>
+          </div>
+          <ul class="info-list">
+            <li><strong>Mouse / Touch:</strong> Move mouse or drag touch horizontally across the playfield to slide the paddle.</li>
+            <li><strong>Keyboard Arrows:</strong> Use <span class="key-kbd">←</span> and <span class="key-kbd">→</span> or <span class="key-kbd">A</span> and <span class="key-kbd">D</span> for smooth keyboard steering.</li>
+            <li><strong>Launch / Pause:</strong> Press <span class="key-kbd">Space</span> or <span class="key-kbd">P</span> to launch the orb or pause the action.</li>
+            <li><strong>Quick Reset:</strong> Press <span class="key-kbd">R</span> to wipe the wave and restart.</li>
+            <li><strong>Mute Audio:</strong> Press <span class="key-kbd">M</span> to toggle synthesized audio effects.</li>
+          </ul>
+        </article>
+
+        <!-- Power-Ups Guide -->
+        <article class="info-card">
+          <div class="info-card-header">
+            <span class="info-icon">[ ⚡ ]</span>
+            <h3 class="info-card-title">Power-Up Capsules</h3>
+          </div>
+          <ul class="info-list">
+            <li><strong>Multi-Ball (●●):</strong> Spawns 2 additional energy orbs simultaneously to overwhelm the grid.</li>
+            <li><strong>Wide Paddle (↔):</strong> Expands paddle surface by 45% for 12 seconds of forgiving defense.</li>
+            <li><strong>Extra Shield (♥):</strong> Replenishes 1 lost shield heart up to a maximum of 5.</li>
+            <li><strong>Slow Orbit (⏱):</strong> Calms ball speed for precision bank shots into tight gaps.</li>
+          </ul>
+        </article>
+
+        <!-- Physics & Combos -->
+        <article class="info-card">
+          <div class="info-card-header">
+            <span class="info-icon">[ 🎯 ]</span>
+            <h3 class="info-card-title">Reflection Physics & Combos</h3>
+          </div>
+          <ul class="info-list">
+            <li><strong>Angle Deflection:</strong> Hits closer to the paddle edge create sharp, aggressive rebound angles; center hits bounce straight up.</li>
+            <li><strong>Combo Multipliers:</strong> Chain consecutive brick hits without paddle contact to multiply score up to <span class="key-kbd">×5</span>.</li>
+            <li><strong>Armored Bricks:</strong> Purple durable bricks absorb one hit before cracking and yielding high bonus score.</li>
+          </ul>
+        </article>
+
+      </div>
+
+      <!-- Quick Arcade Footer Links -->
+      <footer class="game-page-footer">
+        <p>&copy; 2026 Mini Game Arcade. All games are original and free to play.</p>
+        <div class="footer-links">
+          <a href="../../index.html">Arcade Home</a>
+          <a href="../../about.html">About</a>
+          <a href="../../contact.html">Contact</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+        </div>
+      </footer>
+    </section>
+
+  </main>
+
+  <!-- Scripts (Root-relative paths with file:// fallback) -->
+  <script src="/games/brick-breaker/js/audio.js"></script>
+  <script src="/games/brick-breaker/js/levels.js"></script>
+  <script src="/games/brick-breaker/js/game.js"></script>
+  <script>
+    // Fallback if loaded via file:/// protocol where root-relative paths fail
+    if (window.location.protocol === 'file:' && typeof BrickLevels === 'undefined') {
+      ['audio.js', 'levels.js', 'game.js'].forEach(function(s) {
+        var scriptEl = document.createElement('script');
+        scriptEl.src = 'js/' + s;
+        scriptEl.async = false;
+        document.body.appendChild(scriptEl);
+      });
+    }
+  </script>
+</body>
+</html>
