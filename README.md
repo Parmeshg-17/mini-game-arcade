@@ -1,8 +1,15 @@
 # Citrus Blitz — Blade Fruit Slicer Arcade
 
-A browser-based, high-performance fruit-slicing mini-game built with vanilla HTML5, Canvas 2D, and procedural Web Audio API. Designed for desktop, tablet, and mobile browsers with zero external runtime dependencies.
+A fast, juicy, browser-based fruit-slicing arcade mini-game built with vanilla HTML5, Canvas 2D, and procedural Web Audio API. Designed for desktop, tablet, and mobile browsers with zero external runtime dependencies.
 
-![Citrus Blitz Gameplay Banner](https://raw.githubusercontent.com/aiwithshivang/assets/main/citrus-blitz-preview.png)
+```
+  ____ _ _                      ____  _ _ _       
+ / ___(_) |_ _ __ _   _ ___   | __ )| (_) |_ ____
+| |   | | __| '__| | | / __|  |  _ \| | | __|_  /
+| |___| | |_| |  | |_| \__ \  | |_) | | | |_ / / 
+ \____|_|\__|_|   \__,_|___/  |____/|_|_|\__/___|
+          ARCADE FRUIT SLICER EDITION
+```
 
 ---
 
@@ -12,6 +19,7 @@ A browser-based, high-performance fruit-slicing mini-game built with vanilla HTM
 - **Vibrant Procedural Vector Graphics**: 100% original, generated in canvas (Watermelon, Orange, Lemon, Strawberry, Kiwi, Pineapple, Dragonfruit, and rare Golden Starfruit). No external image assets or copyright issues.
 - **Avoid the Bombs!**: Ticking iron bombs with burning fuse sparks. Slicing a bomb detonates an explosion with screen shake, shockwave flash, and a -10s penalty (Arcade) or lost life (Classic).
 - **Combo Multiplier System**: Slice 2 or more fruits in a single fluid swipe stroke to trigger combo multipliers (Double Slice, 3x Combo, 4x Mega Combo, and 5x Blade Frenzy) with custom fanfare and fiery blade trails.
+- **Multi-Touch & Smooth Pointer Tracking**: Independent pointer tracking allows multi-finger slicing on mobile devices without cross-screen jump artifacts.
 - **100% Procedural Web Audio Engine**: Blade swooshes, juicy splatters, bomb fuses, explosions, and musical combo chimes synthesized using the browser's Web Audio API. No external audio files to download.
 - **Sound Mute / Volume Toggle**: Quick sound toggle button and `M` key shortcut, with audio preferences remembered via `localStorage`.
 - **Accidental Scroll Prevention**: `touch-action: none` on the play area stops accidental mobile pull-to-refresh or page swiping while slashing.
@@ -19,7 +27,7 @@ A browser-based, high-performance fruit-slicing mini-game built with vanilla HTM
   - **⚡ Arcade Blitz**: 60-second high-score sprint. Slicing starfruit adds +5s bonus time; bombs deduct 10s and 10 points.
   - **❤️ Classic Survival**: 3 strikes/lives. Missing a fruit or slicing a bomb costs 1 life.
 - **Persistent High Scores**: High scores for each mode are saved locally.
-- **Responsive & High-DPI Ready**: Scales automatically across phones, tablets, and desktops using `window.devicePixelRatio` for sharp Retina graphics.
+- **Responsive & High-DPI Ready**: Scales automatically across phones (even 320px width), tablets, and desktops using `window.devicePixelRatio` for sharp Retina graphics.
 - **Keyboard Shortcuts**:
   - `Space` or `P` : Pause / Resume
   - `R` : Restart Game

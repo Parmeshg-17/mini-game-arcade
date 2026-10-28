@@ -90,3 +90,4 @@ Before publishing, verify the following:
 - [x] Sound toggle works without breaking browser autoplay security policies.
 - [x] Both Arcade Blitz (60s timer) and Classic Survival (3 lives) modes start, score, pause, restart, and game over properly.
 - [x] High scores persist across browser reloads using `localStorage`.
+

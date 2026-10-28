@@ -6,7 +6,7 @@
     "start": "npx serve -l 3000 .",
     "dev": "npx serve -l 3000 .",
     "build": "node -e \"console.log('Static build ready - no compilation required.')\"",
-    "test": "node -e \"console.log('Project syntax and assets verified.')\""
+    "test": "node test-runner.js"
   },
   "keywords": [
     "html5-game",
@@ -18,3 +18,4 @@
   "author": "Front-End Engineer",
   "license": "MIT"
 }
+

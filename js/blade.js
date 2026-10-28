@@ -136,3 +136,4 @@ class BladeTrail {
 }
 
 window.BladeTrail = BladeTrail;
+

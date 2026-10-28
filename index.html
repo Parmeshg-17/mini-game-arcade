@@ -12,7 +12,7 @@
   <meta property="og:description" content="Slice vibrant fruits, dodge bombs, and unleash blazing combos in this juicy browser arcade game!">
   <meta property="og:type" content="website">
 
-  <!-- Google Fonts: Outfit & Poppins -->
+  <!-- Google Fonts: Outfit & Poppins with system fallbacks -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -51,11 +51,6 @@
           <span class="heart-icon">❤️</span>
           <span class="heart-icon">❤️</span>
         </div>
-
-        <!-- Combo Multiplier Pop -->
-        <div id="combo-badge" class="combo-badge hidden">
-          <span id="combo-text">3x COMBO!</span>
-        </div>
       </div>
 
       <div class="hud-right">
@@ -70,6 +65,11 @@
         </button>
       </div>
     </header>
+
+    <!-- Floating Combo Multiplier Banner (Positioned Independently) -->
+    <div id="combo-badge" class="combo-badge hidden">
+      <span id="combo-text">3x COMBO!</span>
+    </div>
 
     <!-- Interactive Canvas Playfield -->
     <main id="canvas-container" class="canvas-container">
@@ -152,7 +152,7 @@
     <!-- Overlay: Game Over -->
     <div id="gameover-overlay" class="overlay hidden">
       <div class="menu-card glass-panel gameover-card">
-        <h2 class="overlay-title gameover-title">TIME'S UP!</h2>
+        <h2 id="gameover-title" class="overlay-title gameover-title">TIME'S UP!</h2>
         <div id="final-highscore-notice" class="new-highscore-badge" style="display: none;">
           🏆 NEW HIGH SCORE! 🏆
         </div>

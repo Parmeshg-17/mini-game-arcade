@@ -47,7 +47,7 @@ class GameEngine {
 
     // Wave spawning
     this.spawnTimer = 0;
-    this.spawnInterval = 110; // frames
+    this.spawnInterval = 110;
     this.waveNumber = 0;
 
     // Screen Shake & Red Flash
@@ -55,9 +55,8 @@ class GameEngine {
     this.shakeIntensity = 0;
     this.flashAlpha = 0;
 
-    // Input tracking
-    this.isPointerDown = false;
-    this.lastPointer = null;
+    // Multi-touch & Pointer Tracking (pointerId -> {x, y})
+    this.activePointers = new Map();
 
     // High DPI & Dimension
     this.dpr = window.devicePixelRatio || 1;
@@ -78,7 +77,6 @@ class GameEngine {
   }
 
   initDOM() {
-    // Buttons & overlays
     this.ui = {
       menuOverlay: document.getElementById('menu-overlay'),
       pauseOverlay: document.getElementById('pause-overlay'),
@@ -106,6 +104,7 @@ class GameEngine {
       btnHelp: document.getElementById('btn-help'),
       btnCloseHelp: document.getElementById('btn-close-help'),
 
+      gameOverTitle: document.getElementById('gameover-title'),
       finalScore: document.getElementById('final-score'),
       finalHighScoreNotice: document.getElementById('final-highscore-notice'),
       statSliced: document.getElementById('stat-sliced'),
@@ -120,8 +119,8 @@ class GameEngine {
     const container = document.getElementById('canvas-container');
     const rect = container.getBoundingClientRect();
 
-    this.width = Math.floor(rect.width);
-    this.height = Math.floor(rect.height);
+    this.width = Math.max(Math.floor(rect.width), 300);
+    this.height = Math.max(Math.floor(rect.height), 400);
 
     this.dpr = window.devicePixelRatio || 1;
     this.canvas.width = Math.floor(this.width * this.dpr);
@@ -130,8 +129,8 @@ class GameEngine {
     this.canvas.style.width = `${this.width}px`;
     this.canvas.style.height = `${this.height}px`;
 
-    this.ctx.resetTransform?.();
-    this.ctx.scale(this.dpr, this.dpr);
+    // Cross-browser transform reset and high-DPI scaling
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
   }
 
   initEvents() {
@@ -139,7 +138,6 @@ class GameEngine {
       this.initCanvasSize();
     });
 
-    // Touch / Pointer controls on canvas
     const canvas = this.canvas;
 
     const getPos = (e) => {
@@ -150,39 +148,49 @@ class GameEngine {
       };
     };
 
+    // Pointer events with multi-touch support
     canvas.addEventListener('pointerdown', (e) => {
       e.preventDefault();
-      this.isPointerDown = true;
+      try {
+        canvas.setPointerCapture(e.pointerId);
+      } catch (err) {}
+
       this.audio.ensureReady();
       const pos = getPos(e);
-      this.lastPointer = pos;
+      this.activePointers.set(e.pointerId, pos);
+
       this.blade.clear();
       this.blade.addPoint(pos.x, pos.y);
     });
 
     window.addEventListener('pointermove', (e) => {
-      if (!this.isPointerDown) return;
-      // Prevent accidental scrolling on mobile while slicing
+      if (!this.activePointers.has(e.pointerId)) return;
       e.preventDefault();
 
       const pos = getPos(e);
+      const prevPos = this.activePointers.get(e.pointerId);
+
       this.blade.addPoint(pos.x, pos.y);
 
-      if (this.lastPointer && this.state === GAME_STATES.PLAYING) {
-        this.processSlice(this.lastPointer, pos);
+      if (prevPos && this.state === GAME_STATES.PLAYING) {
+        this.processSlice(prevPos, pos);
       }
-      this.lastPointer = pos;
+
+      this.activePointers.set(e.pointerId, pos);
     }, { passive: false });
 
-    window.addEventListener('pointerup', () => {
-      this.isPointerDown = false;
-      this.lastPointer = null;
-    });
+    const handlePointerEnd = (e) => {
+      this.activePointers.delete(e.pointerId);
+      try {
+        canvas.releasePointerCapture(e.pointerId);
+      } catch (err) {}
+    };
 
-    window.addEventListener('pointercancel', () => {
-      this.isPointerDown = false;
-      this.lastPointer = null;
-    });
+    window.addEventListener('pointerup', handlePointerEnd);
+    window.addEventListener('pointercancel', handlePointerEnd);
+
+    // Context menu prevention
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
     // UI Buttons
     this.ui.btnStartArcade.addEventListener('click', () => {
@@ -250,7 +258,7 @@ class GameEngine {
           this.resumeGame();
         }
       } else if (e.key === 'r' || e.key === 'R') {
-        if (this.state === GAME_STATES.PLAYING || this.state === GAME_STATES.GAMEOVER) {
+        if (this.state === GAME_STATES.PLAYING || this.state === GAME_STATES.PAUSED || this.state === GAME_STATES.GAMEOVER) {
           this.startGame(this.mode);
         }
       } else if (e.key === 'm' || e.key === 'M') {
@@ -261,6 +269,8 @@ class GameEngine {
           this.ui.howToOverlay.classList.add('hidden');
         } else if (this.state === GAME_STATES.PLAYING) {
           this.togglePause();
+        } else if (this.state === GAME_STATES.PAUSED) {
+          this.resumeGame();
         }
       }
     });
@@ -284,14 +294,14 @@ class GameEngine {
     this.totalSliced = 0;
     this.bombsAvoided = 0;
     this.waveNumber = 0;
-    this.spawnTimer = 40; // quick initial spawn
+    this.spawnTimer = 40; // Quick initial spawn
 
     this.fruits = [];
     this.fruitHalves = [];
     this.particles.reset();
     this.blade.reset();
+    this.activePointers.clear();
 
-    // Setup HUD for current mode
     if (this.mode === GAME_MODES.ARCADE) {
       this.ui.timerContainer.style.display = 'flex';
       this.ui.livesContainer.style.display = 'none';
@@ -326,15 +336,28 @@ class GameEngine {
     this.particles.reset();
     this.fruits = [];
     this.fruitHalves = [];
+    this.activePointers.clear();
     this.updateHUD();
   }
 
-  gameOver() {
+  gameOver(reason = 'time') {
     this.state = GAME_STATES.GAMEOVER;
     this.audio.playGameOver();
+    this.activePointers.clear();
 
-    // Check high score
-    const currentHigh = this.highScores[this.mode];
+    // Dynamic title based on mode and reason
+    if (this.ui.gameOverTitle) {
+      if (this.mode === GAME_MODES.CLASSIC) {
+        this.ui.gameOverTitle.textContent = 'GAME OVER!';
+      } else if (reason === 'bomb') {
+        this.ui.gameOverTitle.textContent = 'BOMB BLAST! GAME OVER!';
+      } else {
+        this.ui.gameOverTitle.textContent = "TIME'S UP!";
+      }
+    }
+
+    // High score check
+    const currentHigh = this.highScores[this.mode] || 0;
     const isNewHigh = this.score > currentHigh;
     if (isNewHigh) {
       this.highScores[this.mode] = this.score;
@@ -346,7 +369,6 @@ class GameEngine {
       this.particles.spawnConfetti(this.width, this.height);
     }
 
-    // Populate game over screen
     this.ui.finalScore.textContent = this.score.toLocaleString();
     this.ui.finalHighScoreNotice.style.display = isNewHigh ? 'block' : 'none';
     this.ui.statSliced.textContent = this.totalSliced;
@@ -377,7 +399,6 @@ class GameEngine {
         this.ui.timerContainer.classList.remove('urgent');
       }
     } else {
-      // Classic hearts display
       const hearts = ['❤️', '❤️', '❤️'];
       for (let i = 0; i < 3; i++) {
         hearts[i] = i < this.lives ? '❤️' : '🖤';
@@ -386,17 +407,13 @@ class GameEngine {
     }
   }
 
-  /**
-   * Collision detection and slicing execution
-   */
   processSlice(p1, p2) {
     const dx = p2.x - p1.x;
     const dy = p2.y - p1.y;
     const dist = Math.hypot(dx, dy);
 
-    if (dist < 3) return; // Ignore microscopic jitter
+    if (dist < 3) return;
 
-    // Play blade whoosh occasionally based on speed
     if (dist > 25 && Math.random() < 0.28) {
       this.audio.playWhoosh(dist);
     }
@@ -415,11 +432,9 @@ class GameEngine {
         this.fruits.splice(i, 1);
 
         if (fruit.type === window.FRUIT_TYPES.BOMB) {
-          // BOMB HIT!
           this.handleBombSlice(fruit);
           return;
         } else {
-          // FRUIT SLICE!
           hitCountInStroke++;
           this.handleFruitSlice(fruit, sliceAngle);
         }
@@ -435,10 +450,8 @@ class GameEngine {
     this.totalSliced++;
     this.audio.playSlice(fruit.type);
 
-    // Points calculation
     let pointsGained = fruit.config.points;
 
-    // Bonus for Starfruit
     if (fruit.type === window.FRUIT_TYPES.STARFRUIT && this.mode === GAME_MODES.ARCADE) {
       this.timer += fruit.config.bonusTime;
       this.particles.spawnFloatingText(`+${fruit.config.bonusTime}s EXTRA TIME!`, fruit.x, fruit.y - 30, {
@@ -450,13 +463,11 @@ class GameEngine {
 
     this.score += pointsGained;
 
-    // Spawn 2 split halves
     this.fruitHalves.push(
       new window.FruitHalf(fruit.x, fruit.y, fruit.vx, fruit.vy, fruit.type, sliceAngle, 0),
       new window.FruitHalf(fruit.x, fruit.y, fruit.vx, fruit.vy, fruit.type, sliceAngle, 1)
     );
 
-    // Juice splatters and floating points
     this.particles.spawnJuiceSplash(fruit.x, fruit.y, fruit.config.palette, 24);
     this.particles.spawnFloatingText(`+${pointsGained}`, fruit.x, fruit.y, {
       color: fruit.config.splashColor,
@@ -470,18 +481,15 @@ class GameEngine {
     this.audio.playExplosion();
     this.particles.spawnExplosion(bomb.x, bomb.y);
 
-    // Screen Shake & Red Flash
     this.shakeDuration = 24;
     this.shakeIntensity = 18;
     this.flashAlpha = 0.6;
 
-    // Combo reset
     this.comboCount = 0;
     this.ui.comboBadge.classList.add('hidden');
     this.blade.setComboMode(false);
 
     if (this.mode === GAME_MODES.ARCADE) {
-      // Penalty: -10s and -10 points
       this.timer = Math.max(0, this.timer - 10);
       this.score = Math.max(0, this.score - 10);
       this.particles.spawnFloatingText('-10s BOMB PENALTY!', bomb.x, bomb.y, {
@@ -492,10 +500,9 @@ class GameEngine {
       });
 
       if (this.timer <= 0) {
-        this.gameOver();
+        this.gameOver('bomb');
       }
     } else {
-      // Classic mode: lose 1 life
       this.lives--;
       this.particles.spawnFloatingText('BOMB HIT! -1 LIFE', bomb.x, bomb.y, {
         color: '#ef4444',
@@ -503,7 +510,7 @@ class GameEngine {
       });
 
       if (this.lives <= 0) {
-        this.gameOver();
+        this.gameOver('bomb');
       }
     }
 
@@ -512,14 +519,13 @@ class GameEngine {
 
   recordCombo(count) {
     this.comboCount += count;
-    this.comboTimer = 28; // ~0.45s window to chain more
+    this.comboTimer = 28;
 
     if (this.comboCount >= 2) {
       if (this.comboCount > this.highestCombo) {
         this.highestCombo = this.comboCount;
       }
 
-      // Combo bonus score
       let bonus = 0;
       let label = '';
       if (this.comboCount === 2) {
@@ -542,7 +548,6 @@ class GameEngine {
       this.score += bonus;
       this.audio.playCombo(this.comboCount);
 
-      // UI display
       this.ui.comboBadge.classList.remove('hidden');
       this.ui.comboText.textContent = label;
 
@@ -557,33 +562,26 @@ class GameEngine {
     }
   }
 
-  /**
-   * Spawn waves of fruits and occasional bombs
-   */
   spawnWave() {
     this.waveNumber++;
 
-    // Wave size: 1 to 4 items
     const waveSize = Math.min(Math.floor(Math.random() * 3) + 1 + Math.floor(this.score / 60), 4);
-
-    // Bomb probability: ~22% after score > 5
     const allowBomb = this.score >= 5;
-    const bombSpawnedInWave = false;
+    let bombSpawnedInWave = false;
 
     for (let i = 0; i < waveSize; i++) {
-      // Pick random fruit or bomb
-      let type = this.pickRandomFruitType(allowBomb && !bombSpawnedInWave);
+      const type = this.pickRandomFruitType(allowBomb && !bombSpawnedInWave);
+      if (type === window.FRUIT_TYPES.BOMB) {
+        bombSpawnedInWave = true;
+      }
 
-      // Spread X positions evenly across bottom
       const margin = this.width * 0.15;
       const x = margin + Math.random() * (this.width - margin * 2);
       const y = this.height + 40;
 
-      // Launch velocity scaled to canvas height
       const heightFactor = Math.sqrt(this.height / 600);
       const vy = -(Math.random() * 4.5 + 14.5) * heightFactor;
 
-      // Drift towards center
       const centerX = this.width / 2;
       const vx = (centerX - x) * 0.008 + (Math.random() - 0.5) * 2.8;
 
@@ -611,9 +609,6 @@ class GameEngine {
     return pool[Math.floor(Math.random() * pool.length)];
   }
 
-  /**
-   * Main game loop
-   */
   loop(currentTime) {
     requestAnimationFrame((t) => this.loop(t));
 
@@ -627,17 +622,15 @@ class GameEngine {
 
   update() {
     if (this.state === GAME_STATES.PLAYING) {
-      // Timer update for Arcade mode
       if (this.mode === GAME_MODES.ARCADE) {
         this.timer -= 1 / 60;
         if (this.timer <= 0) {
           this.timer = 0;
-          this.gameOver();
+          this.gameOver('time');
           return;
         }
       }
 
-      // Combo cooldown decay
       if (this.comboTimer > 0) {
         this.comboTimer--;
         if (this.comboTimer <= 0) {
@@ -647,11 +640,9 @@ class GameEngine {
         }
       }
 
-      // Wave Spawner
       this.spawnTimer--;
       if (this.spawnTimer <= 0) {
         this.spawnWave();
-        // Faster waves as score increases
         const intervalFactor = Math.max(65, 115 - Math.floor(this.score / 8) * 4);
         this.spawnTimer = intervalFactor;
       }
@@ -661,25 +652,22 @@ class GameEngine {
         const fruit = this.fruits[i];
         fruit.update(1);
 
-        // Bomb sparks
         if (fruit.type === window.FRUIT_TYPES.BOMB) {
           this.particles.spawnFuseSparks(fruit.x + 16, fruit.y - fruit.radius - 24);
         }
 
-        // Fruit fell below screen
         if (fruit.y > this.height + 70 && fruit.vy > 0) {
           if (!fruit.sliced) {
             if (fruit.type === window.FRUIT_TYPES.BOMB) {
               this.bombsAvoided++;
             } else if (this.mode === GAME_MODES.CLASSIC) {
-              // Missed fruit in classic mode = lose 1 life!
               this.lives--;
               this.particles.spawnFloatingText('MISSED! 💔', fruit.x, this.height - 40, {
                 color: '#ef4444',
                 font: 'bold 20px "Outfit", sans-serif'
               });
               if (this.lives <= 0) {
-                this.gameOver();
+                this.gameOver('lives');
                 return;
               }
               this.updateHUD();
@@ -698,7 +686,6 @@ class GameEngine {
         }
       }
 
-      // Screen Shake & Flash decay
       if (this.shakeDuration > 0) {
         this.shakeDuration--;
       }
@@ -709,7 +696,6 @@ class GameEngine {
       this.updateHUD();
     }
 
-    // Always update visual particles and blade trail
     this.blade.update();
     this.particles.update(1);
   }
@@ -718,15 +704,15 @@ class GameEngine {
     const ctx = this.ctx;
     ctx.save();
 
-    // Screen Shake translation
+    // Overscan clear to prevent edge artifacting during screen shake
+    ctx.clearRect(-100, -100, this.width + 200, this.height + 200);
+
+    // Apply Screen Shake if active
     if (this.shakeDuration > 0) {
       const offsetX = (Math.random() - 0.5) * this.shakeIntensity;
       const offsetY = (Math.random() - 0.5) * this.shakeIntensity;
       ctx.translate(offsetX, offsetY);
     }
-
-    // Clear Canvas
-    ctx.clearRect(0, 0, this.width, this.height);
 
     // 1. Draw persistent background splatters
     this.particles.drawSplatters(ctx);
@@ -750,7 +736,7 @@ class GameEngine {
     // 6. Bomb red flash shockwave
     if (this.flashAlpha > 0) {
       ctx.fillStyle = `rgba(239, 68, 68, ${this.flashAlpha})`;
-      ctx.fillRect(0, 0, this.width, this.height);
+      ctx.fillRect(-100, -100, this.width + 200, this.height + 200);
     }
 
     ctx.restore();

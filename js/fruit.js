@@ -101,7 +101,7 @@ class FruitObject {
     this.vx = vx;
     this.vy = vy;
     this.type = type;
-    this.config = FRUIT_CONFIGS[type];
+    this.config = FRUIT_CONFIGS[type] || FRUIT_CONFIGS[FRUIT_TYPES.WATERMELON];
     this.radius = this.config.radius;
     this.rotation = Math.random() * Math.PI * 2;
     this.rotSpeed = (Math.random() - 0.5) * 0.08;
@@ -185,7 +185,6 @@ class FruitObject {
 
   drawWatermelon(ctx) {
     const r = this.radius;
-    // Outer green rind
     const grad = ctx.createRadialGradient(-r * 0.3, -r * 0.3, r * 0.1, 0, 0, r);
     grad.addColorStop(0, '#4ade80');
     grad.addColorStop(0.7, '#16a34a');
@@ -252,7 +251,6 @@ class FruitObject {
 
     ctx.fillStyle = grad;
     ctx.beginPath();
-    // Lemon oval with tapered tips
     ctx.moveTo(0, -r * 1.15);
     ctx.quadraticCurveTo(r * 0.9, -r * 0.4, r * 0.8, 0);
     ctx.quadraticCurveTo(r * 0.9, r * 0.4, 0, r * 1.15);
@@ -269,7 +267,6 @@ class FruitObject {
 
   drawStrawberry(ctx) {
     const r = this.radius;
-    // Heart/cone berry
     const grad = ctx.createRadialGradient(-r * 0.2, -r * 0.2, r * 0.1, 0, 0, r);
     grad.addColorStop(0, '#fb7185');
     grad.addColorStop(0.7, '#e11d48');
@@ -329,7 +326,6 @@ class FruitObject {
 
   drawPineapple(ctx) {
     const r = this.radius;
-    // Golden body
     const grad = ctx.createRadialGradient(-r * 0.3, -r * 0.3, r * 0.1, 0, 0, r);
     grad.addColorStop(0, '#fbbf24');
     grad.addColorStop(0.7, '#d97706');
@@ -365,7 +361,6 @@ class FruitObject {
 
   drawDragonfruit(ctx) {
     const r = this.radius;
-    // Vibrant pink body
     const grad = ctx.createRadialGradient(-r * 0.3, -r * 0.3, r * 0.1, 0, 0, r);
     grad.addColorStop(0, '#f472b6');
     grad.addColorStop(0.7, '#db2777');
@@ -376,7 +371,7 @@ class FruitObject {
     ctx.arc(0, 0, r, 0, Math.PI * 2);
     ctx.fill();
 
-    // Wavy curved green-tipped petal scales
+    // Green-tipped petal scales
     for (let i = 0; i < 7; i++) {
       const angle = (i / 7) * Math.PI * 2;
       const px = Math.cos(angle) * r;
@@ -392,14 +387,12 @@ class FruitObject {
 
   drawStarfruit(ctx) {
     const r = this.radius;
-    // Radiant pulsating aura
     const pulseScale = 1 + Math.sin(this.pulse * 4) * 0.08;
     ctx.scale(pulseScale, pulseScale);
 
     ctx.shadowColor = '#facc15';
     ctx.shadowBlur = 18;
 
-    // Golden 5-point star
     ctx.fillStyle = '#fde047';
     ctx.strokeStyle = '#ca8a04';
     ctx.lineWidth = 3;
@@ -418,7 +411,6 @@ class FruitObject {
     ctx.fill();
     ctx.stroke();
 
-    // Star core glow
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
     ctx.arc(0, 0, r * 0.22, 0, Math.PI * 2);
@@ -441,13 +433,13 @@ class FruitObject {
     ctx.arc(0, 0, r, 0, Math.PI * 2);
     ctx.fill();
 
-    // Metallic specular gloss
+    // Specular gloss
     ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
     ctx.beginPath();
     ctx.ellipse(-r * 0.35, -r * 0.35, r * 0.25, r * 0.14, -Math.PI / 4, 0, Math.PI * 2);
     ctx.fill();
 
-    // Warning icon (skull or alert mark)
+    // Warning skull
     ctx.fillStyle = '#ef4444';
     ctx.font = 'bold 22px sans-serif';
     ctx.textAlign = 'center';
@@ -458,7 +450,7 @@ class FruitObject {
     ctx.fillStyle = '#b45309';
     ctx.fillRect(-7, -r - 5, 14, 6);
 
-    // Curved fuse rope
+    // Fuse rope
     ctx.strokeStyle = '#d97706';
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -466,7 +458,7 @@ class FruitObject {
     ctx.quadraticCurveTo(12, -r - 18, 16, -r - 24);
     ctx.stroke();
 
-    // Animated fuse spark
+    // Fuse spark
     ctx.shadowColor = '#ff0055';
     ctx.shadowBlur = 12;
     ctx.fillStyle = Math.sin(this.pulse * 15) > 0 ? '#ffbe0b' : '#ff0055';
@@ -484,12 +476,11 @@ class FruitHalf {
     this.x = x;
     this.y = y;
     this.type = type;
-    this.config = FRUIT_CONFIGS[type];
+    this.config = FRUIT_CONFIGS[type] || FRUIT_CONFIGS[FRUIT_TYPES.WATERMELON];
     this.radius = this.config.radius;
     this.sliceAngle = sliceAngle;
-    this.halfIndex = halfIndex; // 0 (left/top) or 1 (right/bottom)
+    this.halfIndex = halfIndex;
 
-    // Perpendicular impulse away from slice plane
     const normalAngle = sliceAngle + (halfIndex === 0 ? -Math.PI / 2 : Math.PI / 2);
     const impulse = Math.random() * 3.5 + 3.0;
 
@@ -515,7 +506,6 @@ class FruitHalf {
     ctx.translate(this.x, this.y);
     ctx.rotate(this.rotation);
 
-    // Clip to half circle along slice angle
     ctx.beginPath();
     if (this.halfIndex === 0) {
       ctx.arc(0, 0, this.radius + 2, Math.PI, 0, false);
@@ -525,7 +515,6 @@ class FruitHalf {
     ctx.closePath();
     ctx.clip();
 
-    // Draw the detailed interior cross-section!
     this.drawCrossSection(ctx);
 
     ctx.restore();
@@ -536,25 +525,21 @@ class FruitHalf {
 
     switch (this.type) {
       case FRUIT_TYPES.WATERMELON: {
-        // Dark green skin
         ctx.fillStyle = '#15803d';
         ctx.beginPath();
         ctx.arc(0, 0, r, 0, Math.PI * 2);
         ctx.fill();
 
-        // White rind
         ctx.fillStyle = '#f0fdf4';
         ctx.beginPath();
         ctx.arc(0, 0, r * 0.9, 0, Math.PI * 2);
         ctx.fill();
 
-        // Juicy red flesh
         ctx.fillStyle = '#ef4444';
         ctx.beginPath();
         ctx.arc(0, 0, r * 0.82, 0, Math.PI * 2);
         ctx.fill();
 
-        // Little black seeds
         ctx.fillStyle = '#18181b';
         const seedAngles = [-0.6, -0.3, 0, 0.3, 0.6];
         for (const sa of seedAngles) {
@@ -566,19 +551,16 @@ class FruitHalf {
         break;
       }
       case FRUIT_TYPES.ORANGE: {
-        // Orange skin
         ctx.fillStyle = '#ea580c';
         ctx.beginPath();
         ctx.arc(0, 0, r, 0, Math.PI * 2);
         ctx.fill();
 
-        // White pith
         ctx.fillStyle = '#fff7ed';
         ctx.beginPath();
         ctx.arc(0, 0, r * 0.92, 0, Math.PI * 2);
         ctx.fill();
 
-        // Segments
         ctx.fillStyle = '#f97316';
         for (let i = 0; i < 8; i++) {
           const a1 = (i / 8) * Math.PI * 2 + 0.08;
@@ -615,25 +597,21 @@ class FruitHalf {
         break;
       }
       case FRUIT_TYPES.KIWI: {
-        // Fuzzy skin
         ctx.fillStyle = '#78350f';
         ctx.beginPath();
         ctx.arc(0, 0, r, 0, Math.PI * 2);
         ctx.fill();
 
-        // Emerald pulp
         ctx.fillStyle = '#84cc16';
         ctx.beginPath();
         ctx.arc(0, 0, r * 0.9, 0, Math.PI * 2);
         ctx.fill();
 
-        // Creamy core
         ctx.fillStyle = '#ecfccb';
         ctx.beginPath();
         ctx.arc(0, 0, r * 0.32, 0, Math.PI * 2);
         ctx.fill();
 
-        // Seed ring
         ctx.fillStyle = '#1c1917';
         for (let i = 0; i < 12; i++) {
           const sa = (i / 12) * Math.PI * 2;
@@ -644,19 +622,16 @@ class FruitHalf {
         break;
       }
       case FRUIT_TYPES.DRAGONFRUIT: {
-        // Pink rind
         ctx.fillStyle = '#db2777';
         ctx.beginPath();
         ctx.arc(0, 0, r, 0, Math.PI * 2);
         ctx.fill();
 
-        // White pulp
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
         ctx.arc(0, 0, r * 0.86, 0, Math.PI * 2);
         ctx.fill();
 
-        // Black specks
         ctx.fillStyle = '#1e293b';
         for (let i = 0; i < 16; i++) {
           const a = (i / 16) * Math.PI * 2;
@@ -667,8 +642,65 @@ class FruitHalf {
         }
         break;
       }
+      case FRUIT_TYPES.STRAWBERRY: {
+        ctx.fillStyle = '#9f1239';
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#f43f5e';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.88, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Strawberry heart core
+        ctx.fillStyle = '#fecdd3';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.35, 0, Math.PI * 2);
+        ctx.fill();
+        break;
+      }
+      case FRUIT_TYPES.PINEAPPLE: {
+        ctx.fillStyle = '#92400e';
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#fde047';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.88, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Pineapple core ring
+        ctx.fillStyle = '#ca8a04';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.38, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.25, 0, Math.PI * 2);
+        ctx.fill();
+        break;
+      }
+      case FRUIT_TYPES.STARFRUIT: {
+        ctx.fillStyle = '#ca8a04';
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.88, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+        break;
+      }
       default: {
-        // Generic attractive cross section
         ctx.fillStyle = this.config.palette[1] || '#e11d48';
         ctx.beginPath();
         ctx.arc(0, 0, r, 0, Math.PI * 2);
@@ -683,8 +715,8 @@ class FruitHalf {
     }
 
     // Cut edge sheen
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.moveTo(-r, 0);
     ctx.lineTo(r, 0);
