@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Circuit Connect — Logic & Circuit Puzzle | Mini Game Arcade</title>
+  <meta name="description" content="Rotate tiles and connect matching terminals to complete the cyber power circuit before moves run out. Features bridge overpasses, multi-channel routes, and 3-star efficiency ratings." />
+  <meta name="theme-color" content="#10120f" />
+
+  <!-- Fonts & Global Styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet" />
+
+  <!-- Game Stylesheet -->
+  <link rel="stylesheet" href="style.css?v=1.0.0" />
+</head>
+<body class="game-page-body">
+
+  <!-- Top Sticky Navigation Bar -->
+  <nav class="arcade-nav-bar" aria-label="Game navigation">
+    <div class="nav-content-container">
+      <a href="../../index.html" class="back-link" aria-label="Return to Mini Game Arcade Homepage">
+        <span>←</span>
+        <span>Back to Arcade</span>
+      </a>
+
+      <div class="breadcrumbs" aria-label="Breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="bc-sep">/</span>
+        <a href="../../index.html#games-section">Games</a>
+        <span class="bc-sep">/</span>
+        <span class="bc-current">Circuit Connect</span>
+      </div>
+
+      <a href="#controls-guide" class="nav-guide-link">Controls & Rules</a>
+    </div>
+  </nav>
+
+  <!-- Main Stage Container -->
+  <main class="game-stage-wrapper">
+
+    <!-- Editorial Header -->
+    <header class="game-editorial-header">
+      <div class="game-eyebrow-row">
+        <span class="badge-arcade">LOGIC // PUZZLE</span>
+        <span class="badge-tagline">CIRCUIT CONNECTOR</span>
+      </div>
+      <h1 class="game-title">Circuit Connect</h1>
+      <p class="game-subheading">Rotate tiles and connect matching terminals to complete the electrical circuit before moves run out. Overpass bridges allow complex wires to cross without shorting out!</p>
+    </header>
+
+    <!-- Arcade Play Card -->
+    <section class="arcade-play-card" id="circuit-stage-card" aria-label="Interactive Circuit Connect Board">
+
+      <!-- Match HUD -->
+      <div class="match-hud-bar" role="region" aria-label="Match Status">
+        <div class="hud-group">
+          <button id="level-select-btn" class="ctrl-btn" type="button" title="Select Level">
+            <span>📑</span>
+            <span id="level-title-display">Lvl 1: Genesis Circuit</span>
+          </button>
+          <span id="chapter-display" class="hud-pill highlight-cyan">Power Flow</span>
+          <span id="moves-display" class="hud-pill highlight-lime">Moves: 0 / 12</span>
+          <span id="par-display" class="hud-pill highlight-gold">Par: 4</span>
+          <span id="targets-display" class="hud-pill">Terminals: 0 / 1</span>
+          <span id="timer-display" class="hud-pill">00:00</span>
+        </div>
+
+        <div class="hud-group">
+          <button id="undo-btn" class="ctrl-btn" type="button" aria-label="Undo Move (U)" title="Undo (U)">
+            <span>↶</span>
+            <span>Undo</span>
+          </button>
+          <button id="restart-btn" class="ctrl-btn" type="button" aria-label="Restart Level (R)" title="Restart (R)">
+            <span>↺</span>
+          </button>
+          <button id="pause-btn" class="ctrl-btn" type="button" aria-label="Pause Game" title="Pause (P)">⏸</button>
+          <button id="audio-toggle-btn" class="audio-btn" type="button" aria-label="Toggle Sound" title="Sound Toggle (M)">
+            <span id="audio-icon">🔊</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Circuit Board Canvas Stage -->
+      <div class="circuit-stage-container">
+        <canvas id="circuit-canvas" class="circuit-canvas" aria-label="Interactive Circuit Connect Grid"></canvas>
+
+        <!-- Overlay 1: Victory / Level Completed -->
+        <div id="overlay-win" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 id="win-title" class="overlay-title">Circuit Completed!</h2>
+          <p class="overlay-subtitle">Power grid energized! All terminal pathways are complete.</p>
+          <div class="overlay-stats-grid">
+            <div class="stat-box">
+              <span class="stat-label">Rating</span>
+              <span id="win-stars-val" class="stat-val stars">★★★</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Moves Used</span>
+              <span id="win-moves-val" class="stat-val">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Par Moves</span>
+              <span id="win-par-val" class="stat-val">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Time</span>
+              <span id="win-time-val" class="stat-val">00:00</span>
+            </div>
+          </div>
+          <div class="hud-group" style="margin-top: 0.5rem;">
+            <button id="next-level-btn" class="btn-arcade-action" type="button">Next Level →</button>
+            <button id="replay-btn" class="btn-secondary-arcade" type="button">Replay Level (R)</button>
+          </div>
+        </div>
+
+        <!-- Overlay 2: Circuit Overloaded (Out of Moves) -->
+        <div id="overlay-overload" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Circuit Overloaded!</h2>
+          <p class="overlay-subtitle">Move limit exceeded before complete connection was achieved.</p>
+          <div class="hud-group">
+            <button id="overload-undo-btn" class="btn-arcade-action" type="button">Undo Move (U)</button>
+            <button id="overload-restart-btn" class="btn-secondary-arcade" type="button">Restart Level (R)</button>
+          </div>
+        </div>
+
+        <!-- Overlay 3: Level Select Modal -->
+        <div id="overlay-level-select" class="stage-overlay" role="dialog" aria-live="polite">
+          <div class="level-select-container">
+            <div class="level-select-header">
+              <h3 class="overlay-title" style="font-size: 1.25rem;">Select Circuit Level</h3>
+              <button id="close-level-select-btn" class="ctrl-btn" type="button">✕ Close</button>
+            </div>
+            <div id="level-grid-container" class="level-select-grid">
+              <!-- Dynamically populated by game.js -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Bar -->
+      <div class="circuit-action-bar">
+        <button id="btn-quick-undo" class="btn-secondary-arcade" type="button" onclick="document.getElementById('undo-btn').click()">
+          <span>↶</span>
+          <span>Undo Move</span>
+        </button>
+        <button id="btn-quick-levels" class="btn-secondary-arcade" type="button" onclick="document.getElementById('level-select-btn').click()">
+          <span>📑</span>
+          <span>Level Select</span>
+        </button>
+        <button id="btn-quick-restart" class="btn-secondary-arcade" type="button" onclick="document.getElementById('restart-btn').click()">
+          <span>↺</span>
+          <span>Restart (R)</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Controls & Rules Guide -->
+    <section class="controls-guide-section" id="controls-guide" aria-label="Game Rules & Controls Guide">
+      <h2 class="guide-title">How to Play & Controls</h2>
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>🔄</span>
+            <span>Rotate to Connect</span>
+          </div>
+          <p class="rule-text">Click or tap any non-fixed tile to rotate it 90° clockwise. Right-click or shift-click to rotate counter-clockwise. Align wire conduits to complete the circuit path.</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>🌉</span>
+            <span>Bridge Overpasses</span>
+          </div>
+          <p class="rule-text">Bridge tiles allow wires to cross over each other without short-circuiting! Vertical current passes over horizontal current, enabling multi-color crossings.</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>⭐</span>
+            <span>Efficiency Stars</span>
+          </div>
+          <p class="rule-text">Earn up to <strong>3 Stars</strong> by completing circuits at or below the level's Par Move limit. Level progression and best star ratings are saved locally.</p>
+        </div>
+      </div>
+
+      <div class="rules-grid" style="margin-top: 0.5rem;">
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>⌨️</span>
+            <span>Desktop Controls</span>
+          </div>
+          <p class="rule-text"><strong>Arrow Keys / WASD</strong> to select tiles. <strong>Spacebar / Enter</strong> to rotate clockwise. <strong>Q / Shift+Space</strong> to rotate counter-clockwise. <strong>U</strong> to Undo, <strong>R</strong> to Restart.</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>📱</span>
+            <span>Mobile Controls</span>
+          </div>
+          <p class="rule-text">Tap any tile on your touchscreen to rotate it. Responsive layout with tactile electric sound effects calibrated for phones and tablets.</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>⚡</span>
+            <span>Energy Propagation</span>
+          </div>
+          <p class="rule-text">Connected paths illuminate with radiant neon pulses. Power all matching receiver terminals from their source stations to trigger victory fanfare!</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="stage-footer">
+      <a href="../../index.html" class="footer-back-link">← Return to Mini Game Arcade Homepage</a>
+    </footer>
+
+  </main>
+
+  <!-- Modular Scripts with Root-relative paths and file:// fallback -->
+  <script src="/games/circuit-connect/js/engine.js?v=1.0.0"></script>
+  <script src="/games/circuit-connect/js/audio.js?v=1.0.0"></script>
+  <script src="/games/circuit-connect/js/game.js?v=1.0.0"></script>
+  <script>
+    if (window.location.protocol === 'file:' && typeof CircuitEngine === 'undefined') {
+      ['engine.js', 'audio.js', 'game.js'].forEach(function(s) {
+        var scriptEl = document.createElement('script');
+        scriptEl.src = 'js/' + s + '?v=1.0.0';
+        scriptEl.async = false;
+        document.body.appendChild(scriptEl);
+      });
+    }
+  </script>
+</body>
+</html>

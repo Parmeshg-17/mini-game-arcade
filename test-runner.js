@@ -141,12 +141,13 @@ it('Search and category filter logic filters games correctly', () => {
   assert(res3.some(g => g.id === 'tap-challenge'));
   assert(res3.some(g => g.id === 'stack-rush'));
 
-  // Puzzle category filter matches Tic Tac Toe, Number Puzzle, and Block Puzzle
+  // Puzzle category filter matches Tic Tac Toe, Number Puzzle, Block Puzzle, and Circuit Connect
   const res4 = filterGames('', 'Puzzle');
-  assert.strictEqual(res4.length, 3);
+  assert.strictEqual(res4.length, 4);
   assert(res4.some(g => g.id === 'tic-tac-toe'));
   assert(res4.some(g => g.id === 'number-puzzle'));
   assert(res4.some(g => g.id === 'block-puzzle'));
+  assert(res4.some(g => g.id === 'circuit-connect'));
 
   // Casual category filter matches Memory Match and Bubble Pop
   const res5 = filterGames('', 'Casual');
@@ -197,6 +198,11 @@ it('Search and category filter logic filters games correctly', () => {
   const resStack = filterGames('stack', 'All');
   assert.strictEqual(resStack.length, 1);
   assert.strictEqual(resStack[0].id, 'stack-rush');
+
+  // Tag search for circuit connect
+  const resCircuit = filterGames('circuit', 'All');
+  assert.strictEqual(resCircuit.length, 1);
+  assert.strictEqual(resCircuit[0].id, 'circuit-connect');
 
   // Non-matching category
   const res8 = filterGames('', 'Racing');
@@ -1033,7 +1039,149 @@ it('Stack Rush engine executes 3D platform rotations, voxel drops, layer clearin
   assert.strictEqual(evaluateTowerStars(5), 1, '5 blocks yields 1 star');
 });
 
-// 26. Security & Clean Static Deployment Verification
+// 27. Dedicated Circuit Connect Playable Page DOM & Asset Integrity
+it('Dedicated Circuit Connect page (games/circuit-connect/index.html) has all DOM elements required by game.js', () => {
+  const gameHtmlPath = path.join(__dirname, 'games/circuit-connect/index.html');
+  assert(fs.existsSync(gameHtmlPath), 'games/circuit-connect/index.html must exist');
+  const gameHtml = fs.readFileSync(gameHtmlPath, 'utf8');
+
+  const requiredIds = [
+    'circuit-canvas',
+    'level-title-display',
+    'chapter-display',
+    'moves-display',
+    'par-display',
+    'targets-display',
+    'timer-display',
+    'level-select-btn',
+    'undo-btn',
+    'restart-btn',
+    'pause-btn',
+    'audio-toggle-btn',
+    'audio-icon',
+    'overlay-win',
+    'win-title',
+    'win-stars-val',
+    'win-moves-val',
+    'win-par-val',
+    'win-time-val',
+    'next-level-btn',
+    'replay-btn',
+    'overlay-overload',
+    'overload-restart-btn',
+    'overload-undo-btn',
+    'overlay-level-select',
+    'close-level-select-btn',
+    'level-grid-container'
+  ];
+
+  for (const id of requiredIds) {
+    assert(gameHtml.includes(`id="${id}"`), `Game DOM id="${id}" missing in games/circuit-connect/index.html`);
+  }
+
+  // Verify navigation back link to arcade exists
+  assert(gameHtml.includes('href="../../index.html"'), 'Circuit Connect must link back to arcade homepage');
+
+  // Verify vector thumbnail exists
+  const thumbPath = path.join(__dirname, 'assets/games/circuit-connect.svg');
+  assert(fs.existsSync(thumbPath), 'Circuit Connect vector thumbnail must exist');
+});
+
+// 28. Circuit Connect Logic, Port Topology, Multi-Channel BFS & Stars Engine
+it('Circuit Connect engine evaluates directional connectivity, bridge overpasses, and puzzle completion accurately', () => {
+  const engine = require('./games/circuit-connect/js/engine.js');
+  const {
+    DIRS,
+    TRACK_TYPES,
+    CIRCUIT_COLORS,
+    getConnectedPorts,
+    canConnect,
+    evaluateCircuit,
+    rotateTile,
+    calculateStars,
+    LEVELS,
+    createLevelGrid,
+    generateProceduralLevel
+  } = engine;
+
+  // 1. Compass directions & track types
+  assert.strictEqual(DIRS.NORTH, 0);
+  assert.strictEqual(DIRS.EAST, 1);
+  assert.strictEqual(DIRS.SOUTH, 2);
+  assert.strictEqual(DIRS.WEST, 3);
+  assert(TRACK_TYPES.BRIDGE && TRACK_TYPES.TERMINAL);
+
+  // 2. Port connectivity & rotations
+  const line0 = getConnectedPorts(TRACK_TYPES.LINE, 0);
+  assert.deepStrictEqual(line0, [0, 2], 'Line rot 0 connects North and South');
+  const line1 = getConnectedPorts(TRACK_TYPES.LINE, 1);
+  assert.deepStrictEqual(line1, [1, 3], 'Line rot 1 connects East and West');
+
+  const corner0 = getConnectedPorts(TRACK_TYPES.CORNER, 0);
+  assert.deepStrictEqual(corner0, [0, 1], 'Corner rot 0 connects North and East');
+
+  const cross = getConnectedPorts(TRACK_TYPES.CROSS, 0);
+  assert.deepStrictEqual(cross, [0, 1, 2, 3], 'Cross connects all 4 directions');
+
+  // 3. Bridge Overpass isolation
+  const bridge0 = getConnectedPorts(TRACK_TYPES.BRIDGE, 0);
+  assert.deepStrictEqual(bridge0.chA, [0, 2], 'Bridge Channel A connects N-S');
+  assert.deepStrictEqual(bridge0.chB, [1, 3], 'Bridge Channel B connects E-W');
+
+  // 4. Neighbor Connection Evaluation
+  const tileNorth = { type: TRACK_TYPES.LINE, rotation: 0 };
+  const tileSouth = { type: TRACK_TYPES.LINE, rotation: 0 };
+  assert.strictEqual(canConnect(tileNorth, tileSouth, DIRS.SOUTH), true, 'Two aligned vertical lines connect');
+
+  const misalignedTile = { type: TRACK_TYPES.LINE, rotation: 1 };
+  assert.strictEqual(canConnect(tileNorth, misalignedTile, DIRS.SOUTH), false, 'Vertical and horizontal lines do not connect');
+
+  // 5. Tile rotation
+  const grid = [
+    [
+      { type: TRACK_TYPES.LINE, rotation: 0, fixed: false },
+      { type: TRACK_TYPES.TERMINAL, rotation: 1, fixed: true }
+    ]
+  ];
+  assert.strictEqual(rotateTile(grid, 0, 0, 1), true, 'Non-fixed tile rotates');
+  assert.strictEqual(grid[0][0].rotation, 1, 'Rotation increments to 1');
+  assert.strictEqual(rotateTile(grid, 0, 1, 1), false, 'Fixed station cannot rotate');
+  assert.strictEqual(grid[0][1].rotation, 1, 'Fixed station stays at rotation 1');
+
+  // 6. Circuit Solvability & BFS Traversal
+  // Create simple 2-tile solved circuit: Source -> Line -> Target
+  const simpleBoard = [
+    [
+      { type: TRACK_TYPES.TERMINAL, rotation: 1, isSource: true, color: CIRCUIT_COLORS.CYAN, channelId: 'c1' },
+      { type: TRACK_TYPES.LINE, rotation: 1 },
+      { type: TRACK_TYPES.TERMINAL, rotation: 3, isSource: false, color: CIRCUIT_COLORS.CYAN, channelId: 'c1' }
+    ]
+  ];
+  const evalSolved = evaluateCircuit(simpleBoard, 1, 3);
+  assert.strictEqual(evalSolved.isSolved, true, 'Fully connected circuit must evaluate as solved');
+  assert.strictEqual(evalSolved.connectedTargets, 1, 'Target terminal reached');
+  assert.strictEqual(evalSolved.energizedTiles.size, 3, 'All 3 tiles energized');
+
+  // Break circuit by rotating the middle line
+  simpleBoard[0][1].rotation = 0; // Turn vertical
+  const evalBroken = evaluateCircuit(simpleBoard, 1, 3);
+  assert.strictEqual(evalBroken.isSolved, false, 'Broken path must not solve circuit');
+  assert.strictEqual(evalBroken.connectedTargets, 0, 'Target terminal not reached');
+
+  // 7. Star Efficiency
+  assert.strictEqual(calculateStars(4, 4), 3, 'Completing within par gives 3 stars');
+  assert.strictEqual(calculateStars(6, 4), 2, 'Completing within near-par gives 2 stars');
+  assert.strictEqual(calculateStars(11, 4), 1, 'Completing within limit gives 1 star');
+
+  // 8. Level catalogs & Procedural Level Generation
+  assert(LEVELS.length >= 15, 'Must contain at least 15 progressive levels');
+  const procLevel = generateProceduralLevel(4, 4, 2, true);
+  assert.strictEqual(procLevel.rows, 4);
+  assert.strictEqual(procLevel.cols, 4);
+  assert.strictEqual(procLevel.tiles.length, 16);
+});
+
+// 29. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });

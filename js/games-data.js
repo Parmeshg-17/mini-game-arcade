@@ -133,6 +133,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/stack-rush.svg',
     controlsSummary: 'Tap Screen / Click / Spacebar to Drop • Instant One-Touch Restart • P to Pause • R to Restart • M to Mute',
     features: ['One-Button Gameplay', 'Satisfying 3D Trimming', 'Ascending Chime Combos', 'Personal Best & Instant Restart']
+  },
+  {
+    id: 'circuit-connect',
+    title: 'Circuit Connect',
+    category: 'Puzzle',
+    tags: ['puzzle', 'circuit', 'logic', 'connect', 'rotate', 'wire', 'grid', 'cyber', 'brain'],
+    badge: 'New',
+    tagline: 'Rotate tiles. Bridge overpasses. Power the grid.',
+    description: 'Rotate tiles and connect matching terminals to complete the electrical circuit before moves run out. Features 25+ progressive levels, multi-color power conduits, insulated bridge overpasses, procedural level generator, star efficiency ratings, and locally saved progression.',
+    route: 'games/circuit-connect/index.html',
+    thumbnail: 'assets/games/circuit-connect.svg',
+    controlsSummary: 'Click / Tap to Rotate Clockwise • Right-Click / Shift+Click for Counter-Clockwise • Arrow Keys / WASD to Select • Space to Rotate • U to Undo • R to Restart',
+    features: ['25+ Configurable Levels', 'Bridge Overpasses & Multi-Color', 'Efficiency Star Ratings', 'Progress Saved Locally']
   }
 ];
 
