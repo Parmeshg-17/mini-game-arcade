@@ -3,14 +3,226 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mini Game Arcade — Small Games. Big Replay Energy.</title>
-  <meta name="description" content="Discover quick, original browser games built for instant fun. No downloads, no installations — just open, play, and beat your best score.">
+  <title>Free Online Arcade Games | Mini Game Arcade</title>
+  <meta name="description" content="Play free online arcade games instantly at Mini Game Arcade. Slice fruit in Citrus Blitz, chase high scores, and discover fun browser games on desktop and mobile.">
+  <link rel="canonical" href="https://mini-game-arcade-coral.vercel.app/">
   <meta name="theme-color" content="#10120f">
 
   <!-- OpenGraph -->
-  <meta property="og:title" content="Mini Game Arcade — Small Games. Big Replay Energy.">
-  <meta property="og:description" content="Quick sessions. Original games. One more round. Playable free on desktop, tablet, and mobile.">
+  <meta property="og:site_name" content="Mini Game Arcade">
+  <meta property="og:title" content="Free Online Arcade Games | Mini Game Arcade">
+  <meta property="og:description" content="Play free online arcade games instantly at Mini Game Arcade. Slice fruit in Citrus Blitz, chase high scores, and discover fun browser games on desktop and mobile.">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mini-game-arcade-coral.vercel.app/">
+  <meta property="og:image" content="https://mini-game-arcade-coral.vercel.app/assets/games/dashverse.svg">
+  <meta property="og:image:alt" content="Mini Game Arcade Free Online Games Catalog">
+  <meta property="og:image:width" content="640">
+  <meta property="og:image:height" content="360">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Free Online Arcade Games | Mini Game Arcade">
+  <meta name="twitter:description" content="Play free online arcade games instantly at Mini Game Arcade. Slice fruit in Citrus Blitz, chase high scores, and discover fun browser games on desktop and mobile.">
+  <meta name="twitter:image" content="https://mini-game-arcade-coral.vercel.app/assets/games/dashverse.svg">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://mini-game-arcade-coral.vercel.app/#website",
+      "url": "https://mini-game-arcade-coral.vercel.app/",
+      "name": "Mini Game Arcade",
+      "description": "Play free online arcade games instantly in your browser with zero downloads.",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://mini-game-arcade-coral.vercel.app/#organization",
+      "name": "Mini Game Arcade",
+      "url": "https://mini-game-arcade-coral.vercel.app/",
+      "logo": "https://mini-game-arcade-coral.vercel.app/assets/games/citrus-blitz.svg"
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://mini-game-arcade-coral.vercel.app/#games-list",
+      "name": "Free Playable Browser Games",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Citrus Blitz",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/citrus-blitz",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/citrus-blitz.svg",
+            "genre": "Arcade",
+            "gamePlatform": "Web Browser",
+            "operatingSystem": "Any",
+            "description": "Slice fruit, avoid bombs, and build your highest score in a fast-paced browser arcade challenge. Engineered with 100% procedural Canvas 2D physics, dynamic blade swipe trails, and synthesized Web Audio effects."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Tic Tac Toe",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/tic-tac-toe",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/tic-tac-toe.svg",
+            "genre": "Puzzle",
+            "gamePlatform": "Web Browser",
+            "operatingSystem": "Any",
+            "description": "Challenge the unbeatable Mastermind Bot or play head-to-head 2-player pass & play on the same device. Features synthesized arcade audio, laser strike animations, match timer, move counter, and persistent scoreboard."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Memory Match",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/memory-match",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/memory-match.svg",
+            "genre": "Casual",
+            "gamePlatform": "Web Browser",
+            "operatingSystem": "Any",
+            "description": "Challenge your visual recall across Easy (8 cards), Medium (16 cards), and Hard (24 cards) modes. Features 3D card-flip animations, synthesized Web Audio effects, moves counter, match timer, and star ratings."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Brick Breaker",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/brick-breaker",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/brick-breaker.svg",
+            "genre": "Action",
+            "gamePlatform": "Web Browser",
+            "operatingSystem": "Any",
+            "description": "A responsive retro-arcade breakout experience engineered with 100% Canvas 2D physics. Features angle-deflecting paddle rebounds, multi-ball chaos, expanding paddles, particle shatter bursts, and combo score multipliers."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Bubble Pop",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/bubble-pop",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/bubble-pop.svg",
+            "genre": "Casual",
+            "gamePlatform": "Web Browser",
+            "operatingSystem": "Any",
+            "description": "A classic arcade bubble shooter featuring reflective laser aiming, hexagonal grid snapping, Match-3 bursting, and falling island avalanches. Aim ricochet trick shots off side walls, swap colors, and deploy power boosters."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 6,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Space Dodge",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/space-dodge",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/space-dodge.svg",
+            "genre": "Action",
+            "gamePlatform": "Web Browser",
+            "operatingSystem": "Any",
+            "description": "Pilot an agile cyber starship through hazardous asteroid belts, dodging plasma comets and space mines. Squeeze past cosmic debris for near-miss bonuses, gather golden crystals, deploy kinetic energy shields, and trigger devastating EMP shockwaves across 3 progressive sectors or Endless Hyperspace."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 7,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Number Puzzle",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/number-puzzle",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/number-puzzle.svg",
+            "genre": "Puzzle",
+            "gamePlatform": "Web Browser",
+            "operatingSystem": "Any",
+            "description": "The definitive classic 15-puzzle sliding challenge. Slide adjacent numbered tiles into the empty space to arrange them in numerical order from 1 to 15 with the empty slot in the bottom-right corner. Features 3x3, 4x4, and 5x5 grid modes with move counters and star ratings."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 8,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Tap Challenge",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/tap-challenge",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/tap-challenge.svg",
+            "genre": "Arcade",
+            "gamePlatform": "Web Browser",
+            "operatingSystem": "Any",
+            "description": "Test your reaction speed, precision, and finger agility in this high-octane tap arena. Features 3 exciting game modes: Reflex Rush (30s target reaction), Number Sprint (speed 1–16 sequence rush), and CPS Frenzy (10s click speed test) with combo multipliers and star ratings."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 9,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Block Puzzle",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/block-puzzle",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/block-puzzle.svg",
+            "genre": "Puzzle",
+            "gamePlatform": "Web Browser",
+            "operatingSystem": "Any",
+            "description": "The definitive 8×8 block puzzle experience. Strategically place polyomino pieces from your dock to clear full horizontal rows and vertical columns. Features Classic Endless, 10-Line Target Challenge, and 90-Second Timed Blitz with combo multipliers and high score saving."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 10,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Stack Rush",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/stack-rush",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/stack-rush.svg",
+            "genre": "Arcade",
+            "gamePlatform": "Web Browser",
+            "operatingSystem": "Any",
+            "description": "Blocks glide horizontally across alternating 3D axes. Tap, click, or press Space to drop each block and build the tallest tower possible. Poorly aligned blocks get trimmed with realistic falling debris physics, making each subsequent move harder. Features ascending chime combos, particle sparkle bursts, increasing speed, and instant restart."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 11,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Circuit Connect",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/circuit-connect",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/circuit-connect.svg",
+            "genre": "Puzzle",
+            "gamePlatform": "Web Browser",
+            "operatingSystem": "Any",
+            "description": "Draw continuous glowing paths between matching colored neon dots across the grid. Every single cell on the board must be filled without crossing wires to complete the puzzle! Features 30 progressive handcrafted levels (5x5 to 8x8), smart hint solver, 3-star efficiency ratings, and local progression."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 12,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Dashverse",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/dashverse",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/dashverse.svg",
+            "genre": "Action",
+            "gamePlatform": "Web Browser",
+            "operatingSystem": "Any",
+            "description": "Embark on a high-octane parkour adventure through a neon-lit cyber metropolis. As Dash, vault chasms, double jump over roof vents, slide under overhead laser barriers, collect data shards, unlock cyber couriers, and complete mission-based deliveries."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
 
   <!-- Google Fonts: Space Grotesk (Headings) & Plus Jakarta Sans (Body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -65,12 +277,12 @@
         </div>
 
         <h1 class="hero-title">
-          Small Games.<br>
-          <span class="hero-title-highlight">Big Replay Energy.</span>
+          Free Online Arcade Games.<br>
+          <span class="hero-title-highlight">Small Games. Big Replay Energy.</span>
         </h1>
 
         <p class="hero-lead">
-          Discover quick, original browser games built for instant fun. No downloads, no installations — just open, play, and beat your best score.
+          Play free online arcade games instantly in your browser with zero downloads. Slice juicy fruit in Citrus Blitz, sprint across neon rooftops in Dashverse, stack 3D blocks in Stack Rush, or challenge your mind with logic puzzles on desktop and mobile.
         </p>
 
         <div class="hero-actions">
@@ -164,7 +376,7 @@
         <!-- Game 1: Citrus Blitz -->
         <article class="arcade-card" data-game-id="citrus-blitz">
           <a href="games/citrus-blitz/index.html" class="card-media-wrapper" aria-label="Play Citrus Blitz">
-            <img src="assets/games/citrus-blitz.svg" alt="Citrus Blitz original gameplay illustration" class="card-thumb" loading="lazy" />
+            <img src="assets/games/citrus-blitz.svg" alt="Citrus Blitz original gameplay illustration" class="card-thumb" width="480" height="270" loading="lazy" />
             <div class="card-badges">
               <span class="badge-category">Arcade</span>
               <span class="badge-status">Featured</span>
@@ -207,7 +419,7 @@
         <!-- Game 2: Tic Tac Toe -->
         <article class="arcade-card" data-game-id="tic-tac-toe">
           <a href="games/tic-tac-toe/index.html" class="card-media-wrapper" aria-label="Play Tic Tac Toe">
-            <img src="assets/games/tic-tac-toe.svg" alt="Tic Tac Toe original gameplay illustration" class="card-thumb" loading="lazy" />
+            <img src="assets/games/tic-tac-toe.svg" alt="Tic Tac Toe original gameplay illustration" class="card-thumb" width="480" height="270" loading="lazy" />
             <div class="card-badges">
               <span class="badge-category">Puzzle</span>
               <span class="badge-status">New</span>
@@ -250,7 +462,7 @@
         <!-- Game 3: Memory Match -->
         <article class="arcade-card" data-game-id="memory-match">
           <a href="games/memory-match/index.html" class="card-media-wrapper" aria-label="Play Memory Match">
-            <img src="assets/games/memory-match.svg" alt="Memory Match original gameplay illustration" class="card-thumb" loading="lazy" />
+            <img src="assets/games/memory-match.svg" alt="Memory Match original gameplay illustration" class="card-thumb" width="480" height="270" loading="lazy" />
             <div class="card-badges">
               <span class="badge-category">Casual</span>
               <span class="badge-status">New</span>
@@ -293,7 +505,7 @@
         <!-- Game 4: Brick Breaker -->
         <article class="arcade-card" data-game-id="brick-breaker">
           <a href="games/brick-breaker/index.html" class="card-media-wrapper" aria-label="Play Brick Breaker">
-            <img src="assets/games/brick-breaker.svg" alt="Brick Breaker original gameplay illustration" class="card-thumb" loading="lazy" />
+            <img src="assets/games/brick-breaker.svg" alt="Brick Breaker original gameplay illustration" class="card-thumb" width="480" height="270" loading="lazy" />
             <div class="card-badges">
               <span class="badge-category">Action</span>
               <span class="badge-status">New</span>
@@ -336,7 +548,7 @@
         <!-- Game 5: Bubble Pop -->
         <article class="arcade-card" data-game-id="bubble-pop">
           <a href="games/bubble-pop/index.html" class="card-media-wrapper" aria-label="Play Bubble Pop">
-            <img src="assets/games/bubble-pop.svg" alt="Bubble Pop original gameplay illustration" class="card-thumb" loading="lazy" />
+            <img src="assets/games/bubble-pop.svg" alt="Bubble Pop original gameplay illustration" class="card-thumb" width="480" height="270" loading="lazy" />
             <div class="card-badges">
               <span class="badge-category">Casual</span>
               <span class="badge-status">New</span>
@@ -379,7 +591,7 @@
         <!-- Game 6: Space Dodge -->
         <article class="arcade-card" data-game-id="space-dodge">
           <a href="games/space-dodge/index.html" class="card-media-wrapper" aria-label="Play Space Dodge">
-            <img src="assets/games/space-dodge.svg" alt="Space Dodge original gameplay illustration" class="card-thumb" loading="lazy" />
+            <img src="assets/games/space-dodge.svg" alt="Space Dodge original gameplay illustration" class="card-thumb" width="480" height="270" loading="lazy" />
             <div class="card-badges">
               <span class="badge-category">Action</span>
               <span class="badge-status">New</span>
@@ -422,7 +634,7 @@
         <!-- Game 7: Number Puzzle -->
         <article class="arcade-card" data-game-id="number-puzzle">
           <a href="games/number-puzzle/index.html" class="card-media-wrapper" aria-label="Play Number Puzzle">
-            <img src="assets/games/number-puzzle.svg" alt="Number Puzzle original gameplay illustration" class="card-thumb" loading="lazy" />
+            <img src="assets/games/number-puzzle.svg" alt="Number Puzzle original gameplay illustration" class="card-thumb" width="480" height="270" loading="lazy" />
             <div class="card-badges">
               <span class="badge-category">Puzzle</span>
               <span class="badge-status">New</span>
@@ -465,7 +677,7 @@
         <!-- Game 8: Tap Challenge -->
         <article class="arcade-card" data-game-id="tap-challenge">
           <a href="games/tap-challenge/index.html" class="card-media-wrapper" aria-label="Play Tap Challenge">
-            <img src="assets/games/tap-challenge.svg" alt="Tap Challenge original gameplay illustration" class="card-thumb" loading="lazy" />
+            <img src="assets/games/tap-challenge.svg" alt="Tap Challenge original gameplay illustration" class="card-thumb" width="480" height="270" loading="lazy" />
             <div class="card-badges">
               <span class="badge-category">Arcade</span>
               <span class="badge-status">New</span>
@@ -508,7 +720,7 @@
         <!-- Game 9: Block Puzzle -->
         <article class="arcade-card" data-game-id="block-puzzle">
           <a href="games/block-puzzle/index.html" class="card-media-wrapper" aria-label="Play Block Puzzle">
-            <img src="assets/games/block-puzzle.svg" alt="Block Puzzle original gameplay illustration" class="card-thumb" loading="lazy" />
+            <img src="assets/games/block-puzzle.svg" alt="Block Puzzle original gameplay illustration" class="card-thumb" width="480" height="270" loading="lazy" />
             <div class="card-badges">
               <span class="badge-category">Puzzle</span>
               <span class="badge-status">New</span>
@@ -551,7 +763,7 @@
         <!-- Game 10: Stack Rush -->
         <article class="arcade-card" data-game-id="stack-rush">
           <a href="games/stack-rush/index.html" class="card-media-wrapper" aria-label="Play Stack Rush">
-            <img src="assets/games/stack-rush.svg" alt="Stack Rush original 3D slicing stacker gameplay illustration" class="card-thumb" loading="lazy" />
+            <img src="assets/games/stack-rush.svg" alt="Stack Rush original 3D slicing stacker gameplay illustration" class="card-thumb" width="480" height="270" loading="lazy" />
             <div class="card-badges">
               <span class="badge-category">Arcade</span>
               <span class="badge-status">New</span>
@@ -594,7 +806,7 @@
         <!-- Game 11: Circuit Connect -->
         <article class="arcade-card" data-game-id="circuit-connect">
           <a href="games/circuit-connect/index.html" class="card-media-wrapper" aria-label="Play Circuit Connect">
-            <img src="assets/games/circuit-connect.svg" alt="Circuit Connect original logic circuit puzzle illustration" class="card-thumb" loading="lazy" />
+            <img src="assets/games/circuit-connect.svg" alt="Circuit Connect original logic circuit puzzle illustration" class="card-thumb" width="480" height="270" loading="lazy" />
             <div class="card-badges">
               <span class="badge-category">Puzzle</span>
               <span class="badge-status">New</span>
@@ -629,6 +841,45 @@
               <a href="games/circuit-connect/index.html" class="btn-play-game">
                 <span>Play Circuit Connect</span>
                 <span class="play-arrow">→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Game 12: Dashverse -->
+        <article class="arcade-card" data-game-id="dashverse">
+          <a href="games/dashverse/index.html" class="card-media-wrapper" aria-label="Play Dashverse">
+            <img src="assets/games/dashverse.svg" alt="Dashverse cyberpunk rooftop parkour runner game illustration" class="card-thumb" width="480" height="270" loading="lazy" />
+            <div class="card-badges">
+              <span class="badge-category">Action</span>
+              <span class="badge-status">New</span>
+            </div>
+            <div class="card-hover-overlay">
+              <span class="hover-play-pill">Play Now →</span>
+            </div>
+          </a>
+
+          <div class="card-body">
+            <div class="card-header-row">
+              <h3 class="card-title">Dashverse</h3>
+              <span class="card-session-tag">Action & Runner</span>
+            </div>
+
+            <p class="card-tagline">Vault rooftops. Slide lasers. Deliver packages.</p>
+            <p class="card-description">Embark on a high-octane parkour adventure through a neon-lit cyber metropolis. As Dash, vault chasms, double jump over roof vents, slide under overhead laser barriers, collect data shards, unlock cyber couriers, and complete mission-based deliveries.</p>
+
+            <div class="card-features">
+              <span class="card-feature-pill">Endless Rooftop Runner</span>
+              <span class="card-feature-pill">Unlockable Runners & Perks</span>
+              <span class="card-feature-pill">Missions & Daily Challenges</span>
+              <span class="card-feature-pill">Personal Best & Double Jump</span>
+            </div>
+
+            <div class="card-footer-row">
+              <span class="card-control-hint">Controls: Up / W / Space Jump • Down / S Slide • Tap / Swipe</span>
+              <a href="games/dashverse/index.html" class="card-play-btn" aria-label="Play Dashverse now">
+                <span>Play</span>
+                <span>→</span>
               </a>
             </div>
           </div>

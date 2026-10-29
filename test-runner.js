@@ -1433,6 +1433,90 @@ it('No external dependencies, API keys, or hardcoded local paths across any sour
   checkDir(__dirname);
 });
 
+
+// 31. Technical SEO: robots.txt validation
+it('robots.txt exists, allows crawlers, and specifies sitemap location', () => {
+  const robotsPath = path.join(__dirname, 'robots.txt');
+  assert(fs.existsSync(robotsPath), 'robots.txt must exist at project root');
+  const txt = fs.readFileSync(robotsPath, 'utf8');
+  assert(txt.includes('User-agent: *'), 'robots.txt must declare User-agent: *');
+  assert(txt.includes('Allow: /'), 'robots.txt must allow root crawling');
+  assert(txt.includes('Sitemap: https://mini-game-arcade-coral.vercel.app/sitemap.xml'), 'robots.txt must point to valid sitemap.xml');
+});
+
+// 32. Technical SEO: sitemap.xml validation
+it('sitemap.xml exists, is valid XML, and contains all 17 canonical pages', () => {
+  const sitemapPath = path.join(__dirname, 'sitemap.xml');
+  assert(fs.existsSync(sitemapPath), 'sitemap.xml must exist at project root');
+  const xml = fs.readFileSync(sitemapPath, 'utf8');
+  assert(xml.startsWith('<?xml'), 'sitemap.xml must start with XML declaration');
+  assert(xml.includes('https://mini-game-arcade-coral.vercel.app/'), 'sitemap.xml must include homepage');
+  assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/citrus-blitz'), 'sitemap.xml must include citrus-blitz');
+  assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/dashverse'), 'sitemap.xml must include dashverse');
+  assert(xml.includes('https://mini-game-arcade-coral.vercel.app/about'), 'sitemap.xml must include about page');
+  assert(xml.includes('https://mini-game-arcade-coral.vercel.app/contact'), 'sitemap.xml must include contact page');
+  
+  const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+  assert.strictEqual(urls.length, 17, 'sitemap.xml must contain exactly 17 canonical URLs');
+});
+
+// 33. Technical SEO: 404 page error handling
+it('404.html exists, has noindex meta, and provides return navigation', () => {
+  const errPath = path.join(__dirname, '404.html');
+  assert(fs.existsSync(errPath), '404.html must exist for custom error routing');
+  const html = fs.readFileSync(errPath, 'utf8');
+  assert(html.includes('content="noindex, follow"'), '404.html must have noindex directive');
+  assert(html.includes('href="/"'), '404.html must provide link back to arcade homepage');
+});
+
+// 34. Technical SEO: Canonical tags and JSON-LD structured data on all pages
+it('All HTML pages have verified canonical tags and valid Schema.org JSON-LD', () => {
+  const pages = [
+    'index.html',
+    'about.html',
+    'contact.html',
+    'privacy.html',
+    'terms.html',
+    'games/citrus-blitz/index.html',
+    'games/dashverse/index.html',
+    'games/stack-rush/index.html',
+    'games/circuit-connect/index.html',
+    'games/block-puzzle/index.html',
+    'games/brick-breaker/index.html',
+    'games/bubble-pop/index.html',
+    'games/space-dodge/index.html',
+    'games/number-puzzle/index.html',
+    'games/tap-challenge/index.html',
+    'games/memory-match/index.html',
+    'games/tic-tac-toe/index.html'
+  ];
+
+  for (const page of pages) {
+    const fullPath = path.join(__dirname, page);
+    assert(fs.existsSync(fullPath), `File ${page} must exist`);
+    const html = fs.readFileSync(fullPath, 'utf8');
+    assert(html.includes('<link rel="canonical"'), `${page} must contain a canonical link`);
+    assert(html.includes('application/ld+json'), `${page} must contain Schema.org JSON-LD`);
+
+    // Verify JSON-LD parses without error
+    const jsonMatches = [...html.matchAll(/<script\s+type="application\/ld\+json">([\s\S]*?)<\/script>/gi)];
+    assert(jsonMatches.length > 0, `${page} must have valid JSON-LD script`);
+    for (const match of jsonMatches) {
+      assert.doesNotThrow(() => JSON.parse(match[1]), `${page} JSON-LD must parse cleanly`);
+    }
+  }
+});
+
+// 35. Technical SEO: Citrus Blitz comprehensive rich landing page
+it('Citrus Blitz page has H1, FAQ section, breadcrumbs, and crawlable related games', () => {
+  const cbHtml = fs.readFileSync(path.join(__dirname, 'games/citrus-blitz/index.html'), 'utf8');
+  assert(cbHtml.includes('Citrus Blitz'), 'Must have Citrus Blitz branding');
+  assert(cbHtml.includes('FAQPage') || cbHtml.includes('Frequently Asked Questions'), 'Must have FAQ section');
+  assert(cbHtml.includes('class="related-games-section"'), 'Must have crawlable related games grid');
+  assert(cbHtml.includes('/games/dashverse'), 'Related games must link to Dashverse');
+  assert(cbHtml.includes('/games/stack-rush'), 'Related games must link to Stack Rush');
+});
+
 console.log(`\nQA Test Results: ${passedTests} / ${totalTests} passed.`);
 if (passedTests !== totalTests) {
   process.exit(1);

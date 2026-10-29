@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Page Not Found | Mini Game Arcade | Mini Game Arcade</title>
+  <meta name="description" content="The page or game you are looking for does not exist or has been moved. Explore our library of free browser arcade games.">
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#10120f">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/arcade.css">
+  <style>
+    .error-container {
+      max-width: 680px;
+      margin: 80px auto;
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .error-glitch-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--accent-coral, #ff4757);
+      background: rgba(255, 71, 87, 0.1);
+      border: 1px solid rgba(255, 71, 87, 0.3);
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 24px;
+      letter-spacing: 0.08em;
+    }
+    .error-code {
+      font-family: var(--font-display);
+      font-size: clamp(4rem, 12vw, 7rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 16px;
+      text-shadow: 0 0 28px rgba(213, 255, 85, 0.35);
+    }
+    .error-heading {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+    .error-desc {
+      color: var(--text-muted);
+      font-size: 1.0625rem;
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+    .error-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+    .popular-games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      text-align: left;
+      margin-top: 24px;
+    }
+    .mini-game-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--bg-surface, #161a15);
+      border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+      border-radius: var(--radius-xs, 6px);
+      color: var(--text-primary);
+      text-decoration: none;
+      font-family: var(--font-display);
+      font-size: 0.9375rem;
+      font-weight: 700;
+      transition: all 0.15s ease;
+    }
+    .mini-game-link:hover {
+      border-color: var(--accent-lime);
+      color: var(--accent-lime);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="/" class="brand-logo" aria-label="Mini Game Arcade Home">
+        <svg class="brand-emblem-svg" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="2" y="2" width="24" height="24" rx="4" fill="#171A16" stroke="#F4F2E9" stroke-width="1.6"/>
+          <path d="M7 14H21M14 7V21" stroke="#F4F2E9" stroke-width="1.6" stroke-linecap="round"/>
+          <rect x="11.5" y="11.5" width="5" height="5" fill="#D5FF55"/>
+          <circle cx="20" cy="8" r="1.5" fill="#FF784F"/>
+        </svg>
+        <span class="brand-text">MINI GAME <span class="brand-slash">//</span> <span class="brand-tag">ARCADE</span></span>
+      </a>
+
+      <nav class="main-nav" aria-label="Main Navigation">
+        <a href="/" class="nav-link">Games</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/games/citrus-blitz" class="nav-cta">
+          <span class="nav-cta-pip"></span>
+          <span>Play Citrus Blitz</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Error Content -->
+  <main class="page-main">
+    <div class="error-container">
+      <div class="error-glitch-badge">
+        <span>●</span>
+        <span>ERROR // ROUTE_NOT_FOUND</span>
+      </div>
+
+      <div class="error-code">404</div>
+      <h1 class="error-heading">Level Not Found</h1>
+      <p class="error-desc">The stage or file you requested does not exist or has been relocated. Head back to the main arcade lobby or jump directly into one of our playable games below.</p>
+
+      <div class="error-actions">
+        <a href="/" class="btn-primary">
+          <span>Return to Arcade Lobby</span>
+          <span>→</span>
+        </a>
+        <a href="/games/citrus-blitz" class="btn-secondary">
+          <span>Play Citrus Blitz</span>
+        </a>
+      </div>
+
+      <h2 style="font-family: var(--font-display); font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; text-align: left;">Popular Arcade Games</h2>
+      <div class="popular-games-grid">
+        <a href="/games/citrus-blitz" class="mini-game-link">
+          <span>🍉</span>
+          <span>Citrus Blitz</span>
+        </a>
+        <a href="/games/dashverse" class="mini-game-link">
+          <span>🏃</span>
+          <span>Dashverse</span>
+        </a>
+        <a href="/games/stack-rush" class="mini-game-link">
+          <span>🏗️</span>
+          <span>Stack Rush</span>
+        </a>
+        <a href="/games/brick-breaker" class="mini-game-link">
+          <span>🧱</span>
+          <span>Brick Breaker</span>
+        </a>
+        <a href="/games/circuit-connect" class="mini-game-link">
+          <span>💡</span>
+          <span>Circuit Connect</span>
+        </a>
+        <a href="/games/space-dodge" class="mini-game-link">
+          <span>🚀</span>
+          <span>Space Dodge</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-bottom">
+        <p class="copyright">&copy; 2026 Mini Game Arcade. All games are original and free to play.</p>
+        <div class="footer-sublinks">
+          <a href="/">Games</a>
+          <a href="/about">About</a>
+          <a href="/contact">Contact</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
