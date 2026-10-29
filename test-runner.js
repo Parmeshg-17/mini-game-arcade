@@ -163,11 +163,12 @@ it('Search and category filter logic filters games correctly', () => {
   assert(res5.some(g => g.id === 'memory-match'));
   assert(res5.some(g => g.id === 'bubble-pop'));
 
-  // Action category filter matches Brick Breaker and Space Dodge
+  // Action category filter matches Brick Breaker, Space Dodge, and Dashverse
   const res6 = filterGames('', 'Action');
-  assert.strictEqual(res6.length, 2);
+  assert.strictEqual(res6.length, 3);
   assert(res6.some(g => g.id === 'brick-breaker'));
   assert(res6.some(g => g.id === 'space-dodge'));
+  assert(res6.some(g => g.id === 'dashverse'));
 
   // Tag search for brick
   const res7 = filterGames('brick', 'All');
@@ -1242,7 +1243,149 @@ it('Circuit Connect engine evaluates directional connectivity, bridge overpasses
 
 });
 
-// 29. Security & Clean Static Deployment Verification
+// 29. Dedicated Dashverse Playable Page DOM & Asset Integrity
+it('Dedicated Dashverse page (games/dashverse/index.html) has all DOM elements required by game.js', () => {
+  const gameHtmlPath = path.join(__dirname, 'games/dashverse/index.html');
+  assert(fs.existsSync(gameHtmlPath), 'games/dashverse/index.html must exist');
+  const gameHtml = fs.readFileSync(gameHtmlPath, 'utf8');
+
+  const requiredIds = [
+    'dash-canvas',
+    'dist-display',
+    'shards-display',
+    'score-display',
+    'mult-display',
+    'runner-badge',
+    'best-display',
+    'missions-btn',
+    'shop-btn',
+    'pause-btn',
+    'audio-toggle-btn',
+    'audio-icon',
+    'btn-touch-slide',
+    'btn-touch-jump',
+    'overlay-start',
+    'start-btn',
+    'start-shop-btn',
+    'overlay-pause',
+    'resume-btn',
+    'pause-restart-btn',
+    'overlay-gameover',
+    'go-dist-val',
+    'go-shards-val',
+    'go-score-val',
+    'go-best-val',
+    'go-new-best-badge',
+    'go-missions-list',
+    'play-again-btn',
+    'go-shop-btn',
+    'overlay-shop',
+    'close-shop-btn',
+    'shop-grid',
+    'shop-coins-val',
+    'overlay-missions',
+    'close-missions-btn',
+    'missions-container',
+    'daily-date-display',
+    'daily-status-display'
+  ];
+
+  for (const id of requiredIds) {
+    assert(gameHtml.includes(`id="${id}"`), `Game DOM id="${id}" missing in games/dashverse/index.html`);
+  }
+
+  // Verify navigation back link to arcade exists
+  assert(gameHtml.includes('href="../../index.html"'), 'Dashverse must link back to arcade homepage');
+
+  // Verify vector thumbnail exists
+  const thumbPath = path.join(__dirname, 'assets/games/dashverse.svg');
+  assert(fs.existsSync(thumbPath), 'Dashverse vector thumbnail must exist');
+});
+
+// 30. Dashverse Parkour Physics, Jumping, Sliding Hitbox, Missions & Daily Engine
+it('Dashverse engine executes parkour jumps, double-jumps, dynamic sliding hitboxes, laser passes, and missions', () => {
+  const engine = require('./games/dashverse/js/engine.js');
+  const {
+    GRAVITY,
+    JUMP_FORCE,
+    DOUBLE_JUMP_FORCE,
+    GROUND_Y,
+    HITBOX,
+    HAZARDS,
+    PICKUPS,
+    CHARACTERS,
+    MISSIONS_CATALOG,
+    createGameState,
+    triggerJump,
+    triggerSlide,
+    getRunnerHitbox,
+    checkCollision,
+    updateGameState,
+    evaluateMissions,
+    getDailySeedDate
+  } = engine;
+
+  // 1. Constants & Characters verification
+  assert.strictEqual(CHARACTERS.length, 5, 'Must have 5 playable characters with perks');
+  assert(CHARACTERS.some(c => c.id === 'dash' && c.cost === 0), 'Dash is the default free runner');
+  assert(CHARACTERS.some(c => c.id === 'cipher' && c.magnetRadius > 100), 'Cipher has boosted magnet radius');
+  assert(CHARACTERS.some(c => c.id === 'volt' && c.hasShield), 'Volt starts with emergency shield');
+
+  // 2. Initial state
+  const state = createGameState('dash', false);
+  assert.strictEqual(state.status, 'ready');
+  assert.strictEqual(state.runner.isGrounded, true);
+  assert.strictEqual(state.character.id, 'dash');
+
+  // 3. Jump and Double Jump Physics
+  state.status = 'running';
+  const jumpRes = triggerJump(state);
+  assert.strictEqual(jumpRes.action, 'jump');
+  assert.strictEqual(state.runner.isGrounded, false);
+  assert(state.runner.vy < 0, 'Vertical velocity must be upward on jump');
+
+  // Second jump in air -> Double Jump
+  const djRes = triggerJump(state);
+  assert.strictEqual(djRes.action, 'double_jump');
+  assert.strictEqual(state.runner.canDoubleJump, false, 'Double jump consumed');
+
+  // Third jump attempt should fail
+  const failJump = triggerJump(state);
+  assert.strictEqual(failJump, false, 'Cannot triple jump');
+
+  // 4. Sliding & Dynamic Hitbox
+  state.runner.isGrounded = true;
+  state.runner.y = GROUND_Y - HITBOX.RUN.h;
+  const runBox = getRunnerHitbox(state.runner);
+  assert.strictEqual(runBox.h, HITBOX.RUN.h, 'Run hitbox height should be 56px');
+
+  triggerSlide(state);
+  assert.strictEqual(state.runner.isSliding, true);
+  const slideBox = getRunnerHitbox(state.runner);
+  assert.strictEqual(slideBox.h, HITBOX.SLIDE.h, 'Slide hitbox height should drop to 26px');
+
+  // 5. Laser Barrier avoidance when sliding vs running
+  // Laser hangs at roof.y - 70 with height 42 (Y: 290 to 332)
+  const laserBeam = { x: 100, y: GROUND_Y - 70, w: 30, h: 42 };
+  // When sliding, slideBox top is state.runner.y + 30 = (360 - 56) + 30 = 334 > 332 -> clears under!
+  assert.strictEqual(checkCollision(slideBox, laserBeam, 2), false, 'Sliding runner must duck cleanly under overhead laser');
+
+  // When standing/running, runBox top is 304 < 332 and bottom is 360 -> collides!
+  assert.strictEqual(checkCollision(runBox, laserBeam, 2), true, 'Standing runner collides with laser beam');
+
+  // 6. Mission Evaluation
+  const testStats = { distance: 550, shards: 60, slides: 8, packages: 3, doubleJumps: 12 };
+  const evaluated = evaluateMissions(MISSIONS_CATALOG.slice(0, 4), testStats);
+  assert.strictEqual(evaluated.length, 4);
+  assert.strictEqual(evaluated[0].isCompleted, true, '550m meets 300m goal');
+  assert.strictEqual(evaluated[1].isCompleted, true, '60 shards meets 40 goal');
+
+  // 7. Daily seed format
+  const seed = getDailySeedDate();
+  assert(/^\d{4}-\d{2}-\d{2}$/.test(seed), 'Daily seed must be valid YYYY-MM-DD date string');
+});
+
+// 31. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });

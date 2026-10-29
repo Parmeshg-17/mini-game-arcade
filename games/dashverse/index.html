@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Dashverse — Cyberpunk Parkour Rooftop Runner | Mini Game Arcade</title>
+  <meta name="description" content="Embark on a high-octane parkour adventure through a neon-lit cyber metropolis. Vault rooftops, slide under laser barriers, collect data shards, unlock runners, and deliver cyber packages!" />
+  <meta name="theme-color" content="#10120f" />
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="Dashverse — Neon Rooftop Parkour Runner" />
+  <meta property="og:description" content="Vault across towering rooftops, slide under laser barriers, and deliver mysterious packages in this fast-paced cyberpunk endless runner!" />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet" />
+
+  <!-- Root-relative stylesheet link with file:// fallback -->
+  <link rel="stylesheet" href="/games/dashverse/style.css" id="game-stylesheet" />
+  <script>
+    if (window.location.protocol === 'file:') {
+      const link = document.getElementById('game-stylesheet');
+      if (link) link.href = 'style.css';
+    }
+  </script>
+</head>
+<body class="game-page-body">
+
+  <!-- Top Sticky Navigation Bar -->
+  <nav class="arcade-nav-bar" aria-label="Game navigation">
+    <div class="nav-content-container">
+      <a href="../../index.html" class="back-link" aria-label="Return to Mini Game Arcade Homepage">
+        <span>←</span>
+        <span>Back to Arcade</span>
+      </a>
+
+      <div class="breadcrumbs" aria-label="Breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="bc-sep">/</span>
+        <a href="../../index.html#games-section">Games</a>
+        <span class="bc-sep">/</span>
+        <span class="bc-current">Dashverse</span>
+      </div>
+
+      <a href="#controls-guide" class="nav-guide-link">Controls & Rules</a>
+    </div>
+  </nav>
+
+  <!-- Main Stage Container -->
+  <main class="game-stage-wrapper">
+
+    <!-- Editorial Header -->
+    <header class="game-editorial-header">
+      <div class="game-eyebrow-row">
+        <span class="badge-arcade">ACTION // PARKOUR</span>
+        <span class="badge-tagline">NEON ROOFTOP RUSH</span>
+      </div>
+      <h1 class="game-title">Dashverse</h1>
+      <p class="game-subheading">Embark on a high-octane parkour adventure through a neon-lit city teeming with towering rooftops and digital billboards. Vault chasms, slide under laser security barriers, collect data shards, unlock agile couriers, and complete high-priority cyber deliveries!</p>
+    </header>
+
+    <!-- Arcade Play Card -->
+    <section class="arcade-play-card" id="dash-stage-card" aria-label="Interactive Dashverse Stage">
+
+      <!-- Match HUD Bar -->
+      <div class="match-hud-bar" role="region" aria-label="Match Status">
+        <div class="hud-group">
+          <span id="dist-display" class="hud-pill highlight-cyan">0m</span>
+          <span id="shards-display" class="hud-pill highlight-lime">0</span>
+          <span id="score-display" class="hud-pill">0</span>
+          <span id="mult-display" class="hud-pill highlight-gold">x1</span>
+          <span id="runner-badge" class="hud-pill">● Dash</span>
+          <span id="best-display" class="hud-pill">BEST: 0m</span>
+        </div>
+
+        <div class="hud-group">
+          <button id="missions-btn" class="ctrl-btn" type="button" aria-label="Missions & Daily Challenges" title="Missions">
+            <span>🎯</span>
+            <span>Missions</span>
+          </button>
+          <button id="shop-btn" class="ctrl-btn" type="button" aria-label="Runners Locker" title="Runners Locker">
+            <span>👕</span>
+            <span>Runners</span>
+          </button>
+          <button id="pause-btn" class="ctrl-btn" type="button" aria-label="Pause Game" title="Pause (P)">⏸</button>
+          <button id="audio-toggle-btn" class="audio-btn" type="button" aria-label="Toggle Sound" title="Sound Toggle (M)">
+            <span id="audio-icon">🔊</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas Stage Frame -->
+      <div class="dash-stage-container">
+        <canvas id="dash-canvas" class="dash-canvas" aria-label="Interactive Dashverse Rooftop Game Canvas"></canvas>
+
+        <!-- Overlay 1: Start / Ready Screen -->
+        <div id="overlay-start" class="stage-overlay show" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Ready to Dash?</h2>
+          <p class="overlay-subtitle">Run across neon rooftops, vault across sky chasms, slide under laser barriers, and deliver mysterious packages across the metropolis!</p>
+          <div class="hud-group" style="margin-top: 0.5rem;">
+            <button id="start-btn" class="btn-arcade-action" type="button">Start Run → (Space / Tap)</button>
+            <button id="start-shop-btn" class="btn-secondary-arcade" type="button">Runners Locker</button>
+          </div>
+        </div>
+
+        <!-- Overlay 2: Pause Screen -->
+        <div id="overlay-pause" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Run Paused</h2>
+          <p class="overlay-subtitle">Take a breather above the city skyline.</p>
+          <div class="hud-group">
+            <button id="resume-btn" class="btn-arcade-action" type="button">Resume Run</button>
+            <button id="pause-restart-btn" class="btn-secondary-arcade" type="button">Restart (R)</button>
+          </div>
+        </div>
+
+        <!-- Overlay 3: Game Over Screen -->
+        <div id="overlay-gameover" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Run Terminated!</h2>
+          <span id="go-new-best-badge" class="hud-pill highlight-gold" style="display:none;">★ NEW PERSONAL BEST! ★</span>
+          <div class="overlay-stats-grid">
+            <div class="stat-box">
+              <span class="stat-label">Distance Run</span>
+              <span id="go-dist-val" class="stat-val">0m</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Data Shards</span>
+              <span id="go-shards-val" class="stat-val">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Final Score</span>
+              <span id="go-score-val" class="stat-val">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">All-Time Best</span>
+              <span id="go-best-val" class="stat-val">0m</span>
+            </div>
+          </div>
+          <div id="go-missions-list" style="width:100%; max-width:380px; display:flex; flex-direction:column; gap:0.4rem;"></div>
+          <div class="hud-group" style="margin-top: 0.5rem;">
+            <button id="play-again-btn" class="btn-arcade-action" type="button">Run Again (Space / R)</button>
+            <button id="go-shop-btn" class="btn-secondary-arcade" type="button">Runners Locker</button>
+          </div>
+        </div>
+
+        <!-- Overlay 4: Character Locker / Shop Modal -->
+        <div id="overlay-shop" class="stage-overlay" role="dialog" aria-live="polite">
+          <div class="modal-container">
+            <div class="modal-header">
+              <h3 class="overlay-title" style="font-size: 1.25rem;">Runners Locker</h3>
+              <div class="hud-group">
+                <span class="hud-pill highlight-gold">Coins: <strong id="shop-coins-val">0</strong></span>
+                <button id="close-shop-btn" class="ctrl-btn" type="button">✕ Close</button>
+              </div>
+            </div>
+            <div id="shop-grid" class="shop-grid">
+              <!-- Dynamically populated by game.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Overlay 5: Missions & Daily Challenge Modal -->
+        <div id="overlay-missions" class="stage-overlay" role="dialog" aria-live="polite">
+          <div class="modal-container">
+            <div class="modal-header">
+              <h3 class="overlay-title" style="font-size: 1.25rem;">Missions &amp; Daily Challenge</h3>
+              <button id="close-missions-btn" class="ctrl-btn" type="button">✕ Close</button>
+            </div>
+            <div class="mission-item-card" style="border-color: var(--accent-gold); background: var(--bg-surface);">
+              <div class="mission-item-header">
+                <span>📅 Daily City Rush (<span id="daily-date-display">Today</span>)</span>
+                <span class="mission-reward">2x Bonus Multiplier</span>
+              </div>
+              <p class="char-desc" style="margin-top: 0.2rem;">Fixed rooftop sector. Reach today's courier target for double rewards!</p>
+              <div id="daily-status-display" class="highlight-gold" style="font-family: var(--font-mono); font-size: 0.8125rem; margin-top: 0.4rem;">Target: 800m • Multiplier: 2x</div>
+            </div>
+            <div id="missions-container" class="missions-container">
+              <!-- Dynamically populated by game.js -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Mobile On-Screen Action Touch Buttons -->
+      <div class="touch-action-row" aria-label="Mobile Touch Action Buttons">
+        <button id="btn-touch-slide" class="btn-touch-action touch-slide" type="button" aria-label="Slide or Roll under obstacles">
+          <span>▼</span>
+          <span>SLIDE</span>
+        </button>
+        <button id="btn-touch-jump" class="btn-touch-action touch-jump" type="button" aria-label="Jump or Double Jump across rooftops">
+          <span>▲</span>
+          <span>JUMP</span>
+        </button>
+      </div>
+
+      <!-- Action Bar -->
+      <div class="dash-action-bar">
+        <button id="btn-quick-jump" class="btn-arcade-action" type="button" onclick="document.getElementById('btn-touch-jump').click()">
+          <span>▲</span>
+          <span>Jump / Double Jump (W / Space)</span>
+        </button>
+        <button id="btn-quick-slide" class="btn-secondary-arcade" type="button" onclick="document.getElementById('btn-touch-slide').click()">
+          <span>▼</span>
+          <span>Slide (S / Down)</span>
+        </button>
+        <button id="btn-quick-shop" class="btn-secondary-arcade" type="button" onclick="document.getElementById('shop-btn').click()">
+          <span>👕</span>
+          <span>Runners</span>
+        </button>
+        <button id="btn-quick-missions" class="btn-secondary-arcade" type="button" onclick="document.getElementById('missions-btn').click()">
+          <span>🎯</span>
+          <span>Missions</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Controls & Rules Guide -->
+    <section class="controls-guide-section" id="controls-guide" aria-label="Game Rules & Controls Guide">
+      <h2 class="guide-title">How to Play & Controls</h2>
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>🏃</span>
+            <span>Vault &amp; Double Jump</span>
+          </div>
+          <p class="rule-text">Press <strong>Up / W / Spacebar</strong> to leap across rooftop gaps and roof vents. Tap again while airborne to perform an aerial <strong>Double Jump</strong> somersault!</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>⚡</span>
+            <span>Slide Under Lasers</span>
+          </div>
+          <p class="rule-text">Press <strong>Down / S</strong> to slide low beneath security laser beams. Sliding while airborne triggers a rapid ground dive to regain solid footing quickly.</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>📦</span>
+            <span>Shards &amp; Deliveries</span>
+          </div>
+          <p class="rule-text">Collect glowing <strong>Data Shards</strong> to charge your score and wallet. Deliver golden <strong>Cyber Packages</strong> for massive score bonuses and mission progress.</p>
+        </div>
+      </div>
+
+      <div class="rules-grid" style="margin-top: 0.5rem;">
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>👕</span>
+            <span>Unlockable Runners</span>
+          </div>
+          <p class="rule-text">Spend earned coins in the <strong>Runners Locker</strong> to unlock Dash, Cipher (data magnet), Spark (high-leap boots), Volt (shield ninja), and Nova (slide multiplier).</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>🎯</span>
+            <span>Missions &amp; Daily Runs</span>
+          </div>
+          <p class="rule-text">Complete 3 dynamic missions to earn bonus coins. Check back every day for the <strong>Daily Challenge</strong> run featuring a 2x bonus score multiplier!</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>📱</span>
+            <span>Mobile Thumb Controls</span>
+          </div>
+          <p class="rule-text">Swipe Up to Jump, Swipe Down to Slide, or use the dedicated left/right on-screen thumb buttons engineered for effortless one-touch mobile parkour.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="stage-footer">
+      <a href="../../index.html" class="footer-back-link">← Return to Mini Game Arcade Homepage</a>
+    </footer>
+
+  </main>
+
+  <!-- Modular Scripts with Root-relative paths and file:// fallback -->
+  <script src="/games/dashverse/js/engine.js"></script>
+  <script src="/games/dashverse/js/audio.js"></script>
+  <script src="/games/dashverse/js/game.js"></script>
+  <script>
+    if (window.location.protocol === 'file:' && typeof DashverseEngine === 'undefined') {
+      ['engine.js', 'audio.js', 'game.js'].forEach(function(s) {
+        var scriptEl = document.createElement('script');
+        scriptEl.src = 'js/' + s;
+        scriptEl.async = false;
+        document.body.appendChild(scriptEl);
+      });
+    }
+  </script>
+</body>
+</html>

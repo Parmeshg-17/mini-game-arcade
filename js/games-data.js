@@ -146,6 +146,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/circuit-connect.svg',
     controlsSummary: 'Click & Drag / Touch Swipe to Draw Path • Dragging Backward Backtracks • Arrow Keys / WASD + Spacebar to Navigate • H for Hint • U to Undo • R to Restart',
     features: ['30 Progressive Levels', '100% Board Fill Constraint', 'Smart Hint Solver', 'Progress Saved Locally']
+  },
+  {
+    id: 'dashverse',
+    title: 'Dashverse',
+    category: 'Action',
+    tags: ['action', 'runner', 'endless', 'parkour', 'cyberpunk', 'neon', 'rooftop', 'jump', 'slide', 'reflex'],
+    badge: 'New',
+    tagline: 'Vault rooftops. Slide lasers. Deliver packages.',
+    description: 'Embark on a high-octane parkour adventure through a neon-lit cyber metropolis. As Dash, vault chasms, double jump over roof vents, slide under overhead laser barriers, collect data shards, unlock cyber couriers, and complete mission-based deliveries.',
+    route: 'games/dashverse/index.html',
+    thumbnail: 'assets/games/dashverse.svg',
+    controlsSummary: 'Up / W / Space to Jump & Double Jump • Down / S to Slide • Tap / Swipe on Mobile • Dedicated On-Screen Thumb Buttons • P to Pause • R to Restart • M to Mute',
+    features: ['Endless Rooftop Runner', 'Unlockable Runners & Perks', 'Missions & Daily Challenges', 'Personal Best & Double Jump']
   }
 ];
 
