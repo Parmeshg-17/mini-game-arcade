@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Tap Challenge — Play Free on Mini Game Arcade</title>
+  <meta name="description" content="Test your reaction speed, precision, and finger agility in Tap Challenge. Play Reflex Rush, Number Sprint 1-16, and CPS Frenzy free in your browser.">
+  <meta name="theme-color" content="#10120f">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="Tap Challenge — Mini Game Arcade">
+  <meta property="og:description" content="Fast-paced arcade reflex and tap speed challenge with multiple modes and combo streaks.">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Root-relative stylesheet link with file:// fallback -->
+  <link rel="stylesheet" href="/games/tap-challenge/style.css" id="game-stylesheet">
+  <script>
+    if (window.location.protocol === 'file:') {
+      const link = document.getElementById('game-stylesheet');
+      if (link) link.href = 'style.css';
+    }
+  </script>
+</head>
+<body class="game-page-body">
+
+  <!-- Screen reader live announcer -->
+  <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;"></div>
+
+  <!-- Arcade Top Navigation Bar -->
+  <nav class="arcade-nav-bar" aria-label="Game page navigation">
+    <div class="nav-content-container">
+      <a href="../../index.html" class="back-link">
+        <span class="back-arrow">←</span>
+        <span>Back to Arcade</span>
+      </a>
+
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="crumb-separator">/</span>
+        <a href="../../index.html#games-section">Games</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-current">Tap Challenge</span>
+      </div>
+
+      <a href="#controls-guide" class="nav-guide-link">Controls & Rules</a>
+    </div>
+  </nav>
+
+  <!-- Main Stage Container -->
+  <main class="game-stage-wrapper">
+
+    <!-- Editorial Header -->
+    <header class="game-editorial-header">
+      <div class="game-eyebrow-row">
+        <span class="badge-arcade">ARCADE // REFLEX</span>
+        <span class="badge-tagline">SPEED TAP ARENA</span>
+      </div>
+      <h1 class="game-title">Tap Challenge</h1>
+      <p class="game-subheading">Test your reaction speed, precision, and rhythm across 3 electrifying tap modes.</p>
+    </header>
+
+    <!-- Arcade Play Card -->
+    <section class="arcade-play-card" id="tap-stage-card" aria-label="Interactive Tap Challenge Game Stage">
+
+      <!-- Mode Selector -->
+      <div class="mode-selector-wrap">
+        <div class="segmented-control" role="tablist" aria-label="Game Modes">
+          <button id="mode-reflex-btn" class="segment-btn active" role="tab" aria-selected="true" type="button">
+            <span>⚡</span>
+            <span>Reflex Rush (30s)</span>
+          </button>
+          <button id="mode-sprint-btn" class="segment-btn" role="tab" aria-selected="false" type="button">
+            <span>🔢</span>
+            <span>Number Sprint (1–16)</span>
+          </button>
+          <button id="mode-frenzy-btn" class="segment-btn" role="tab" aria-selected="false" type="button">
+            <span>🔥</span>
+            <span>CPS Frenzy (10s)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Match HUD -->
+      <div class="match-hud-bar" role="region" aria-label="Match Status">
+        <div class="hud-group">
+          <span id="score-display" class="hud-pill highlight-lime" title="Current Score">Score: 0</span>
+          <span id="timer-display" class="hud-pill highlight-cyan" title="Time Remaining / Elapsed">30.0s</span>
+          <span id="moves-display" class="hud-pill" title="Taps and Accuracy">Taps: 0</span>
+          <span id="combo-display" class="hud-pill" title="Active Streak">Streak: 0</span>
+          <span id="target-cue" class="sr-only">Target Cue</span>
+        </div>
+
+        <div class="hud-group">
+          <span class="hud-pill" title="Personal Best Record">
+            <span>BEST:</span>
+            <span id="best-display">—</span>
+          </span>
+          <button id="pause-btn" class="ctrl-btn" type="button" aria-label="Pause Game" title="Pause (P)">⏸</button>
+          <button id="audio-toggle-btn" class="audio-btn" type="button" aria-label="Toggle Sound" title="Sound Toggle (M)">
+            <span id="audio-icon">🔊</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Tap Board Container -->
+      <div class="tap-board-container">
+        <div id="tap-board" class="tap-board grid-3" role="grid" aria-label="Interactive Tap Challenge Grid">
+          <!-- Pads injected dynamically by js/game.js -->
+        </div>
+
+        <!-- Overlay 1: Start / Ready -->
+        <div id="overlay-start" class="stage-overlay show" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Ready to Tap?</h2>
+          <p class="overlay-subtitle">Tap illuminated neon nodes before they fade! Hit speed orbs for time bonuses, chain multipliers, and avoid red glitch mines.</p>
+          <button id="start-btn" class="btn-arcade-action" type="button">
+            <span>Start Challenge</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        <!-- Overlay 2: Paused -->
+        <div id="overlay-pause" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Challenge Paused</h2>
+          <p class="overlay-subtitle">Catch your breath. Press Resume to jump right back in.</p>
+          <div class="hud-group">
+            <button id="resume-btn" class="btn-arcade-action" type="button">Resume (P)</button>
+            <button id="restart-btn" class="btn-secondary-arcade" type="button">Restart (R)</button>
+          </div>
+        </div>
+
+        <!-- Overlay 3: Victory / Cleared -->
+        <div id="overlay-win" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 id="win-title" class="overlay-title">Challenge Complete!</h2>
+          <p id="win-summary" class="overlay-subtitle">Incredible speed and lightning-fast reflexes!</p>
+          <div class="overlay-stats-grid">
+            <div class="stat-box">
+              <span class="stat-label">Final Score</span>
+              <span id="win-score-val" class="stat-val">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Rating</span>
+              <span id="win-stars-val" class="stat-val stars">★★★</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Rate / Time</span>
+              <span id="win-rate-val" class="stat-val">0</span>
+            </div>
+          </div>
+          <div class="hud-group" style="margin-top: 0.5rem;">
+            <button id="play-again-btn" class="btn-arcade-action" type="button">Play Again (R)</button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Controls & Rules Guide -->
+    <section class="controls-guide-section" id="controls-guide" aria-label="Game Rules & Controls Guide">
+      <h2 class="guide-title">How to Play & Controls</h2>
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>⚡</span>
+            <span>Reflex Rush (30s)</span>
+          </div>
+          <p class="rule-text">Tap glowing nodes before their countdown ring expires. Hit golden stars for 300 pts, speed pulses for +1s time, and steer clear of glitch mines!</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>🔢</span>
+            <span>Number Sprint (1–16)</span>
+          </div>
+          <p class="rule-text">Scan the 4×4 grid and tap numbers 1 through 16 in exact numerical order. Accuracy is key—wrong taps add penalty time!</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>🔥</span>
+            <span>CPS Frenzy (10s)</span>
+          </div>
+          <p class="rule-text">A pure 10-second test of raw tapping frequency. Tap as fast as humanly possible to discover your Clicks Per Second tier!</p>
+        </div>
+      </div>
+
+      <div class="rules-grid" style="margin-top: 0.5rem;">
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>⌨️</span>
+            <span>Keyboard Shortcuts</span>
+          </div>
+          <p class="rule-text">Use <strong>Q, W, E / A, S, D / Z, X, C</strong> or Numpad <strong>1–9</strong> for the 3×3 grid pads. Press <strong>Space</strong> in Frenzy mode, <strong>P</strong> to Pause, <strong>R</strong> to Restart, and <strong>M</strong> to Mute.</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>📱</span>
+            <span>Touch & Mobile</span>
+          </div>
+          <p class="rule-text">Engineered with low-latency touch handlers and multi-touch support for tablets and smartphones. No zoom delay or tap lag.</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>⭐</span>
+            <span>3-Star Ratings</span>
+          </div>
+          <p class="rule-text">Earn up to 3 stars by maintaining combo streaks in Reflex mode, finishing under 12s in Number Sprint, or hitting 8+ CPS in Frenzy.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="stage-footer">
+      <a href="../../index.html" class="footer-back-link">← Return to Mini Game Arcade Homepage</a>
+    </footer>
+
+  </main>
+
+  <!-- Modular Scripts -->
+  <script src="js/engine.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

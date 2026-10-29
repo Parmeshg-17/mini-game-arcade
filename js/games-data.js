@@ -94,6 +94,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/number-puzzle.svg',
     controlsSummary: 'Click/Tap adjacent tiles • Arrow keys / WASD to slide • Touch swipe • R to Reshuffle • M to Mute',
     features: ['3 Grid Modes: 3x3, 4x4 & 5x5', '100% Solvability Guarantee', 'Move Counter & Stopwatch', 'Star Ratings & High Scores']
+  },
+  {
+    id: 'tap-challenge',
+    title: 'Tap Challenge',
+    category: 'Arcade',
+    tags: ['arcade', 'tap', 'reflex', 'speed', 'challenge', 'rush', 'reaction', 'cps', 'casual'],
+    badge: 'New',
+    tagline: 'Tap fast. Chain combos. Master your reaction speed.',
+    description: 'Test your reaction speed, precision, and finger agility in this high-octane tap arena. Features 3 exciting game modes: Reflex Rush (30s target reaction), Number Sprint (speed 1–16 sequence rush), and CPS Frenzy (10s click speed test) with combo multipliers and star ratings.',
+    route: 'games/tap-challenge/index.html',
+    thumbnail: 'assets/games/tap-challenge.svg',
+    controlsSummary: 'Touch Tap / Mouse Click • QWE/ASD/ZXC or Numpad 1–9 • Space in Frenzy • P to Pause • R to Restart • M to Mute',
+    features: ['3 Modes: Reflex, Sprint & Frenzy', 'Combo Multipliers up to 5x', 'Real-time CPS & Stopwatch', 'Tactile Sound & Visual Ripples']
   }
 ];
 

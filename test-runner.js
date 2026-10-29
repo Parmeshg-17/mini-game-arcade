@@ -136,8 +136,9 @@ it('Search and category filter logic filters games correctly', () => {
 
   // Category filter
   const res3 = filterGames('', 'Arcade');
-  assert.strictEqual(res3.length, 1);
-  assert.strictEqual(res3[0].id, 'citrus-blitz');
+  assert.strictEqual(res3.length, 2);
+  assert(res3.some(g => g.id === 'citrus-blitz'));
+  assert(res3.some(g => g.id === 'tap-challenge'));
 
   // Puzzle category filter matches Tic Tac Toe and Number Puzzle
   const res4 = filterGames('', 'Puzzle');
@@ -172,10 +173,16 @@ it('Search and category filter logic filters games correctly', () => {
   assert.strictEqual(resDodge.length, 1);
   assert.strictEqual(resDodge[0].id, 'space-dodge');
 
-  // Tag search for number/puzzle
+  // Tag search for number
   const resNumber = filterGames('number', 'All');
-  assert.strictEqual(resNumber.length, 1);
-  assert.strictEqual(resNumber[0].id, 'number-puzzle');
+  assert.strictEqual(resNumber.length, 2);
+  assert(resNumber.some(g => g.id === 'number-puzzle'));
+  assert(resNumber.some(g => g.id === 'tap-challenge'));
+
+  // Tag search for tap/reflex
+  const resTap = filterGames('tap', 'All');
+  assert.strictEqual(resTap.length, 1);
+  assert.strictEqual(resTap[0].id, 'tap-challenge');
 
   // Non-matching category
   const res8 = filterGames('', 'Racing');
@@ -601,7 +608,92 @@ it('Number Puzzle computes valid sliding moves, directional swipes, solvability 
   assert.strictEqual(calculateStars(250, 'classic'), 1, 'High moves yields 1 star');
 });
 
-// 20. Security & Clean Static Deployment Verification
+// 20. Dedicated Tap Challenge Playable Page & Engine Integrity
+it('Dedicated Tap Challenge page (games/tap-challenge/index.html) has all DOM elements required by game.js', () => {
+  const tpHtmlPath = path.join(__dirname, 'games/tap-challenge/index.html');
+  assert(fs.existsSync(tpHtmlPath), 'games/tap-challenge/index.html must exist');
+  const tpHtml = fs.readFileSync(tpHtmlPath, 'utf8');
+  const tpGameJs = fs.readFileSync(path.join(__dirname, 'games/tap-challenge/js/game.js'), 'utf8');
+
+  // Verify all document.getElementById calls in game.js are present in HTML
+  const idRegex = /document\.getElementById\(['"]([^'"]+)['"]\)/g;
+  let match;
+  while ((match = idRegex.exec(tpGameJs)) !== null) {
+    const id = match[1];
+    assert(tpHtml.includes(`id="${id}"`), `DOM id="${id}" missing in games/tap-challenge/index.html`);
+  }
+
+  // Verify navigation back link to arcade exists
+  assert(tpHtml.includes('href="../../index.html"'), 'Tap Challenge page must link back to arcade homepage');
+});
+
+// 21. Tap Challenge Engine Mechanics, Modes, CPS, Combos & Scoring
+it('Tap Challenge computes sequence shuffling, validation, combos, CPS tiers, and star evaluations accurately', () => {
+  const {
+    MODES,
+    TARGET_TYPES,
+    generateSprintBoard,
+    validateSprintTap,
+    calculateComboMultiplier,
+    calculateCPS,
+    calculateFrenzyTier,
+    calculateSprintStars,
+    calculateReflexStars,
+    rollTargetType,
+    formatSeconds
+  } = require('./games/tap-challenge/js/engine.js');
+
+  // 1. Modes validation
+  assert(MODES.reflex && MODES.sprint && MODES.frenzy, 'Must define all 3 core game modes');
+  assert.strictEqual(MODES.reflex.totalCells, 9, 'Reflex mode is 3x3 (9 cells)');
+  assert.strictEqual(MODES.sprint.totalCells, 16, 'Number Sprint mode is 4x4 (16 cells)');
+  assert.strictEqual(MODES.frenzy.duration, 10, 'CPS Frenzy duration is 10 seconds');
+
+  // 2. Number Sprint board generation & validation
+  const sprintBoard = generateSprintBoard(16);
+  assert.strictEqual(sprintBoard.length, 16, 'Sprint board must contain 16 numbers');
+  for (let i = 1; i <= 16; i++) {
+    assert(sprintBoard.includes(i), `Sprint board must contain number ${i}`);
+  }
+
+  // Sequence tap validation
+  const validTap = validateSprintTap(1, 1);
+  assert.strictEqual(validTap.isCorrect, true, 'Matching number tap is marked correct');
+  assert.strictEqual(validTap.nextExpected, 2, 'Increments expected number');
+
+  const invalidTap = validateSprintTap(1, 5);
+  assert.strictEqual(invalidTap.isCorrect, false, 'Non-matching tap is marked incorrect');
+  assert.strictEqual(invalidTap.nextExpected, 1, 'Does not increment expected number');
+
+  // 3. Combo multiplier scaling
+  assert.strictEqual(calculateComboMultiplier(1), 1, 'Streak 1 yields 1x');
+  assert.strictEqual(calculateComboMultiplier(4), 2, 'Streak 4 yields 2x');
+  assert.strictEqual(calculateComboMultiplier(8), 3, 'Streak 8 yields 3x');
+  assert.strictEqual(calculateComboMultiplier(14), 4, 'Streak 14 yields 4x');
+  assert.strictEqual(calculateComboMultiplier(20), 5, 'Streak 20 yields 5x');
+
+  // 4. CPS Calculation & Speed Tiers
+  assert.strictEqual(calculateCPS(85, 10), 8.5, '85 taps in 10s is 8.5 CPS');
+  assert.strictEqual(calculateCPS(0, 5), 0, '0 taps is 0 CPS');
+
+  const godlikeTier = calculateFrenzyTier(10.5);
+  assert.strictEqual(godlikeTier.stars, 3, '10+ CPS yields 3 stars and Master tier');
+
+  const agileTier = calculateFrenzyTier(4.0);
+  assert.strictEqual(agileTier.stars, 2, '4.0 CPS yields 2 stars');
+
+  // 5. Star evaluations
+  assert.strictEqual(calculateSprintStars(10.5, 0), 3, 'Under 12s with zero errors is 3 stars');
+  assert.strictEqual(calculateSprintStars(18.0, 1), 2, 'Under 20s with 1 error is 2 stars');
+  assert.strictEqual(calculateReflexStars(3800), 3, 'High reflex score yields 3 stars');
+
+  // 6. Target types integrity
+  assert(TARGET_TYPES.normal && TARGET_TYPES.speed && TARGET_TYPES.golden && TARGET_TYPES.hazard, 'All target types configured');
+  assert.strictEqual(TARGET_TYPES.hazard.isHazard, true, 'Glitch mine marked as hazard');
+  assert.strictEqual(TARGET_TYPES.normal.points, 100, 'Normal node points is 100');
+});
+
+// 22. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });

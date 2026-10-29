@@ -229,3 +229,4 @@
   exports.calculateStars = calculateStars;
 
 })(typeof module !== 'undefined' && module.exports ? module.exports : (window.NumberEngine = {}));
+

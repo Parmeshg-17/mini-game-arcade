@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360" role="img" aria-label="Tap Challenge Arcade Game Thumbnail">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0e100c"/>
+      <stop offset="50%" stop-color="#141812"/>
+      <stop offset="100%" stop-color="#1a2018"/>
+    </linearGradient>
+
+    <!-- Pad Gradients -->
+    <linearGradient id="padBaseGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#222820"/>
+      <stop offset="100%" stop-color="#151913"/>
+    </linearGradient>
+
+    <linearGradient id="padActiveGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2d421d"/>
+      <stop offset="100%" stop-color="#1a2b12"/>
+    </linearGradient>
+
+    <linearGradient id="padSpeedGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#153648"/>
+      <stop offset="100%" stop-color="#0c2230"/>
+    </linearGradient>
+
+    <linearGradient id="padGoldGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a3b18"/>
+      <stop offset="100%" stop-color="#2c220b"/>
+    </linearGradient>
+
+    <!-- Glowing Filters -->
+    <filter id="glowLime" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glowCyan" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glowGold" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Subtle Grid Pattern -->
+    <pattern id="dotGrid" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#262f22" opacity="0.6"/>
+    </pattern>
+  </defs>
+
+  <!-- Deep Stage Background -->
+  <rect width="640" height="360" fill="url(#bgGrad)"/>
+  <rect width="640" height="360" fill="url(#dotGrid)"/>
+
+  <!-- Radial Atmosphere Glow -->
+  <circle cx="320" cy="180" r="160" fill="#d5ff55" opacity="0.06" filter="url(#glowLime)"/>
+  <circle cx="200" cy="140" r="120" fill="#38bdf8" opacity="0.05" filter="url(#glowCyan)"/>
+
+  <!-- 3x3 Isometric / Angled Pad Matrix Stage -->
+  <g transform="translate(195, 45)">
+    <!-- Base Board Shadow & Surface -->
+    <rect x="-10" y="-10" width="270" height="270" rx="18" fill="#0d0f0c" stroke="#252d21" stroke-width="2"/>
+
+    <!-- Row 1 -->
+    <!-- Pad (0,0) - Normal inactive -->
+    <rect x="0" y="0" width="76" height="76" rx="10" fill="url(#padBaseGrad)" stroke="#323b2c" stroke-width="2"/>
+    <text x="38" y="44" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="bold" fill="#4d5a45" text-anchor="middle">Q</text>
+
+    <!-- Pad (0,1) - Active Cyan Speed Pulse -->
+    <rect x="87" y="0" width="76" height="76" rx="10" fill="url(#padSpeedGrad)" stroke="#38bdf8" stroke-width="2.5" filter="url(#glowCyan)"/>
+    <circle cx="125" cy="38" r="22" fill="#38bdf8" opacity="0.15"/>
+    <text x="125" y="44" font-family="'JetBrains Mono', monospace" font-size="24" text-anchor="middle">⏱️</text>
+
+    <!-- Pad (0,2) - Normal inactive -->
+    <rect x="174" y="0" width="76" height="76" rx="10" fill="url(#padBaseGrad)" stroke="#323b2c" stroke-width="2"/>
+    <text x="212" y="44" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="bold" fill="#4d5a45" text-anchor="middle">E</text>
+
+    <!-- Row 2 -->
+    <!-- Pad (1,0) - Golden Star Core -->
+    <rect x="0" y="87" width="76" height="76" rx="10" fill="url(#padGoldGrad)" stroke="#ffd166" stroke-width="2.5" filter="url(#glowGold)"/>
+    <circle cx="38" cy="125" r="22" fill="#ffd166" opacity="0.2"/>
+    <text x="38" y="132" font-family="'JetBrains Mono', monospace" font-size="24" text-anchor="middle">⭐</text>
+
+    <!-- Pad (1,1) - Center Primary Tap Node (Activated & Ripling) -->
+    <rect x="87" y="87" width="76" height="76" rx="10" fill="url(#padActiveGrad)" stroke="#d5ff55" stroke-width="3" filter="url(#glowLime)"/>
+    
+    <!-- Concentric Ripple Waves -->
+    <circle cx="125" cy="125" r="32" fill="none" stroke="#d5ff55" stroke-width="1.5" opacity="0.8"/>
+    <circle cx="125" cy="125" r="44" fill="none" stroke="#d5ff55" stroke-width="1" stroke-dasharray="4 3" opacity="0.5"/>
+    <circle cx="125" cy="125" r="56" fill="none" stroke="#d5ff55" stroke-width="0.8" opacity="0.3"/>
+    
+    <!-- Center Bolt Icon -->
+    <path d="M 127 107 L 118 123 L 125 123 L 122 141 L 133 125 L 126 125 Z" fill="#d5ff55"/>
+
+    <!-- Pad (1,2) - Glitch Hazard Warning -->
+    <rect x="174" y="87" width="76" height="76" rx="10" fill="#2d1316" stroke="#ff4757" stroke-width="2"/>
+    <text x="212" y="132" font-family="'JetBrains Mono', monospace" font-size="22" text-anchor="middle">💥</text>
+
+    <!-- Row 3 -->
+    <!-- Pad (2,0) - Inactive -->
+    <rect x="0" y="174" width="76" height="76" rx="10" fill="url(#padBaseGrad)" stroke="#323b2c" stroke-width="2"/>
+    <text x="38" y="218" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="bold" fill="#4d5a45" text-anchor="middle">Z</text>
+
+    <!-- Pad (2,1) - Inactive -->
+    <rect x="87" y="174" width="76" height="76" rx="10" fill="url(#padBaseGrad)" stroke="#323b2c" stroke-width="2"/>
+    <text x="125" y="218" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="bold" fill="#4d5a45" text-anchor="middle">X</text>
+
+    <!-- Pad (2,2) - Inactive -->
+    <rect x="174" y="174" width="76" height="76" rx="10" fill="url(#padBaseGrad)" stroke="#323b2c" stroke-width="2"/>
+    <text x="212" y="218" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="bold" fill="#4d5a45" text-anchor="middle">C</text>
+  </g>
+
+  <!-- Dynamic Finger Tap / Precision Cursor with Impact Sparks -->
+  <g transform="translate(320, 170)">
+    <!-- Shockwave Sparks -->
+    <line x1="-15" y1="-15" x2="-35" y2="-35" stroke="#d5ff55" stroke-width="3" stroke-linecap="round"/>
+    <line x1="20" y1="-12" x2="40" y2="-28" stroke="#d5ff55" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="-18" y1="18" x2="-38" y2="38" stroke="#ffd166" stroke-width="2" stroke-linecap="round"/>
+    <line x1="22" y1="15" x2="42" y2="32" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- Tap Contact Core -->
+    <circle cx="0" cy="0" r="8" fill="#ffffff" filter="url(#glowLime)"/>
+  </g>
+
+  <!-- Left Side Badges & Stats HUD -->
+  <g transform="translate(32, 70)">
+    <!-- Category Badge -->
+    <rect x="0" y="0" width="128" height="26" rx="6" fill="#182215" stroke="#d5ff55" stroke-width="1"/>
+    <text x="64" y="17" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="bold" fill="#d5ff55" text-anchor="middle">REFLEX ARENA</text>
+
+    <!-- Big Digital Speed Stats -->
+    <text x="0" y="68" font-family="'Space Grotesk', sans-serif" font-size="34" font-weight="800" fill="#ffffff">9.4 CPS</text>
+    <text x="0" y="90" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="bold" fill="#38bdf8">LIGHTNING SPEED</text>
+
+    <!-- Score Counter -->
+    <rect x="0" y="112" width="138" height="38" rx="8" fill="#171a15" stroke="#2c3527" stroke-width="1.5"/>
+    <text x="14" y="136" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="bold" fill="#889680">SCORE:</text>
+    <text x="124" y="136" font-family="'JetBrains Mono', monospace" font-size="15" font-weight="bold" fill="#d5ff55" text-anchor="end">4,850</text>
+  </g>
+
+  <!-- Right Side Badges & Combo Meter -->
+  <g transform="translate(470, 70)">
+    <!-- Combo Multiplier Pill -->
+    <rect x="0" y="0" width="138" height="36" rx="8" fill="#2d3f18" stroke="#d5ff55" stroke-width="1.5" filter="url(#glowLime)"/>
+    <text x="69" y="23" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="800" fill="#d5ff55" text-anchor="middle">⚡ 5x COMBO</text>
+
+    <!-- Stopwatch HUD -->
+    <rect x="0" y="52" width="138" height="42" rx="8" fill="#152430" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="14" y="77" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="bold" fill="#75a5c0">TIME:</text>
+    <text x="124" y="78" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="bold" fill="#38bdf8" text-anchor="end">00:14.2s</text>
+
+    <!-- Accuracy Badge -->
+    <rect x="0" y="108" width="138" height="36" rx="8" fill="#171a15" stroke="#2c3527" stroke-width="1.5"/>
+    <text x="14" y="131" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="bold" fill="#889680">ACCURACY:</text>
+    <text x="124" y="131" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="bold" fill="#ffd166" text-anchor="end">98.5%</text>
+  </g>
+
+  <!-- Bottom Title Banner -->
+  <g transform="translate(320, 325)">
+    <rect x="-170" y="-18" width="340" height="36" rx="10" fill="#131611" stroke="#2f3a29" stroke-width="1.5"/>
+    <text x="0" y="5" font-family="'Space Grotesk', sans-serif" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="0.08em">TAP CHALLENGE // SPEED MATRIX</text>
+  </g>
+</svg>
