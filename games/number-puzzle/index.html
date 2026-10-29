@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Number Puzzle — Play Free on Mini Game Arcade</title>
+  <meta name="description" content="Play the classic 15 Number Puzzle online for free. Slide numbered tiles into numerical order from 1 to 15 with intuitive touch and keyboard controls.">
+  <meta name="theme-color" content="#10120f">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="Number Puzzle — Mini Game Arcade">
+  <meta property="og:description" content="Slide tiles into order from 1 to 15 in this classic sliding number challenge.">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Root-relative stylesheet link with file:// fallback -->
+  <link rel="stylesheet" href="/games/number-puzzle/style.css" id="game-stylesheet">
+  <script>
+    if (window.location.protocol === 'file:') {
+      const link = document.getElementById('game-stylesheet');
+      if (link) link.href = 'style.css';
+    }
+  </script>
+</head>
+<body class="game-page-body">
+
+  <!-- Screen reader live announcer -->
+  <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;"></div>
+
+  <!-- Arcade Top Navigation Bar -->
+  <nav class="arcade-nav-bar" aria-label="Game page navigation">
+    <div class="nav-content-container">
+      <a href="../../index.html" class="back-link">
+        <span class="back-arrow">←</span>
+        <span>Back to Arcade</span>
+      </a>
+
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="crumb-separator">/</span>
+        <a href="../../index.html#games-section">Games</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-current">Number Puzzle</span>
+      </div>
+
+      <a href="#controls-guide" class="nav-guide-link">Controls & Rules</a>
+    </div>
+  </nav>
+
+  <!-- Main Stage Container -->
+  <main class="game-stage-wrapper">
+
+    <!-- Editorial Header -->
+    <header class="game-editorial-header">
+      <div class="game-eyebrow-row">
+        <span class="badge-arcade">PUZZLE // RETRO</span>
+        <span class="badge-tagline">CLASSIC 15-PUZZLE SLIDER</span>
+      </div>
+      <h1 class="game-title">Number Puzzle</h1>
+      <p class="game-subheading">Slide tiles into order from 1 to 15 with the empty space in the bottom-right corner.</p>
+    </header>
+
+    <!-- Arcade Play Card -->
+    <section class="arcade-play-card" id="puzzle-stage-card" aria-label="Interactive Number Puzzle Game Stage">
+
+      <!-- Difficulty / Grid Mode Selector -->
+      <div class="mode-selector-wrap">
+        <div class="segmented-control" role="tablist" aria-label="Puzzle Grid Size">
+          <button id="diff-easy-btn" class="segment-btn" role="tab" aria-selected="false" type="button">
+            <span>🌱</span>
+            <span>3×3 (8 Tiles)</span>
+          </button>
+          <button id="diff-classic-btn" class="segment-btn active" role="tab" aria-selected="true" type="button">
+            <span>⚡</span>
+            <span>4×4 (15 Tiles)</span>
+          </button>
+          <button id="diff-expert-btn" class="segment-btn" role="tab" aria-selected="false" type="button">
+            <span>🔥</span>
+            <span>5×5 (24 Tiles)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Match HUD -->
+      <div class="match-hud-bar" role="region" aria-label="Match Status">
+        <div class="hud-group">
+          <span id="moves-display" class="hud-pill highlight-lime" title="Total Moves">Moves: 0</span>
+          <span id="timer-display" class="hud-pill highlight-cyan" title="Time Elapsed">00:00</span>
+          <span id="progress-display" class="hud-pill" title="Tiles in Correct Position">0 / 15 Placed</span>
+        </div>
+
+        <div class="hud-group">
+          <span class="hud-pill" title="Fewest Moves Solved">
+            <span>BEST:</span>
+            <span id="best-display">—</span>
+          </span>
+          <button id="pause-btn" class="ctrl-btn" type="button" aria-label="Pause Game" title="Pause (P)">⏸</button>
+          <button id="audio-toggle-btn" class="audio-btn" type="button" aria-label="Toggle Sound" title="Sound Toggle (M)">
+            <span id="audio-icon">🔊</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Sliding Board Stage & Overlays -->
+      <div class="puzzle-board-container">
+        <div id="puzzle-board" class="puzzle-board grid-4" role="grid" aria-label="15 Sliding Number Puzzle Board">
+          <!-- Tiles injected dynamically by js/game.js -->
+        </div>
+
+        <!-- Overlay 1: Start / Ready -->
+        <div id="overlay-start" class="stage-overlay show" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Ready to Solve?</h2>
+          <p class="overlay-subtitle">Click or tap any tile adjacent to the empty space to slide it. Order tiles from 1 to 15 with the empty space at the bottom right!</p>
+          <button id="start-btn" class="btn-arcade-action" type="button">
+            <span>Start Puzzle</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        <!-- Overlay 2: Paused -->
+        <div id="overlay-pause" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Puzzle Paused</h2>
+          <p class="overlay-subtitle">Take a breather. Press Resume to continue sliding.</p>
+          <div class="hud-group">
+            <button id="resume-btn" class="btn-arcade-action" type="button">Resume (P)</button>
+            <button id="restart-btn" class="btn-secondary-arcade" type="button">New Shuffle (R)</button>
+          </div>
+        </div>
+
+        <!-- Overlay 3: Victory / Cleared -->
+        <div id="overlay-win" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Puzzle Solved!</h2>
+          <p class="overlay-subtitle">Magnificent logic and spatial reasoning!</p>
+          <div class="overlay-stats-grid">
+            <div class="stat-box">
+              <span class="stat-label">Total Moves</span>
+              <span id="win-moves-val" class="stat-val">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Rating</span>
+              <span id="win-stars-val" class="stat-val stars">★★★</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Solve Time</span>
+              <span id="win-time-val" class="stat-val">00:00</span>
+            </div>
+          </div>
+          <div class="hud-group">
+            <button id="play-again-btn" class="btn-arcade-action" type="button">Play Again ↺</button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Controls & How to Play Guide -->
+    <section class="controls-guide-section" id="controls-guide" aria-label="Controls and How to Play Guide">
+      <article class="guide-article">
+        <h3><span>🎮</span> Controls & Shortcuts</h3>
+        <ul>
+          <li><span class="key-box">Click / Tap</span> Click on any tile adjacent to the empty space to slide it.</li>
+          <li><span class="key-box">Touch Swipe</span> Swipe across the board in the direction you want tiles to slide.</li>
+          <li><span class="key-box">Arrow Keys / WASD</span> Slide tiles in four directions (<kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd>).</li>
+          <li><span class="key-box">P</span> Pause or resume puzzle timer.</li>
+          <li><span class="key-box">R</span> Reshuffle the board with a fresh 100% solvable layout.</li>
+          <li><span class="key-box">M</span> Toggle sound effects.</li>
+        </ul>
+      </article>
+
+      <article class="guide-article">
+        <h3><span>🧩</span> How to Play & Rules</h3>
+        <ul>
+          <li><strong>Movement:</strong> Click on a tile adjacent to the empty space to slide it. Only tiles next to the empty space can be moved.</li>
+          <li><strong>Objective:</strong> Arrange all numbers in order from <strong>1 to 15</strong>.</li>
+          <li><strong>Goal Position:</strong> The empty space should end up in the <strong>bottom-right corner</strong>.</li>
+          <li><strong>Efficiency:</strong> Plan your moves carefully to solve the puzzle efficiently and challenge yourself to complete it in fewer moves!</li>
+          <li><strong>Green Dot:</strong> When a tile shows a neon green dot, it is locked into its correct final target spot!</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- Quick Footer Links -->
+    <footer class="game-page-footer">
+      <p>&copy; 2026 Mini Game Arcade. All games are original and free to play.</p>
+      <div class="footer-links">
+        <a href="../../index.html">Arcade Home</a>
+        <a href="../../about.html">About</a>
+        <a href="../../contact.html">Contact</a>
+        <a href="../../privacy.html">Privacy Policy</a>
+        <a href="../../terms.html">Terms of Service</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Scripts (Root-relative paths with cache-busting and file:// fallback) -->
+  <script src="/games/number-puzzle/js/engine.js?v=1.0.0"></script>
+  <script src="/games/number-puzzle/js/audio.js?v=1.0.0"></script>
+  <script src="/games/number-puzzle/js/game.js?v=1.0.0"></script>
+  <script>
+    if (window.location.protocol === 'file:' && typeof NumberEngine === 'undefined') {
+      ['engine.js', 'audio.js', 'game.js'].forEach(function(s) {
+        var scriptEl = document.createElement('script');
+        scriptEl.src = 'js/' + s + '?v=1.0.0';
+        scriptEl.async = false;
+        document.body.appendChild(scriptEl);
+      });
+    }
+  </script>
+</body>
+</html>

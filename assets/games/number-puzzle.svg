@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="npBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0c09"/>
+      <stop offset="50%" stop-color="#121612"/>
+      <stop offset="100%" stop-color="#181d17"/>
+    </linearGradient>
+
+    <!-- Tile Gradient -->
+    <linearGradient id="tileGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2a3126"/>
+      <stop offset="50%" stop-color="#20251d"/>
+      <stop offset="100%" stop-color="#161a14"/>
+    </linearGradient>
+
+    <!-- Slide Active Tile Gradient -->
+    <linearGradient id="activeTileGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#343e2e"/>
+      <stop offset="100%" stop-color="#242c20"/>
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="neonGlowNP" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="sparkGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 1. Background -->
+  <rect width="640" height="380" fill="url(#npBg)"/>
+
+  <!-- Subtle Cyber Grid Dots -->
+  <g fill="rgba(244, 242, 233, 0.04)">
+    <circle cx="80" cy="60" r="1.5"/><circle cx="160" cy="60" r="1.5"/><circle cx="240" cy="60" r="1.5"/>
+    <circle cx="320" cy="60" r="1.5"/><circle cx="400" cy="60" r="1.5"/><circle cx="480" cy="60" r="1.5"/><circle cx="560" cy="60" r="1.5"/>
+    <circle cx="80" cy="140" r="1.5"/><circle cx="160" cy="140" r="1.5"/><circle cx="240" cy="140" r="1.5"/>
+    <circle cx="320" cy="140" r="1.5"/><circle cx="400" cy="140" r="1.5"/><circle cx="480" cy="140" r="1.5"/><circle cx="560" cy="140" r="1.5"/>
+    <circle cx="80" cy="220" r="1.5"/><circle cx="160" cy="220" r="1.5"/><circle cx="240" cy="220" r="1.5"/>
+    <circle cx="320" cy="220" r="1.5"/><circle cx="400" cy="220" r="1.5"/><circle cx="480" cy="220" r="1.5"/><circle cx="560" cy="220" r="1.5"/>
+    <circle cx="80" cy="300" r="1.5"/><circle cx="160" cy="300" r="1.5"/><circle cx="240" cy="300" r="1.5"/>
+    <circle cx="320" cy="300" r="1.5"/><circle cx="400" cy="300" r="1.5"/><circle cx="480" cy="300" r="1.5"/><circle cx="560" cy="300" r="1.5"/>
+  </g>
+
+  <!-- Target Grid Brackets -->
+  <path d="M40 30 H60 M50 20 V40" stroke="rgba(213, 255, 85, 0.25)" stroke-width="1.5"/>
+  <path d="M580 30 H600 M590 20 V40" stroke="rgba(213, 255, 85, 0.25)" stroke-width="1.5"/>
+  <path d="M40 350 H60 M50 340 V360" stroke="rgba(213, 255, 85, 0.25)" stroke-width="1.5"/>
+  <path d="M580 350 H600 M590 340 V360" stroke="rgba(213, 255, 85, 0.25)" stroke-width="1.5"/>
+
+  <!-- 2. Main 15-Puzzle Outer Tray -->
+  <g transform="translate(190, 50)">
+    <!-- Outer Inset Bevel Box -->
+    <rect x="-10" y="-10" width="280" height="280" rx="14" fill="#11140f" stroke="rgba(244, 242, 233, 0.15)" stroke-width="2"/>
+    <rect x="-6" y="-6" width="272" height="272" rx="12" fill="#0d100c"/>
+
+    <!-- Row 0: Tiles 1, 2, 3, 4 -->
+    <g>
+      <!-- Tile 1 -->
+      <rect x="4" y="4" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="33" y="41" font-family="'Space Grotesk', monospace" font-size="24" font-weight="bold" fill="#d5ff55" text-anchor="middle">1</text>
+      <circle cx="52" cy="14" r="2.5" fill="#d5ff55"/>
+
+      <!-- Tile 2 -->
+      <rect x="68" y="4" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="97" y="41" font-family="'Space Grotesk', monospace" font-size="24" font-weight="bold" fill="#d5ff55" text-anchor="middle">2</text>
+      <circle cx="116" cy="14" r="2.5" fill="#d5ff55"/>
+
+      <!-- Tile 3 -->
+      <rect x="132" y="4" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="161" y="41" font-family="'Space Grotesk', monospace" font-size="24" font-weight="bold" fill="#d5ff55" text-anchor="middle">3</text>
+      <circle cx="180" cy="14" r="2.5" fill="#d5ff55"/>
+
+      <!-- Tile 4 -->
+      <rect x="196" y="4" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="225" y="41" font-family="'Space Grotesk', monospace" font-size="24" font-weight="bold" fill="#d5ff55" text-anchor="middle">4</text>
+      <circle cx="244" cy="14" r="2.5" fill="#d5ff55"/>
+    </g>
+
+    <!-- Row 1: Tiles 5, 6, 7, 8 -->
+    <g>
+      <!-- Tile 5 -->
+      <rect x="4" y="68" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="33" y="105" font-family="'Space Grotesk', monospace" font-size="24" font-weight="bold" fill="#d5ff55" text-anchor="middle">5</text>
+      <circle cx="52" cy="78" r="2.5" fill="#d5ff55"/>
+
+      <!-- Tile 6 -->
+      <rect x="68" y="68" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="97" y="105" font-family="'Space Grotesk', monospace" font-size="24" font-weight="bold" fill="#d5ff55" text-anchor="middle">6</text>
+      <circle cx="116" cy="78" r="2.5" fill="#d5ff55"/>
+
+      <!-- Tile 7 -->
+      <rect x="132" y="68" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="161" y="105" font-family="'Space Grotesk', monospace" font-size="24" font-weight="bold" fill="#d5ff55" text-anchor="middle">7</text>
+      <circle cx="180" cy="78" r="2.5" fill="#d5ff55"/>
+
+      <!-- Tile 8 -->
+      <rect x="196" y="68" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="225" y="105" font-family="'Space Grotesk', monospace" font-size="24" font-weight="bold" fill="#d5ff55" text-anchor="middle">8</text>
+      <circle cx="244" cy="78" r="2.5" fill="#d5ff55"/>
+    </g>
+
+    <!-- Row 2: Tiles 9, 10, 11, 12 -->
+    <g>
+      <!-- Tile 9 -->
+      <rect x="4" y="132" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="33" y="169" font-family="'Space Grotesk', monospace" font-size="24" font-weight="bold" fill="#d5ff55" text-anchor="middle">9</text>
+      <circle cx="52" cy="142" r="2.5" fill="#d5ff55"/>
+
+      <!-- Tile 10 -->
+      <rect x="68" y="132" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="97" y="169" font-family="'Space Grotesk', monospace" font-size="22" font-weight="bold" fill="#d5ff55" text-anchor="middle">10</text>
+      <circle cx="116" cy="142" r="2.5" fill="#d5ff55"/>
+
+      <!-- Tile 11 -->
+      <rect x="132" y="132" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="161" y="169" font-family="'Space Grotesk', monospace" font-size="22" font-weight="bold" fill="#d5ff55" text-anchor="middle">11</text>
+      <circle cx="180" cy="142" r="2.5" fill="#d5ff55"/>
+
+      <!-- Tile 12 -->
+      <rect x="196" y="132" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="225" y="169" font-family="'Space Grotesk', monospace" font-size="22" font-weight="bold" fill="#d5ff55" text-anchor="middle">12</text>
+      <circle cx="244" cy="142" r="2.5" fill="#d5ff55"/>
+    </g>
+
+    <!-- Row 3: Tiles 13, 14, 15, and EMPTY SPACE -->
+    <g>
+      <!-- Tile 13 -->
+      <rect x="4" y="196" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="33" y="233" font-family="'Space Grotesk', monospace" font-size="22" font-weight="bold" fill="#d5ff55" text-anchor="middle">13</text>
+      <circle cx="52" cy="206" r="2.5" fill="#d5ff55"/>
+
+      <!-- Tile 14 -->
+      <rect x="68" y="196" width="58" height="58" rx="8" fill="url(#tileGrad)" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1.5"/>
+      <text x="97" y="233" font-family="'Space Grotesk', monospace" font-size="22" font-weight="bold" fill="#d5ff55" text-anchor="middle">14</text>
+      <circle cx="116" cy="206" r="2.5" fill="#d5ff55"/>
+
+      <!-- Active Sliding Tile 15 with Neon Cyan Glow -->
+      <g filter="url(#neonGlowNP)">
+        <rect x="136" y="196" width="58" height="58" rx="8" fill="url(#activeTileGrad)" stroke="#38bdf8" stroke-width="2"/>
+        <text x="165" y="233" font-family="'Space Grotesk', monospace" font-size="22" font-weight="bold" fill="#38bdf8" text-anchor="middle">15</text>
+      </g>
+
+      <!-- Sliding Kinetic Arrow (Pointing to empty slot) -->
+      <path d="M182 225 L198 225 M193 219 L200 225 L193 231" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" filter="url(#sparkGlow)"/>
+
+      <!-- Empty Space Cavity (Bottom-Right) -->
+      <rect x="196" y="196" width="58" height="58" rx="8" fill="#070906" stroke="rgba(244, 242, 233, 0.15)" stroke-width="1.5" stroke-dasharray="6 4"/>
+    </g>
+  </g>
+
+  <!-- Left Accent Graphic -->
+  <g transform="translate(60, 160)" filter="url(#sparkGlow)">
+    <circle cx="30" cy="30" r="28" fill="#171b15" stroke="rgba(213, 255, 85, 0.3)" stroke-width="2"/>
+    <text x="30" y="38" font-family="'Space Grotesk', monospace" font-size="20" font-weight="800" fill="#d5ff55" text-anchor="middle">15</text>
+  </g>
+
+  <!-- Right Accent Callout -->
+  <g transform="translate(500, 150)" filter="url(#sparkGlow)">
+    <rect x="0" y="0" width="80" height="60" rx="10" fill="#171b15" stroke="rgba(56, 189, 248, 0.4)" stroke-width="2"/>
+    <text x="40" y="26" font-family="monospace" font-size="10" font-weight="bold" fill="#a7ada0" text-anchor="middle">MOVES</text>
+    <text x="40" y="48" font-family="'Space Grotesk', monospace" font-size="18" font-weight="bold" fill="#38bdf8" text-anchor="middle">38</text>
+  </g>
+</svg>

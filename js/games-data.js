@@ -81,6 +81,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/space-dodge.svg',
     controlsSummary: 'Mouse Drag or Touch • Arrow keys / WASD to fly • Space for EMP Blast • P to Pause • R to Restart • M to Mute',
     features: ['3 Sector Waves & Endless', 'Energy Shields & EMP Blasts', 'Near-Miss Dodge Streaks', 'Parallax Starfield & Crystals']
+  },
+  {
+    id: 'number-puzzle',
+    title: 'Number Puzzle',
+    category: 'Puzzle',
+    tags: ['puzzle', 'number', '15-puzzle', 'sliding', 'brain', 'logic', 'math', 'retro'],
+    badge: 'New',
+    tagline: 'Slide tiles. Order numbers 1 to 15. Beat the clock.',
+    description: 'The definitive classic 15-puzzle sliding challenge. Slide adjacent numbered tiles into the empty space to arrange them in numerical order from 1 to 15 with the empty slot in the bottom-right corner. Features 3x3, 4x4, and 5x5 grid modes with move counters and star ratings.',
+    route: 'games/number-puzzle/index.html',
+    thumbnail: 'assets/games/number-puzzle.svg',
+    controlsSummary: 'Click/Tap adjacent tiles • Arrow keys / WASD to slide • Touch swipe • R to Reshuffle • M to Mute',
+    features: ['3 Grid Modes: 3x3, 4x4 & 5x5', '100% Solvability Guarantee', 'Move Counter & Stopwatch', 'Star Ratings & High Scores']
   }
 ];
 

@@ -139,10 +139,11 @@ it('Search and category filter logic filters games correctly', () => {
   assert.strictEqual(res3.length, 1);
   assert.strictEqual(res3[0].id, 'citrus-blitz');
 
-  // Puzzle category filter matches Tic Tac Toe
+  // Puzzle category filter matches Tic Tac Toe and Number Puzzle
   const res4 = filterGames('', 'Puzzle');
-  assert.strictEqual(res4.length, 1);
-  assert.strictEqual(res4[0].id, 'tic-tac-toe');
+  assert.strictEqual(res4.length, 2);
+  assert(res4.some(g => g.id === 'tic-tac-toe'));
+  assert(res4.some(g => g.id === 'number-puzzle'));
 
   // Casual category filter matches Memory Match and Bubble Pop
   const res5 = filterGames('', 'Casual');
@@ -170,6 +171,11 @@ it('Search and category filter logic filters games correctly', () => {
   const resDodge = filterGames('dodge', 'All');
   assert.strictEqual(resDodge.length, 1);
   assert.strictEqual(resDodge[0].id, 'space-dodge');
+
+  // Tag search for number/puzzle
+  const resNumber = filterGames('number', 'All');
+  assert.strictEqual(resNumber.length, 1);
+  assert.strictEqual(resNumber[0].id, 'number-puzzle');
 
   // Non-matching category
   const res8 = filterGames('', 'Racing');
@@ -515,7 +521,87 @@ it('Space Dodge computes collisions, near-misses, starfield layers, and sector s
   assert.strictEqual(calculateStars(1000, 0, 1), 1, 'Low score with depleted shields yields 1 star');
 });
 
-// 18. Security & Clean Static Deployment Verification
+// 18. Dedicated Number Puzzle Playable Page & Engine Integrity
+it('Dedicated Number Puzzle page (games/number-puzzle/index.html) has all DOM elements required by game.js', () => {
+  const npHtmlPath = path.join(__dirname, 'games/number-puzzle/index.html');
+  assert(fs.existsSync(npHtmlPath), 'games/number-puzzle/index.html must exist');
+  const npHtml = fs.readFileSync(npHtmlPath, 'utf8');
+  const npGameJs = fs.readFileSync(path.join(__dirname, 'games/number-puzzle/js/game.js'), 'utf8');
+
+  // Verify all document.getElementById calls in game.js are present in HTML
+  const idRegex = /document\.getElementById\(['"]([^'"]+)['"]\)/g;
+  let match;
+  while ((match = idRegex.exec(npGameJs)) !== null) {
+    const id = match[1];
+    assert(npHtml.includes(`id="${id}"`), `DOM id="${id}" missing in games/number-puzzle/index.html`);
+  }
+
+  // Verify navigation back link to arcade exists
+  assert(npHtml.includes('href="../../index.html"'), 'Number Puzzle page must link back to arcade homepage');
+});
+
+// 19. Number Puzzle (15-Puzzle) Sliding Mechanics, Solvability & Scoring Engine
+it('Number Puzzle computes valid sliding moves, directional swipes, solvability shuffle, and star ratings', () => {
+  const {
+    DIFFICULTIES,
+    createSolvedBoard,
+    isSolved,
+    getBlankIndex,
+    getAdjacentMovableIndices,
+    canSlide,
+    slideTiles,
+    slideDirection,
+    shuffleBoard,
+    countCorrectTiles,
+    calculateStars
+  } = require('./games/number-puzzle/js/engine.js');
+
+  // 1. Difficulty modes
+  assert(DIFFICULTIES.easy && DIFFICULTIES.classic && DIFFICULTIES.expert, 'All 3 difficulty modes defined');
+  assert.strictEqual(DIFFICULTIES.easy.size, 3, 'Easy mode is 3x3');
+  assert.strictEqual(DIFFICULTIES.classic.size, 4, 'Classic mode is 4x4 (15 tiles)');
+  assert.strictEqual(DIFFICULTIES.expert.size, 5, 'Expert mode is 5x5 (24 tiles)');
+
+  // 2. Solved board creation & check
+  const solved4 = createSolvedBoard(4);
+  assert.strictEqual(solved4.length, 16, '4x4 board has 16 items');
+  assert.strictEqual(solved4[15], 0, 'Last slot in 4x4 is blank (0)');
+  assert.strictEqual(solved4[0], 1, 'First slot is 1');
+  assert.strictEqual(isSolved(solved4), true, 'Initial solved board is identified as solved');
+  assert.strictEqual(countCorrectTiles(solved4), 16, 'All tiles are placed in solved board');
+
+  // 3. Tile movement check (adjacent and invalid)
+  // In solved 4x4: row 3 col 3 is blank (index 15).
+  // Adjacent tiles are index 14 (row 3, col 2) and index 11 (row 2, col 3).
+  assert.strictEqual(canSlide(solved4, 14, 4), true, 'Tile directly to left of blank can slide');
+  assert.strictEqual(canSlide(solved4, 11, 4), true, 'Tile directly above blank can slide');
+  assert.strictEqual(canSlide(solved4, 0, 4), false, 'Tile at (0, 0) is not in blank row or col');
+
+  // 4. Slide tile action
+  const step1 = slideTiles(solved4, 14, 4);
+  assert.strictEqual(step1.changed, true, 'Valid slide modifies board');
+  assert.strictEqual(step1.newBoard[14], 0, 'Blank space shifts to index 14');
+  assert.strictEqual(step1.newBoard[15], 15, 'Tile 15 shifts to index 15');
+  assert.strictEqual(isSolved(step1.newBoard), false, 'Board is no longer solved');
+
+  // 5. Directional slide (WASD / Keyboard / Swipe)
+  // Current board has blank at index 14. Sliding 'right' moves tile 13 (to the left of blank) right into blank.
+  const step2 = slideDirection(step1.newBoard, 'right', 4);
+  assert.strictEqual(step2.changed, true, 'Right slide executes');
+  assert.strictEqual(step2.newBoard[13], 0, 'Blank space shifts to index 13');
+
+  // 6. Solvable shuffle test
+  const shuffled = shuffleBoard(4, 50);
+  assert.strictEqual(shuffled.length, 16, 'Shuffled board maintains length');
+  assert.strictEqual(getBlankIndex(shuffled) >= 0, true, 'Blank space exists in shuffled board');
+
+  // 7. Star ratings based on moves
+  assert.strictEqual(calculateStars(60, 'classic'), 3, 'Low moves yields 3 stars');
+  assert.strictEqual(calculateStars(110, 'classic'), 2, 'Medium moves yields 2 stars');
+  assert.strictEqual(calculateStars(250, 'classic'), 1, 'High moves yields 1 star');
+});
+
+// 20. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
