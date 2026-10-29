@@ -2,59 +2,59 @@
  * Block Puzzle — Pure Functional Game Engine
  * Core algorithms: 8x8 grid matrix, polyomino shapes, collision checking,
  * row/column line completion detection, board clearing, combo streaks,
- * and game-over reachability validation.
+ * smart solvability shape dealing, and game-over reachability validation.
  */
 (function(exports) {
   'use strict';
 
   const GRID_SIZE = 8;
 
-  // Shapes catalog with visual dimensions and color branding
+  // Shapes catalog with visual dimensions, categories, and color branding
   const SHAPES = [
-    // 1x1 Dot
-    { id: 'dot', name: '1x1 Dot', matrix: [[1]], color: '#d5ff55' },
+    // 1x1 Dot (Small)
+    { id: 'dot', name: '1x1 Dot', tier: 'small', matrix: [[1]], color: '#d5ff55' },
 
-    // 1x2 and 2x1 Lines
-    { id: 'line2h', name: '1x2 Bar', matrix: [[1, 1]], color: '#38bdf8' },
-    { id: 'line2v', name: '2x1 Bar', matrix: [[1], [1]], color: '#38bdf8' },
+    // 1x2 and 2x1 Lines (Small)
+    { id: 'line2h', name: '1x2 Bar', tier: 'small', matrix: [[1, 1]], color: '#38bdf8' },
+    { id: 'line2v', name: '2x1 Bar', tier: 'small', matrix: [[1], [1]], color: '#38bdf8' },
 
-    // 1x3 and 3x1 Lines
-    { id: 'line3h', name: '1x3 Bar', matrix: [[1, 1, 1]], color: '#38bdf8' },
-    { id: 'line3v', name: '3x1 Bar', matrix: [[1], [1], [1]], color: '#38bdf8' },
+    // 1x3 and 3x1 Lines (Medium)
+    { id: 'line3h', name: '1x3 Bar', tier: 'medium', matrix: [[1, 1, 1]], color: '#38bdf8' },
+    { id: 'line3v', name: '3x1 Bar', tier: 'medium', matrix: [[1], [1], [1]], color: '#38bdf8' },
 
-    // 1x4 and 4x1 Lines
-    { id: 'line4h', name: '1x4 Bar', matrix: [[1, 1, 1, 1]], color: '#60a5fa' },
-    { id: 'line4v', name: '4x1 Bar', matrix: [[1], [1], [1], [1]], color: '#60a5fa' },
+    // 1x4 and 4x1 Lines (Large)
+    { id: 'line4h', name: '1x4 Bar', tier: 'large', matrix: [[1, 1, 1, 1]], color: '#60a5fa' },
+    { id: 'line4v', name: '4x1 Bar', tier: 'large', matrix: [[1], [1], [1], [1]], color: '#60a5fa' },
 
-    // 1x5 and 5x1 Lines
-    { id: 'line5h', name: '1x5 Bar', matrix: [[1, 1, 1, 1, 1]], color: '#818cf8' },
-    { id: 'line5v', name: '5x1 Bar', matrix: [[1], [1], [1], [1], [1]], color: '#818cf8' },
+    // 1x5 and 5x1 Lines (Large)
+    { id: 'line5h', name: '1x5 Bar', tier: 'large', matrix: [[1, 1, 1, 1, 1]], color: '#818cf8' },
+    { id: 'line5v', name: '5x1 Bar', tier: 'large', matrix: [[1], [1], [1], [1], [1]], color: '#818cf8' },
 
-    // 2x2 Square
-    { id: 'square2', name: '2x2 Box', matrix: [[1, 1], [1, 1]], color: '#ffd166' },
+    // 2x2 Square (Medium)
+    { id: 'square2', name: '2x2 Box', tier: 'medium', matrix: [[1, 1], [1, 1]], color: '#ffd166' },
 
-    // 3x3 Big Square
-    { id: 'square3', name: '3x3 Giant Box', matrix: [[1, 1, 1], [1, 1, 1], [1, 1, 1]], color: '#ff784f' },
+    // 3x3 Big Square (Large)
+    { id: 'square3', name: '3x3 Giant Box', tier: 'large', matrix: [[1, 1, 1], [1, 1, 1], [1, 1, 1]], color: '#ff784f' },
 
-    // 2x2 Small Corners
-    { id: 'corner2_tl', name: 'Corner TL', matrix: [[1, 1], [1, 0]], color: '#c084fc' },
-    { id: 'corner2_tr', name: 'Corner TR', matrix: [[1, 1], [0, 1]], color: '#c084fc' },
-    { id: 'corner2_bl', name: 'Corner BL', matrix: [[1, 0], [1, 1]], color: '#c084fc' },
-    { id: 'corner2_br', name: 'Corner BR', matrix: [[0, 1], [1, 1]], color: '#c084fc' },
+    // 2x2 Small Corners (Small)
+    { id: 'corner2_tl', name: 'Corner TL', tier: 'small', matrix: [[1, 1], [1, 0]], color: '#c084fc' },
+    { id: 'corner2_tr', name: 'Corner TR', tier: 'small', matrix: [[1, 1], [0, 1]], color: '#c084fc' },
+    { id: 'corner2_bl', name: 'Corner BL', tier: 'small', matrix: [[1, 0], [1, 1]], color: '#c084fc' },
+    { id: 'corner2_br', name: 'Corner BR', tier: 'small', matrix: [[0, 1], [1, 1]], color: '#c084fc' },
 
-    // 3x3 Large Corners
-    { id: 'corner3_tl', name: 'Big Corner TL', matrix: [[1, 1, 1], [1, 0, 0], [1, 0, 0]], color: '#fb7185' },
-    { id: 'corner3_tr', name: 'Big Corner TR', matrix: [[1, 1, 1], [0, 0, 1], [0, 0, 1]], color: '#fb7185' },
-    { id: 'corner3_bl', name: 'Big Corner BL', matrix: [[1, 0, 0], [1, 0, 0], [1, 1, 1]], color: '#fb7185' },
-    { id: 'corner3_br', name: 'Big Corner BR', matrix: [[0, 0, 1], [0, 0, 1], [1, 1, 1]], color: '#fb7185' },
+    // 3x3 Large Corners (Large)
+    { id: 'corner3_tl', name: 'Big Corner TL', tier: 'large', matrix: [[1, 1, 1], [1, 0, 0], [1, 0, 0]], color: '#fb7185' },
+    { id: 'corner3_tr', name: 'Big Corner TR', tier: 'large', matrix: [[1, 1, 1], [0, 0, 1], [0, 0, 1]], color: '#fb7185' },
+    { id: 'corner3_bl', name: 'Big Corner BL', tier: 'large', matrix: [[1, 0, 0], [1, 0, 0], [1, 1, 1]], color: '#fb7185' },
+    { id: 'corner3_br', name: 'Big Corner BR', tier: 'large', matrix: [[0, 0, 1], [0, 0, 1], [1, 1, 1]], color: '#fb7185' },
 
-    // T-Shapes
-    { id: 't_down', name: 'T Down', matrix: [[1, 1, 1], [0, 1, 0]], color: '#a78bfa' },
-    { id: 't_up', name: 'T Up', matrix: [[0, 1, 0], [1, 1, 1]], color: '#a78bfa' },
+    // T-Shapes (Medium)
+    { id: 't_down', name: 'T Down', tier: 'medium', matrix: [[1, 1, 1], [0, 1, 0]], color: '#a78bfa' },
+    { id: 't_up', name: 'T Up', tier: 'medium', matrix: [[0, 1, 0], [1, 1, 1]], color: '#a78bfa' },
 
-    // Z and S Shapes
-    { id: 'z_shape', name: 'Z Block', matrix: [[1, 1, 0], [0, 1, 1]], color: '#4ade80' },
-    { id: 's_shape', name: 'S Block', matrix: [[0, 1, 1], [1, 1, 0]], color: '#4ade80' }
+    // Z and S Shapes (Medium)
+    { id: 'z_shape', name: 'Z Block', tier: 'medium', matrix: [[1, 1, 0], [0, 1, 1]], color: '#4ade80' },
+    { id: 's_shape', name: 'S Block', tier: 'medium', matrix: [[0, 1, 1], [1, 1, 0]], color: '#4ade80' }
   ];
 
   /**
@@ -200,6 +200,24 @@
   }
 
   /**
+   * Checks if a single specific shape can fit ANYWHERE on the board.
+   */
+  function canShapeFitAnywhere(grid, shapeMatrix, size = GRID_SIZE) {
+    if (!shapeMatrix || shapeMatrix.length === 0) return false;
+    const h = shapeMatrix.length;
+    const w = shapeMatrix[0].length;
+
+    for (let r = 0; r <= size - h; r++) {
+      for (let c = 0; c <= size - w; c++) {
+        if (canPlaceShape(grid, shapeMatrix, r, c, size)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
    * Determines if ANY available dock shape can still be placed ANYWHERE on the board.
    * If false, player is completely blocked (Game Over).
    */
@@ -208,15 +226,8 @@
 
     for (const shape of availableShapes) {
       if (!shape) continue;
-      const h = shape.matrix.length;
-      const w = shape.matrix[0].length;
-
-      for (let r = 0; r <= size - h; r++) {
-        for (let c = 0; c <= size - w; c++) {
-          if (canPlaceShape(grid, shape.matrix, r, c, size)) {
-            return true; // At least one valid placement exists
-          }
-        }
+      if (canShapeFitAnywhere(grid, shape.matrix, size)) {
+        return true;
       }
     }
 
@@ -244,21 +255,71 @@
   }
 
   /**
-   * Randomly deals a set of shapes from the catalog.
+   * Intelligently deals a balanced, solvable hand of 3 shapes.
+   * - Prevents dealing 3 large/unplaceable shapes in one hand.
+   * - If grid is provided, guarantees at least one shape is currently placeable!
+   * - Automatically favors smaller/combo-enabling shapes when board density is high.
    */
-  function dealShapes(count = 3, rng = Math.random) {
+  function dealShapes(count = 3, rng = Math.random, grid = null) {
+    const smallShapes = SHAPES.filter(s => s.tier === 'small');
+    const mediumShapes = SHAPES.filter(s => s.tier === 'medium');
+    const largeShapes = SHAPES.filter(s => s.tier === 'large');
+
+    // Calculate grid density if grid provided
+    let density = 0;
+    if (grid && grid.length > 0) {
+      let occupied = 0;
+      const totalCells = grid.length * grid[0].length;
+      for (let r = 0; r < grid.length; r++) {
+        for (let c = 0; c < grid[r].length; c++) {
+          if (grid[r][c] !== null) occupied++;
+        }
+      }
+      density = occupied / totalCells;
+    }
+
     const dealt = [];
+    let largeCount = 0;
+
     for (let i = 0; i < count; i++) {
-      const idx = Math.floor(rng() * SHAPES.length);
-      // Deep clone shape to avoid mutation
-      const shape = SHAPES[idx];
+      let pool = SHAPES;
+
+      // Restrict large shapes: at most 1 large shape per hand
+      if (largeCount >= 1 || density > 0.45) {
+        pool = [...smallShapes, ...mediumShapes];
+      } else if (density > 0.65) {
+        // High density -> heavy weight on small shapes to allow comebacks
+        pool = [...smallShapes, ...smallShapes, ...mediumShapes];
+      }
+
+      const chosen = pool[Math.floor(rng() * pool.length)];
+      if (chosen.tier === 'large') largeCount++;
+
       dealt.push({
-        id: shape.id,
-        name: shape.name,
-        matrix: shape.matrix.map(row => [...row]),
-        color: shape.color
+        id: chosen.id,
+        name: chosen.name,
+        tier: chosen.tier,
+        matrix: chosen.matrix.map(row => [...row]),
+        color: chosen.color
       });
     }
+
+    // Solvability safeguard: if grid is provided, ensure at least 1 shape can fit!
+    if (grid) {
+      const anyCanFit = dealt.some(s => canShapeFitAnywhere(grid, s.matrix));
+      if (!anyCanFit) {
+        // Replace the last shape with a guaranteed small shape (e.g. dot or 1x2 bar)
+        const solvableShape = smallShapes.find(s => canShapeFitAnywhere(grid, s.matrix)) || smallShapes[0];
+        dealt[dealt.length - 1] = {
+          id: solvableShape.id,
+          name: solvableShape.name,
+          tier: solvableShape.tier,
+          matrix: solvableShape.matrix.map(row => [...row]),
+          color: solvableShape.color
+        };
+      }
+    }
+
     return dealt;
   }
 
@@ -267,12 +328,10 @@
    */
   function calculateStars(score, linesCleared, mode = 'classic') {
     if (mode === 'challenge') {
-      // In challenge mode, target is 10 lines
       if (linesCleared >= 10 && score >= 2000) return 3;
       if (linesCleared >= 10) return 2;
       return 1;
     }
-    // Classic / Blitz
     if (score >= 3500) return 3;
     if (score >= 1800) return 2;
     return 1;
@@ -284,6 +343,7 @@
   exports.createEmptyGrid = createEmptyGrid;
   exports.cloneGrid = cloneGrid;
   exports.canPlaceShape = canPlaceShape;
+  exports.canShapeFitAnywhere = canShapeFitAnywhere;
   exports.placeShape = placeShape;
   exports.checkCompletedLines = checkCompletedLines;
   exports.clearLines = clearLines;

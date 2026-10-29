@@ -1,7 +1,11 @@
 /**
  * Block Puzzle — Interactive DOM Game Controller
- * Manages 8x8 grid rendering, dock polyominos, tap/click/keyboard placement,
- * ghost preview, line blast particle animations, and victory/game-over conditions.
+ * Features:
+ * - Fluid Pointer Drag & Drop with finger-offset preview & touch support
+ * - Tap-to-select and click-to-place fallback for full accessibility
+ * - Dynamic can-place dock status (greys out shapes that currently cannot fit)
+ * - Juicy neon line-clearing blast animations & floating score popups
+ * - Smart balanced dealing with solvability safeguards
  */
 (function() {
   'use strict';
@@ -24,13 +28,19 @@
     comboStreak: 0,
     timer: 0,
     timerInterval: null,
-    targetLines: 10, // For challenge mode
-    blitzDuration: 90, // For blitz mode
+    targetLines: 10,
+    blitzDuration: 90,
     bestScores: {
       classic: 0,
       challenge: 0,
       blitz: 0
-    }
+    },
+    // Drag and Drop state
+    isDragging: false,
+    dragShapeIndex: -1,
+    dragHoverRow: -1,
+    dragHoverCol: -1,
+    touchOffsetY: 0
   };
 
   if (document.readyState === 'loading') {
@@ -47,6 +57,7 @@
   }
 
   function cacheDom() {
+    dom.boardContainer = document.querySelector('.board-container');
     dom.boardGrid = document.getElementById('board-grid');
     dom.dockContainer = document.getElementById('dock-container');
     dom.dockSlots = [
@@ -93,6 +104,12 @@
     dom.goLinesVal = document.getElementById('go-lines-val');
 
     dom.srAnnouncer = document.getElementById('sr-announcer');
+
+    // Create drag avatar element
+    dom.dragAvatar = document.createElement('div');
+    dom.dragAvatar.id = 'drag-avatar';
+    dom.dragAvatar.className = 'drag-avatar';
+    document.body.appendChild(dom.dragAvatar);
   }
 
   function loadBestScores() {
@@ -137,7 +154,7 @@
     if (dom.playAgainBtn) dom.playAgainBtn.addEventListener('click', restartGame);
     if (dom.tryAgainBtn) dom.tryAgainBtn.addEventListener('click', restartGame);
 
-    // Keyboard listener
+    // Global keyboard listener
     window.addEventListener('keydown', handleKeyDown);
 
     // Sync initial audio icon
@@ -184,6 +201,8 @@
     state.selectedDockIndex = -1;
     state.cursorRow = 3;
     state.cursorCol = 3;
+    state.isDragging = false;
+    state.dragShapeIndex = -1;
 
     if (state.mode === 'blitz') {
       state.timer = state.blitzDuration;
@@ -200,8 +219,9 @@
 
   function dealNewDockShapes() {
     const Engine = window.BlockEngine;
-    state.dockShapes = Engine ? Engine.dealShapes(3) : [];
-    state.selectedDockIndex = 0; // Automatically select first dock piece for accessibility
+    // Pass current grid to ensure deal is balanced and guaranteed solvable!
+    state.dockShapes = Engine ? Engine.dealShapes(3, Math.random, state.grid) : [];
+    state.selectedDockIndex = state.dockShapes.findIndex(s => s !== null);
   }
 
   function renderBoard() {
@@ -224,20 +244,21 @@
           cell.style.backgroundColor = color;
         }
 
-        // Mouse hover preview
+        // Pointer hover for preview
         cell.addEventListener('pointerenter', () => {
-          if (state.status === 'playing' && state.selectedDockIndex !== -1) {
+          if (state.status === 'playing' && state.selectedDockIndex !== -1 && !state.isDragging) {
             state.cursorRow = r;
             state.cursorCol = c;
-            updatePlacementPreview();
+            updatePlacementPreview(r, c);
           }
         });
 
-        // Click / touch to place
+        // Click / tap to place (fallback mode)
         cell.addEventListener('pointerdown', (e) => {
-          e.preventDefault();
+          if (state.isDragging) return;
           if (state.status === 'playing' && state.selectedDockIndex !== -1) {
-            handleAttemptPlace(r, c);
+            e.preventDefault();
+            handleAttemptPlace(r, c, state.selectedDockIndex);
           }
         });
 
@@ -245,24 +266,38 @@
       }
     }
 
-    updatePlacementPreview();
+    if (state.selectedDockIndex !== -1 && !state.isDragging) {
+      updatePlacementPreview(state.cursorRow, state.cursorCol);
+    }
   }
 
   function renderDock() {
     if (!dom.dockSlots) return;
+    const Engine = window.BlockEngine;
 
     state.dockShapes.forEach((shape, idx) => {
       const slot = dom.dockSlots[idx];
       if (!slot) return;
       slot.innerHTML = '';
-      slot.className = `dock-slot ${state.selectedDockIndex === idx ? 'selected' : ''}`;
+      slot.className = 'dock-slot';
 
       if (!shape) {
         slot.classList.add('empty');
         return;
       }
 
-      // Render miniature matrix
+      if (state.selectedDockIndex === idx) {
+        slot.classList.add('selected');
+      }
+
+      // Check if this piece can currently fit anywhere on the board
+      const canFit = Engine ? Engine.canShapeFitAnywhere(state.grid, shape.matrix) : true;
+      if (!canFit) {
+        slot.classList.add('cannot-fit');
+        slot.setAttribute('title', 'No room for this shape right now. Clear lines first!');
+      }
+
+      // Build mini-block grid
       const matrix = shape.matrix;
       const h = matrix.length;
       const w = matrix[0].length;
@@ -284,48 +319,190 @@
         }
       }
 
-      // Slot select listener
-      slot.addEventListener('pointerdown', (e) => {
+      // Attach pointer down for DRAG or TAP
+      slot.onpointerdown = (e) => {
+        if (state.status !== 'playing' && state.status !== 'ready') return;
         e.preventDefault();
-        selectDockPiece(idx);
-      });
+        startPieceDrag(e, idx);
+      };
 
       slot.appendChild(pieceWrap);
     });
   }
 
-  function selectDockPiece(idx) {
-    if (state.status !== 'playing' && state.status !== 'ready') return;
-    if (!state.dockShapes[idx]) return;
+  /**
+   * Fluid Drag and Drop Controller
+   */
+  function startPieceDrag(e, dockIndex) {
+    const shape = state.dockShapes[dockIndex];
+    if (!shape) return;
 
-    state.selectedDockIndex = idx;
+    state.selectedDockIndex = dockIndex;
+    state.dragShapeIndex = dockIndex;
+    state.isDragging = true;
+
+    // Ergonomic touch offset: lift 60px above finger on mobile so finger doesn't block view
+    state.touchOffsetY = e.pointerType === 'touch' ? 64 : 10;
+
     if (window.BlockAudio) window.BlockAudio.playSelect();
     renderDock();
-    updatePlacementPreview();
+
+    // Populate and show drag avatar
+    setupDragAvatar(shape);
+    moveDragAvatar(e.clientX, e.clientY);
+
+    // Bind window drag listeners
+    window.addEventListener('pointermove', onWindowPointerMove, { passive: false });
+    window.addEventListener('pointerup', onWindowPointerUp, { passive: false });
+    window.addEventListener('pointercancel', onWindowPointerCancel, { passive: false });
   }
 
-  function updatePlacementPreview() {
+  function setupDragAvatar(shape) {
+    if (!dom.dragAvatar) return;
+    dom.dragAvatar.innerHTML = '';
+    dom.dragAvatar.style.display = 'grid';
+
+    const matrix = shape.matrix;
+    const h = matrix.length;
+    const w = matrix[0].length;
+
+    dom.dragAvatar.style.gridTemplateRows = `repeat(${h}, 1fr)`;
+    dom.dragAvatar.style.gridTemplateColumns = `repeat(${w}, 1fr)`;
+
+    // Calculate cell dimension matching the board grid
+    const boardRect = dom.boardGrid ? dom.boardGrid.getBoundingClientRect() : { width: 360 };
+    const cellSize = (boardRect.width - 16) / 8; // approx 40px
+
+    dom.dragAvatar.style.width = `${w * cellSize}px`;
+    dom.dragAvatar.style.height = `${h * cellSize}px`;
+
+    for (let r = 0; r < h; r++) {
+      for (let c = 0; c < w; c++) {
+        const block = document.createElement('div');
+        block.className = 'avatar-block';
+        if (matrix[r][c] === 1) {
+          block.style.backgroundColor = shape.color;
+          block.classList.add('filled');
+        }
+        dom.dragAvatar.appendChild(block);
+      }
+    }
+  }
+
+  function moveDragAvatar(clientX, clientY) {
+    if (!dom.dragAvatar) return;
+    const shape = state.dockShapes[state.dragShapeIndex];
+    if (!shape) return;
+
+    const avatarW = dom.dragAvatar.offsetWidth || 80;
+    const avatarH = dom.dragAvatar.offsetHeight || 80;
+
+    // Center the avatar on cursor with touch vertical offset
+    const x = clientX - (avatarW / 2);
+    const y = clientY - (avatarH / 2) - state.touchOffsetY;
+
+    dom.dragAvatar.style.transform = `translate3d(${x}px, ${y}px, 0) scale(1.05)`;
+  }
+
+  function onWindowPointerMove(e) {
+    if (!state.isDragging) return;
+    e.preventDefault();
+    moveDragAvatar(e.clientX, e.clientY);
+
+    // Map pointer to grid cell
+    const targetCell = getGridCoordsFromPoint(e.clientX, e.clientY - state.touchOffsetY);
+    if (targetCell) {
+      state.dragHoverRow = targetCell.row;
+      state.dragHoverCol = targetCell.col;
+      state.cursorRow = targetCell.row;
+      state.cursorCol = targetCell.col;
+      updatePlacementPreview(targetCell.row, targetCell.col);
+    } else {
+      state.dragHoverRow = -1;
+      state.dragHoverCol = -1;
+      clearPlacementPreview();
+    }
+  }
+
+  function onWindowPointerUp(e) {
+    if (!state.isDragging) return;
+    e.preventDefault();
+
+    cleanupDrag();
+
+    // Check if released over a valid grid spot
+    if (state.dragHoverRow !== -1 && state.dragHoverCol !== -1) {
+      handleAttemptPlace(state.dragHoverRow, state.dragHoverCol, state.dragShapeIndex);
+    }
+  }
+
+  function onWindowPointerCancel() {
+    cleanupDrag();
+  }
+
+  function cleanupDrag() {
+    state.isDragging = false;
+    window.removeEventListener('pointermove', onWindowPointerMove);
+    window.removeEventListener('pointerup', onWindowPointerUp);
+    window.removeEventListener('pointercancel', onWindowPointerCancel);
+
+    if (dom.dragAvatar) {
+      dom.dragAvatar.style.display = 'none';
+      dom.dragAvatar.innerHTML = '';
+    }
+    clearPlacementPreview();
+  }
+
+  function getGridCoordsFromPoint(clientX, clientY) {
+    if (!dom.boardGrid) return null;
+    const rect = dom.boardGrid.getBoundingClientRect();
+
+    if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
+      return null;
+    }
+
+    const shape = state.dockShapes[state.dragShapeIndex];
+    const shapeW = shape ? shape.matrix[0].length : 1;
+    const shapeH = shape ? shape.matrix.length : 1;
+
+    const cellWidth = rect.width / 8;
+    const cellHeight = rect.height / 8;
+
+    // Center shape around pointer
+    const rawCol = Math.floor((clientX - rect.left) / cellWidth) - Math.floor((shapeW - 1) / 2);
+    const rawRow = Math.floor((clientY - rect.top) / cellHeight) - Math.floor((shapeH - 1) / 2);
+
+    const clampedCol = Math.max(0, Math.min(8 - shapeW, rawCol));
+    const clampedRow = Math.max(0, Math.min(8 - shapeH, rawRow));
+
+    return { row: clampedRow, col: clampedCol };
+  }
+
+  function clearPlacementPreview() {
     if (!dom.boardGrid) return;
     const cells = dom.boardGrid.children;
-    // Clear previous preview styles
     for (let i = 0; i < cells.length; i++) {
       cells[i].classList.remove('preview-valid', 'preview-invalid', 'preview-clearing');
     }
+  }
 
+  function updatePlacementPreview(startR, startC) {
+    clearPlacementPreview();
     const currentShape = state.dockShapes[state.selectedDockIndex];
     if (!currentShape || state.status !== 'playing') return;
 
     const Engine = window.BlockEngine;
-    const isValid = Engine ? Engine.canPlaceShape(state.grid, currentShape.matrix, state.cursorRow, state.cursorCol) : false;
+    const isValid = Engine ? Engine.canPlaceShape(state.grid, currentShape.matrix, startR, startC) : false;
 
     const h = currentShape.matrix.length;
     const w = currentShape.matrix[0].length;
+    const cells = dom.boardGrid.children;
 
     for (let r = 0; r < h; r++) {
       for (let c = 0; c < w; c++) {
         if (currentShape.matrix[r][c] === 1) {
-          const targetR = state.cursorRow + r;
-          const targetC = state.cursorCol + c;
+          const targetR = startR + r;
+          const targetC = startC + c;
           if (targetR >= 0 && targetR < 8 && targetC >= 0 && targetC < 8) {
             const cellIdx = targetR * 8 + targetC;
             const cell = cells[cellIdx];
@@ -340,9 +517,9 @@
       }
     }
 
-    // Highlight rows and columns that will clear if placed
+    // Highlight lines that will blast
     if (isValid && Engine) {
-      const sim = Engine.placeShape(state.grid, currentShape.matrix, state.cursorRow, state.cursorCol, currentShape.color);
+      const sim = Engine.placeShape(state.grid, currentShape.matrix, startR, startC, currentShape.color);
       if (sim.success) {
         const lines = Engine.checkCompletedLines(sim.newGrid);
         lines.fullRows.forEach(r => {
@@ -355,12 +532,12 @@
     }
   }
 
-  function handleAttemptPlace(startR, startC) {
-    const currentShape = state.dockShapes[state.selectedDockIndex];
-    if (!currentShape) return;
+  function handleAttemptPlace(startR, startC, dockIndex) {
+    const shape = state.dockShapes[dockIndex];
+    if (!shape) return;
 
     const Engine = window.BlockEngine;
-    const placement = Engine ? Engine.placeShape(state.grid, currentShape.matrix, startR, startC, currentShape.color) : { success: false };
+    const placement = Engine ? Engine.placeShape(state.grid, shape.matrix, startR, startC, shape.color) : { success: false };
 
     if (!placement.success) {
       if (window.BlockAudio) window.BlockAudio.playInvalid();
@@ -368,52 +545,98 @@
       return;
     }
 
-    // Successful Placement!
+    // Success! Update grid & consume piece
     state.grid = placement.newGrid;
     state.moves++;
-    state.dockShapes[state.selectedDockIndex] = null;
+    state.dockShapes[dockIndex] = null;
+    clearPlacementPreview();
 
     if (window.BlockAudio) window.BlockAudio.playPlace();
 
-    // Check line completions
+    // Check completed lines
     const lineCheck = Engine.checkCompletedLines(state.grid);
-    let linesCount = lineCheck.totalLines;
+    const linesCount = lineCheck.totalLines;
 
     if (linesCount > 0) {
       state.comboStreak++;
       state.linesCleared += linesCount;
-      const clearRes = Engine.clearLines(state.grid, lineCheck.fullRows, lineCheck.fullCols);
-      state.grid = clearRes.newGrid;
 
-      // Audio feedback
-      if (window.BlockAudio) {
-        window.BlockAudio.playLineClear(linesCount);
-        if (state.comboStreak > 1) {
-          window.BlockAudio.playCombo(state.comboStreak);
+      // Render board with immediate placed shape
+      renderBoard();
+
+      // Trigger line blast animations on clearing cells
+      highlightAndBlastLines(lineCheck.fullRows, lineCheck.fullCols, () => {
+        const clearRes = Engine.clearLines(state.grid, lineCheck.fullRows, lineCheck.fullCols);
+        state.grid = clearRes.newGrid;
+
+        const earned = Engine.calculatePlacementScore(placement.placedCount, linesCount, state.comboStreak);
+        state.score += earned;
+
+        showFloatingScore(`+${earned}${state.comboStreak > 1 ? ` (${state.comboStreak}x Streak!)` : ''}`);
+
+        if (window.BlockAudio) {
+          window.BlockAudio.playLineClear(linesCount);
+          if (state.comboStreak > 1) {
+            window.BlockAudio.playCombo(state.comboStreak);
+          }
         }
-      }
 
-      // Bonus time in Blitz mode
-      if (state.mode === 'blitz') {
-        state.timer = Math.min(state.blitzDuration, state.timer + (linesCount * 3));
-      }
+        if (state.mode === 'blitz') {
+          state.timer = Math.min(state.blitzDuration, state.timer + (linesCount * 3));
+        }
+
+        finalizeTurn();
+      });
+
     } else {
       state.comboStreak = 0;
+      const earned = Engine.calculatePlacementScore(placement.placedCount, 0, 0);
+      state.score += earned;
+      finalizeTurn();
     }
+  }
 
-    // Compute score
-    const earned = Engine.calculatePlacementScore(placement.placedCount, linesCount, state.comboStreak);
-    state.score += earned;
+  function highlightAndBlastLines(rows, cols, onComplete) {
+    const cells = dom.boardGrid.children;
+    const blastedCells = [];
 
-    // Check if dock is empty -> deal 3 new shapes
+    rows.forEach(r => {
+      for (let c = 0; c < 8; c++) {
+        const cell = cells[r * 8 + c];
+        if (cell) blastedCells.push(cell);
+      }
+    });
+
+    cols.forEach(c => {
+      for (let r = 0; r < 8; r++) {
+        const cell = cells[r * 8 + c];
+        if (cell && !blastedCells.includes(cell)) blastedCells.push(cell);
+      }
+    });
+
+    blastedCells.forEach(cell => cell.classList.add('cell-blast'));
+    triggerScreenShake();
+
+    setTimeout(() => {
+      blastedCells.forEach(cell => cell.classList.remove('cell-blast'));
+      onComplete();
+    }, 180);
+  }
+
+  function finalizeTurn() {
+    const Engine = window.BlockEngine;
+
+    // Deal new shapes if dock is empty
     const remaining = state.dockShapes.filter(s => s !== null);
     if (remaining.length === 0) {
       dealNewDockShapes();
     }
 
-    // Automatically select next available piece
-    const nextIdx = state.dockShapes.findIndex(s => s !== null);
-    state.selectedDockIndex = nextIdx;
+    // Automatically select next placeable dock piece
+    state.selectedDockIndex = state.dockShapes.findIndex(s => s !== null && Engine.canShapeFitAnywhere(state.grid, s.matrix));
+    if (state.selectedDockIndex === -1) {
+      state.selectedDockIndex = state.dockShapes.findIndex(s => s !== null);
+    }
 
     updateHUD();
     renderBoard();
@@ -425,13 +648,22 @@
       return;
     }
 
-    // Check Game Over Condition (No moves remain for any available shape)
+    // Check Game Over Condition
     const available = state.dockShapes.filter(s => s !== null);
     const canMove = Engine.hasAnyValidMove(state.grid, available);
 
     if (!canMove) {
       endGame(false);
     }
+  }
+
+  function showFloatingScore(text) {
+    if (!dom.boardContainer) return;
+    const floater = document.createElement('div');
+    floater.className = 'floating-score';
+    floater.textContent = text;
+    dom.boardContainer.appendChild(floater);
+    setTimeout(() => floater.remove(), 800);
   }
 
   function triggerScreenShake() {
@@ -447,8 +679,9 @@
     state.status = 'playing';
     startTimer();
     updateHUD();
-    updatePlacementPreview();
-    announceSR('Block Puzzle match started! Place blocks onto the grid.');
+    renderDock();
+    updatePlacementPreview(state.cursorRow, state.cursorCol);
+    announceSR('Block Puzzle match started! Drag or tap shapes onto the grid.');
   }
 
   function startTimer() {
@@ -571,7 +804,13 @@
     // Number keys 1, 2, 3 to select dock piece
     if (key === '1' || key === '2' || key === '3') {
       e.preventDefault();
-      selectDockPiece(parseInt(key, 10) - 1);
+      const targetIdx = parseInt(key, 10) - 1;
+      if (state.dockShapes[targetIdx]) {
+        state.selectedDockIndex = targetIdx;
+        if (window.BlockAudio) window.BlockAudio.playSelect();
+        renderDock();
+        updatePlacementPreview(state.cursorRow, state.cursorCol);
+      }
       return;
     }
 
@@ -593,14 +832,14 @@
 
     if (moved) {
       e.preventDefault();
-      updatePlacementPreview();
+      updatePlacementPreview(state.cursorRow, state.cursorCol);
       return;
     }
 
     // Space / Enter to place shape at cursor
     if (key === ' ' || key === 'enter') {
       e.preventDefault();
-      handleAttemptPlace(state.cursorRow, state.cursorCol);
+      handleAttemptPlace(state.cursorRow, state.cursorCol, state.selectedDockIndex);
     }
   }
 
@@ -620,7 +859,8 @@
     hideOverlays();
     state.status = 'playing';
     startTimer();
-    updatePlacementPreview();
+    renderDock();
+    updatePlacementPreview(state.cursorRow, state.cursorCol);
     announceSR('Game resumed.');
   }
 
@@ -649,7 +889,7 @@
       const descEl = dom.overlayStart.querySelector('.overlay-subtitle');
       if (descEl) {
         if (state.mode === 'classic') {
-          descEl.textContent = 'Drag or click shapes from the dock to fit them onto the 8×8 board. Fill full rows or columns to clear lines and build explosive combos!';
+          descEl.textContent = 'Drag or tap polyominos from your dock to fit them onto the 8×8 board. Fill rows or columns to blast lines and trigger explosive combo streaks!';
         } else if (state.mode === 'challenge') {
           descEl.textContent = 'Target: Clear 10 rows or columns in the fewest moves possible to earn a 3-star rating!';
         } else {

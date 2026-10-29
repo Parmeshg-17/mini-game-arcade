@@ -257,14 +257,14 @@
   </main>
 
   <!-- Modular Scripts with Root-relative paths and file:// fallback -->
-  <script src="/games/block-puzzle/js/engine.js?v=1.0.0"></script>
-  <script src="/games/block-puzzle/js/audio.js?v=1.0.0"></script>
-  <script src="/games/block-puzzle/js/game.js?v=1.0.0"></script>
+  <script src="/games/block-puzzle/js/engine.js?v=1.1.0"></script>
+  <script src="/games/block-puzzle/js/audio.js?v=1.1.0"></script>
+  <script src="/games/block-puzzle/js/game.js?v=1.1.0"></script>
   <script>
     if (window.location.protocol === 'file:' && typeof BlockEngine === 'undefined') {
       ['engine.js', 'audio.js', 'game.js'].forEach(function(s) {
         var scriptEl = document.createElement('script');
-        scriptEl.src = 'js/' + s + '?v=1.0.0';
+        scriptEl.src = 'js/' + s + '?v=1.1.0';
         scriptEl.async = false;
         document.body.appendChild(scriptEl);
       });
@@ -272,3 +272,4 @@
   </script>
 </body>
 </html>
+
