@@ -140,11 +140,12 @@ it('Search and category filter logic filters games correctly', () => {
   assert(res3.some(g => g.id === 'citrus-blitz'));
   assert(res3.some(g => g.id === 'tap-challenge'));
 
-  // Puzzle category filter matches Tic Tac Toe and Number Puzzle
+  // Puzzle category filter matches Tic Tac Toe, Number Puzzle, and Block Puzzle
   const res4 = filterGames('', 'Puzzle');
-  assert.strictEqual(res4.length, 2);
+  assert.strictEqual(res4.length, 3);
   assert(res4.some(g => g.id === 'tic-tac-toe'));
   assert(res4.some(g => g.id === 'number-puzzle'));
+  assert(res4.some(g => g.id === 'block-puzzle'));
 
   // Casual category filter matches Memory Match and Bubble Pop
   const res5 = filterGames('', 'Casual');
@@ -183,6 +184,11 @@ it('Search and category filter logic filters games correctly', () => {
   const resTap = filterGames('tap', 'All');
   assert.strictEqual(resTap.length, 1);
   assert.strictEqual(resTap[0].id, 'tap-challenge');
+
+  // Tag search for block puzzle
+  const resBlock = filterGames('block', 'All');
+  assert.strictEqual(resBlock.length, 1);
+  assert.strictEqual(resBlock[0].id, 'block-puzzle');
 
   // Non-matching category
   const res8 = filterGames('', 'Racing');
@@ -693,7 +699,116 @@ it('Tap Challenge computes sequence shuffling, validation, combos, CPS tiers, an
   assert.strictEqual(TARGET_TYPES.normal.points, 100, 'Normal node points is 100');
 });
 
-// 22. Security & Clean Static Deployment Verification
+// 22. Dedicated Block Puzzle Playable Page & Engine Integrity
+it('Dedicated Block Puzzle page (games/block-puzzle/index.html) has all DOM elements required by game.js', () => {
+  const bpHtmlPath = path.join(__dirname, 'games/block-puzzle/index.html');
+  assert(fs.existsSync(bpHtmlPath), 'games/block-puzzle/index.html must exist');
+  const bpHtml = fs.readFileSync(bpHtmlPath, 'utf8');
+  const bpGameJs = fs.readFileSync(path.join(__dirname, 'games/block-puzzle/js/game.js'), 'utf8');
+
+  // Verify all document.getElementById calls in game.js are present in HTML
+  const idRegex = /document\.getElementById\(['"]([^'"]+)['"]\)/g;
+  let match;
+  while ((match = idRegex.exec(bpGameJs)) !== null) {
+    const id = match[1];
+    assert(bpHtml.includes(`id="${id}"`), `DOM id="${id}" missing in games/block-puzzle/index.html`);
+  }
+
+  // Verify navigation back link to arcade exists
+  assert(bpHtml.includes('href="../../index.html"'), 'Block Puzzle page must link back to arcade homepage');
+});
+
+// 23. Block Puzzle (8x8 Grid) Placement Physics, Line Blasts & Game-Over Evaluation
+it('Block Puzzle computes valid placements, row/col line clears, combo multipliers, and board reachability accurately', () => {
+  const {
+    GRID_SIZE,
+    SHAPES,
+    createEmptyGrid,
+    canPlaceShape,
+    placeShape,
+    checkCompletedLines,
+    clearLines,
+    hasAnyValidMove,
+    calculatePlacementScore,
+    dealShapes,
+    calculateStars
+  } = require('./games/block-puzzle/js/engine.js');
+
+  // 1. Grid & Shapes catalog
+  assert.strictEqual(GRID_SIZE, 8, 'Block Puzzle grid size must be 8x8');
+  assert(SHAPES.length >= 10, 'Must have at least 10 polyomino shapes defined');
+
+  // 2. Empty grid generation
+  const grid = createEmptyGrid();
+  assert.strictEqual(grid.length, 8, 'Must have 8 rows');
+  assert.strictEqual(grid[0].length, 8, 'Must have 8 columns');
+  assert(grid.every(row => row.every(cell => cell === null)), 'All cells in empty grid must be null');
+
+  // 3. Shape placement validation
+  const square2 = [[1, 1], [1, 1]];
+  assert.strictEqual(canPlaceShape(grid, square2, 0, 0), true, '2x2 square fits at top-left');
+  assert.strictEqual(canPlaceShape(grid, square2, 7, 7), false, '2x2 square exceeds bottom-right boundary');
+
+  // Place shape
+  const placed = placeShape(grid, square2, 0, 0, '#ffd166');
+  assert.strictEqual(placed.success, true, 'Placement must succeed');
+  assert.strictEqual(placed.placedCount, 4, '4 cells filled');
+  assert.strictEqual(placed.newGrid[0][0], '#ffd166', 'Cell (0,0) filled with color');
+
+  // Collision with occupied cell
+  assert.strictEqual(canPlaceShape(placed.newGrid, square2, 0, 0), false, 'Cannot overlap existing blocks');
+
+  // 4. Line completion detection
+  const fullRowGrid = createEmptyGrid();
+  for (let c = 0; c < 8; c++) {
+    fullRowGrid[2][c] = '#38bdf8'; // Fill row 2 completely
+  }
+  const lines = checkCompletedLines(fullRowGrid);
+  assert.strictEqual(lines.fullRows.length, 1, 'Must detect 1 full row');
+  assert.strictEqual(lines.fullRows[0], 2, 'Row 2 is full');
+  assert.strictEqual(lines.fullCols.length, 0, 'No full columns');
+
+  // Line clearing
+  const cleared = clearLines(fullRowGrid, lines.fullRows, lines.fullCols);
+  assert.strictEqual(cleared.clearedCells, 8, '8 cells cleared in full row');
+  assert(cleared.newGrid[2].every(cell => cell === null), 'Row 2 must be reset to null');
+
+  // 5. Simultaneous Row and Column Blast (Cross clear)
+  const crossGrid = createEmptyGrid();
+  for (let i = 0; i < 8; i++) {
+    crossGrid[4][i] = '#d5ff55'; // Row 4
+    crossGrid[i][4] = '#d5ff55'; // Col 4
+  }
+  const crossLines = checkCompletedLines(crossGrid);
+  assert.strictEqual(crossLines.totalLines, 2, 'Must detect both full row and full column');
+
+  // 6. Game-over evaluation (blocked board)
+  const fullBoard = createEmptyGrid();
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      fullBoard[r][c] = '#ff784f';
+    }
+  }
+  const shapes = [{ matrix: [[1]] }];
+  assert.strictEqual(hasAnyValidMove(fullBoard, shapes), false, 'Full board has no valid moves');
+  assert.strictEqual(hasAnyValidMove(grid, shapes), true, 'Empty board has valid moves');
+
+  // 7. Scoring and combo multipliers
+  const score1 = calculatePlacementScore(4, 0, 0);
+  assert.strictEqual(score1, 40, '4 blocks placed = 40 pts');
+
+  const score2 = calculatePlacementScore(4, 1, 0); // 4 blocks + 1 line (100) = 140
+  assert.strictEqual(score2, 140, '1 line clear gives +100');
+
+  const scoreCombo = calculatePlacementScore(4, 2, 2); // 4 blocks + 2 lines (300) * (1 + 2*0.5 = 2.0x) = 40 + 600 = 640
+  assert.strictEqual(scoreCombo, 640, 'Combo streak multiplier applies to line clear');
+
+  // 8. Performance stars
+  assert.strictEqual(calculateStars(4000, 15, 'classic'), 3, 'High score yields 3 stars');
+  assert.strictEqual(calculateStars(2000, 10, 'challenge'), 3, 'Challenge target met with 2000 pts yields 3 stars');
+});
+
+// 24. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });

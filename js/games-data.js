@@ -107,6 +107,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/tap-challenge.svg',
     controlsSummary: 'Touch Tap / Mouse Click • QWE/ASD/ZXC or Numpad 1–9 • Space in Frenzy • P to Pause • R to Restart • M to Mute',
     features: ['3 Modes: Reflex, Sprint & Frenzy', 'Combo Multipliers up to 5x', 'Real-time CPS & Stopwatch', 'Tactile Sound & Visual Ripples']
+  },
+  {
+    id: 'block-puzzle',
+    title: 'Block Puzzle',
+    category: 'Puzzle',
+    tags: ['puzzle', 'block', 'grid', 'polyomino', 'tetris', 'logic', 'brain', 'lines', 'casual'],
+    badge: 'New',
+    tagline: 'Fit shapes. Blast lines. Chain explosive combos.',
+    description: 'The definitive 8×8 block puzzle experience. Strategically place polyomino pieces from your dock to clear full horizontal rows and vertical columns. Features Classic Endless, 10-Line Target Challenge, and 90-Second Timed Blitz with combo multipliers and high score saving.',
+    route: 'games/block-puzzle/index.html',
+    thumbnail: 'assets/games/block-puzzle.svg',
+    controlsSummary: 'Drag & Drop / Tap to Place • 1, 2, 3 to select dock • Arrow keys / WASD to move • Space to Place • P to Pause • R to Restart • M to Mute',
+    features: ['8x8 Grid & Polyomino Dock', 'Classic, Challenge & Blitz', 'Row & Column Blast Combos', 'Full Keyboard & Touch Support']
   }
 ];
 

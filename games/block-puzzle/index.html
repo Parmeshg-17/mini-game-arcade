@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Block Puzzle — Play Free on Mini Game Arcade</title>
+  <meta name="description" content="Play Block Puzzle free online. Drag and fit polyomino shapes onto the 8x8 grid to blast rows and columns and chain explosive combos.">
+  <meta name="theme-color" content="#10120f">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="Block Puzzle — Mini Game Arcade">
+  <meta property="og:description" content="Fit polyominos onto the 8x8 grid and blast full rows and columns in this addictive arcade puzzle.">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Root-relative stylesheet link with file:// fallback -->
+  <link rel="stylesheet" href="/games/block-puzzle/style.css" id="game-stylesheet">
+  <script>
+    if (window.location.protocol === 'file:') {
+      const link = document.getElementById('game-stylesheet');
+      if (link) link.href = 'style.css';
+    }
+  </script>
+</head>
+<body class="game-page-body">
+
+  <!-- Screen reader live announcer -->
+  <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;"></div>
+
+  <!-- Arcade Top Navigation Bar -->
+  <nav class="arcade-nav-bar" aria-label="Game page navigation">
+    <div class="nav-content-container">
+      <a href="../../index.html" class="back-link">
+        <span class="back-arrow">←</span>
+        <span>Back to Arcade</span>
+      </a>
+
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="crumb-separator">/</span>
+        <a href="../../index.html#games-section">Games</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-current">Block Puzzle</span>
+      </div>
+
+      <a href="#controls-guide" class="nav-guide-link">Controls & Rules</a>
+    </div>
+  </nav>
+
+  <!-- Main Stage Container -->
+  <main class="game-stage-wrapper">
+
+    <!-- Editorial Header -->
+    <header class="game-editorial-header">
+      <div class="game-eyebrow-row">
+        <span class="badge-arcade">PUZZLE // STRATEGY</span>
+        <span class="badge-tagline">8×8 LINE BLAST</span>
+      </div>
+      <h1 class="game-title">Block Puzzle</h1>
+      <p class="game-subheading">Fit polyominos onto the 8×8 grid. Clear complete rows and columns to trigger explosive combos.</p>
+    </header>
+
+    <!-- Arcade Play Card -->
+    <section class="arcade-play-card" id="puzzle-stage-card" aria-label="Interactive Block Puzzle Game Stage">
+
+      <!-- Mode Selector -->
+      <div class="mode-selector-wrap">
+        <div class="segmented-control" role="tablist" aria-label="Game Modes">
+          <button id="mode-classic-btn" class="segment-btn active" role="tab" aria-selected="true" type="button">
+            <span>⚡</span>
+            <span>Classic Endless</span>
+          </button>
+          <button id="mode-challenge-btn" class="segment-btn" role="tab" aria-selected="false" type="button">
+            <span>🎯</span>
+            <span>10-Line Challenge</span>
+          </button>
+          <button id="mode-blitz-btn" class="segment-btn" role="tab" aria-selected="false" type="button">
+            <span>⏱️</span>
+            <span>Timed Blitz (90s)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Match HUD -->
+      <div class="match-hud-bar" role="region" aria-label="Match Status">
+        <div class="hud-group">
+          <span id="score-display" class="hud-pill highlight-lime" title="Current Score">Score: 0</span>
+          <span id="lines-display" class="hud-pill highlight-cyan" title="Lines Cleared">Lines: 0</span>
+          <span id="moves-display" class="hud-pill" title="Total Shapes Placed">Moves: 0</span>
+          <span id="timer-display" class="hud-pill" title="Elapsed Time / Timer">00:00</span>
+          <span id="combo-display" class="hud-pill" title="Active Streak">Streak: 0</span>
+        </div>
+
+        <div class="hud-group">
+          <span class="hud-pill" title="Personal Best Score">
+            <span>BEST:</span>
+            <span id="best-display">—</span>
+          </span>
+          <button id="pause-btn" class="ctrl-btn" type="button" aria-label="Pause Game" title="Pause (P)">⏸</button>
+          <button id="audio-toggle-btn" class="audio-btn" type="button" aria-label="Toggle Sound" title="Sound Toggle (M)">
+            <span id="audio-icon">🔊</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive 8x8 Board Container -->
+      <div class="board-container">
+        <div id="board-grid" class="board-grid" role="grid" aria-label="8 by 8 Block Puzzle Board">
+          <!-- 64 cells injected dynamically by js/game.js -->
+        </div>
+
+        <!-- Overlay 1: Start / Ready -->
+        <div id="overlay-start" class="stage-overlay show" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Ready to Place?</h2>
+          <p class="overlay-subtitle">Drag or click shapes from the dock to fit them onto the 8×8 board. Fill full rows or columns to clear lines and build explosive combos!</p>
+          <button id="start-btn" class="btn-arcade-action" type="button">
+            <span>Start Puzzle</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        <!-- Overlay 2: Paused -->
+        <div id="overlay-pause" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Puzzle Paused</h2>
+          <p class="overlay-subtitle">Catch your breath and plan your next placement.</p>
+          <div class="hud-group">
+            <button id="resume-btn" class="btn-arcade-action" type="button">Resume (P)</button>
+            <button id="restart-btn" class="btn-secondary-arcade" type="button">New Board (R)</button>
+          </div>
+        </div>
+
+        <!-- Overlay 3: Victory / Challenge Cleared -->
+        <div id="overlay-win" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 id="win-title" class="overlay-title">Challenge Completed!</h2>
+          <p id="win-summary" class="overlay-subtitle">Incredible spatial reasoning and board management!</p>
+          <div class="overlay-stats-grid">
+            <div class="stat-box">
+              <span class="stat-label">Final Score</span>
+              <span id="win-score-val" class="stat-val">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Rating</span>
+              <span id="win-stars-val" class="stat-val stars">★★★</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Total Moves</span>
+              <span id="win-moves-val" class="stat-val">0</span>
+            </div>
+            <div class="stat-box" style="grid-column: span 3;">
+              <span class="stat-label">Lines Cleared</span>
+              <span id="win-lines-val" class="stat-val">0</span>
+            </div>
+          </div>
+          <div class="hud-group" style="margin-top: 0.5rem;">
+            <button id="play-again-btn" class="btn-arcade-action" type="button">Play Again (R)</button>
+          </div>
+        </div>
+
+        <!-- Overlay 4: Game Over (No Moves Remain) -->
+        <div id="overlay-gameover" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">No More Moves!</h2>
+          <p class="overlay-subtitle">None of your current dock shapes can fit onto the board.</p>
+          <div class="overlay-stats-grid">
+            <div class="stat-box">
+              <span class="stat-label">Score</span>
+              <span id="go-score-val" class="stat-val">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Moves</span>
+              <span id="go-moves-val" class="stat-val">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Lines Cleared</span>
+              <span id="go-lines-val" class="stat-val">0</span>
+            </div>
+          </div>
+          <div class="hud-group" style="margin-top: 0.5rem;">
+            <button id="try-again-btn" class="btn-arcade-action" type="button">Try Again (R)</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Dock Container (3 Shape Choices) -->
+      <div id="dock-container" class="dock-container" role="region" aria-label="Available Polyomino Blocks Dock">
+        <div id="dock-slot-0" class="dock-slot selected" role="button" tabindex="0" aria-label="Dock Shape 1 (Key 1)"></div>
+        <div id="dock-slot-1" class="dock-slot" role="button" tabindex="0" aria-label="Dock Shape 2 (Key 2)"></div>
+        <div id="dock-slot-2" class="dock-slot" role="button" tabindex="0" aria-label="Dock Shape 3 (Key 3)"></div>
+      </div>
+
+    </section>
+
+    <!-- Controls & Rules Guide -->
+    <section class="controls-guide-section" id="controls-guide" aria-label="Game Rules & Controls Guide">
+      <h2 class="guide-title">How to Play & Controls</h2>
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>🧩</span>
+            <span>Polyomino Dock</span>
+          </div>
+          <p class="rule-text">You are dealt 3 shapes at a time. Click or tap any dock slot (or press keys <strong>1, 2, 3</strong>) to select a piece, then place it on the board.</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>💥</span>
+            <span>Line Clears & Combos</span>
+          </div>
+          <p class="rule-text">Fill any complete horizontal row or vertical column to clear it. Clearing multiple lines at once or chaining back-to-back clears earns huge combo multipliers!</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>🎯</span>
+            <span>Game Modes</span>
+          </div>
+          <p class="rule-text"><strong>Classic</strong> is an endless high-score battle until the board fills. <strong>Challenge</strong> tests you to clear 10 lines in fewest moves. <strong>Timed Blitz</strong> gives you 90 seconds!</p>
+        </div>
+      </div>
+
+      <div class="rules-grid" style="margin-top: 0.5rem;">
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>⌨️</span>
+            <span>Keyboard Controls</span>
+          </div>
+          <p class="rule-text">Keys <strong>1, 2, 3</strong> select shapes. <strong>Arrow Keys / WASD</strong> move the grid cursor. <strong>Space / Enter</strong> places the shape. <strong>P</strong> to Pause, <strong>R</strong> to Restart.</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>📱</span>
+            <span>Touch & Mouse</span>
+          </div>
+          <p class="rule-text">Click or tap any dock shape to select it, then tap your target cell on the board. A translucent ghost preview shows legal placements and lines about to blast.</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
+            <span>⭐</span>
+            <span>Strategy Tip</span>
+          </div>
+          <p class="rule-text">Avoid isolating empty single holes. Always keep space in the center open for large 3×3 squares or 1×5 long lines!</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="stage-footer">
+      <a href="../../index.html" class="footer-back-link">← Return to Mini Game Arcade Homepage</a>
+    </footer>
+
+  </main>
+
+  <!-- Modular Scripts with Root-relative paths and file:// fallback -->
+  <script src="/games/block-puzzle/js/engine.js?v=1.0.0"></script>
+  <script src="/games/block-puzzle/js/audio.js?v=1.0.0"></script>
+  <script src="/games/block-puzzle/js/game.js?v=1.0.0"></script>
+  <script>
+    if (window.location.protocol === 'file:' && typeof BlockEngine === 'undefined') {
+      ['engine.js', 'audio.js', 'game.js'].forEach(function(s) {
+        var scriptEl = document.createElement('script');
+        scriptEl.src = 'js/' + s + '?v=1.0.0';
+        scriptEl.async = false;
+        document.body.appendChild(scriptEl);
+      });
+    }
+  </script>
+</body>
+</html>
