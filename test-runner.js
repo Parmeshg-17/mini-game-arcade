@@ -55,6 +55,15 @@ it('About, Contact, Privacy, and Terms pages exist and link to each other', () =
     assert(content.includes('brand-logo'), `Page ${page} missing header logo`);
     assert(content.includes('site-footer'), `Page ${page} missing footer`);
   }
+
+  // Verify Web3Forms Integration on contact.html
+  const contactContent = fs.readFileSync(path.join(__dirname, 'contact.html'), 'utf8');
+  assert(contactContent.includes('5397ec81-8957-4e36-84b1-b687cd10ae8b'), 'contact.html must include Web3Forms access key');
+  assert(contactContent.includes('api.web3forms.com/submit'), 'contact.html must submit to Web3Forms API endpoint');
+  assert(contactContent.includes('name="access_key"'), 'contact.html must have access_key form input');
+  assert(contactContent.includes('name="name"'), 'contact.html must have name form input');
+  assert(contactContent.includes('name="email"'), 'contact.html must have email form input');
+  assert(contactContent.includes('name="message"'), 'contact.html must have message form input');
 });
 
 // 3. Central Games Registry Validation
