@@ -150,10 +150,11 @@ it('Search and category filter logic filters games correctly', () => {
   assert(res5.some(g => g.id === 'memory-match'));
   assert(res5.some(g => g.id === 'bubble-pop'));
 
-  // Action category filter matches Brick Breaker
+  // Action category filter matches Brick Breaker and Space Dodge
   const res6 = filterGames('', 'Action');
-  assert.strictEqual(res6.length, 1);
-  assert.strictEqual(res6[0].id, 'brick-breaker');
+  assert.strictEqual(res6.length, 2);
+  assert(res6.some(g => g.id === 'brick-breaker'));
+  assert(res6.some(g => g.id === 'space-dodge'));
 
   // Tag search for brick
   const res7 = filterGames('brick', 'All');
@@ -164,6 +165,11 @@ it('Search and category filter logic filters games correctly', () => {
   const resBubble = filterGames('bubble', 'All');
   assert.strictEqual(resBubble.length, 1);
   assert.strictEqual(resBubble[0].id, 'bubble-pop');
+
+  // Tag search for space/dodge
+  const resDodge = filterGames('dodge', 'All');
+  assert.strictEqual(resDodge.length, 1);
+  assert.strictEqual(resDodge[0].id, 'space-dodge');
 
   // Non-matching category
   const res8 = filterGames('', 'Racing');
@@ -443,7 +449,73 @@ it('Bubble Pop computes hexagonal coordinates, raycast reflections, and island a
   assert(orphans.some(o => o.r === 4 && o.c === 2), 'Must detect disconnected bubble as an orphan');
 });
 
-// 16. Security & Clean Static Deployment Verification
+// 16. Dedicated Space Dodge Playable Page & Engine Integrity
+it('Dedicated Space Dodge page (games/space-dodge/index.html) has all DOM elements required by game.js', () => {
+  const sdHtmlPath = path.join(__dirname, 'games/space-dodge/index.html');
+  assert(fs.existsSync(sdHtmlPath), 'games/space-dodge/index.html must exist');
+  const sdHtml = fs.readFileSync(sdHtmlPath, 'utf8');
+  const sdGameJs = fs.readFileSync(path.join(__dirname, 'games/space-dodge/js/game.js'), 'utf8');
+
+  // Verify all document.getElementById calls in game.js are present in HTML
+  const idRegex = /document\.getElementById\(['"]([^'"]+)['"]\)/g;
+  let match;
+  while ((match = idRegex.exec(sdGameJs)) !== null) {
+    const id = match[1];
+    assert(sdHtml.includes(`id="${id}"`), `DOM id="${id}" missing in games/space-dodge/index.html`);
+  }
+
+  // Verify navigation back link to arcade exists
+  assert(sdHtml.includes('href="../../index.html"'), 'Space Dodge page must link back to arcade homepage');
+});
+
+// 17. Space Dodge Flight Physics, Collision & Near-Miss Engine
+it('Space Dodge computes collisions, near-misses, starfield layers, and sector scores accurately', () => {
+  const {
+    SECTORS,
+    createStarField,
+    createObstacle,
+    checkCollision,
+    checkNearMiss,
+    calculateScore,
+    calculateStars
+  } = require('./games/space-dodge/js/engine.js');
+
+  // 1. Sector configurations
+  assert.strictEqual(SECTORS.length, 3, 'Must define 3 progressive sectors');
+  assert(SECTORS.every(s => s.duration >= 30 && s.hazardTypes.length > 0), 'Every sector must have valid duration and hazards');
+
+  // 2. Parallax Starfield generator
+  const stars = createStarField(50, 480, 640);
+  assert.strictEqual(stars.length, 50, 'Must generate exactly requested number of stars');
+  assert(stars.every(s => s.x >= 0 && s.x <= 480 && s.y >= 0 && s.y <= 640), 'Stars must be bounded within canvas');
+
+  // 3. Collision Math
+  const ship = { x: 200, y: 300, hitRadius: 14 };
+  const directHitObstacle = { x: 210, y: 305, hitRadius: 16, isHazard: true }; // dist = 11.18 <= 30
+  assert.strictEqual(checkCollision(ship, directHitObstacle), true, 'Direct overlap must trigger collision');
+
+  const distantObstacle = { x: 200, y: 400, hitRadius: 16, isHazard: true }; // dist = 100 > 30
+  assert.strictEqual(checkCollision(ship, distantObstacle), false, 'Far obstacle must not collide');
+
+  // 4. Near-Miss Math (close pass without hitting)
+  // hitDist = 30; nearMiss threshold = 30 * 1.65 = 49.5
+  const nearMissObstacle = { x: 200, y: 340, hitRadius: 16, isHazard: true, nearMissTriggered: false }; // dist = 40
+  assert.strictEqual(checkNearMiss(ship, nearMissObstacle), true, 'Close proximity should trigger near miss');
+  assert.strictEqual(nearMissObstacle.nearMissTriggered, true, 'Near miss flag should be set');
+  assert.strictEqual(checkNearMiss(ship, nearMissObstacle), false, 'Already triggered near miss should not fire again');
+
+  // 5. Scoring calculation
+  // 30s survival, 15 dodges, 4 crystals, 2 near misses
+  const score = calculateScore(30, 15, 4, 2);
+  const expected = (30 * 40) + (15 * 60) + (4 * 200) + (2 * 150);
+  assert.strictEqual(score, expected, 'Score calculation formula must match specification');
+
+  // 6. Star rating calculation
+  assert.strictEqual(calculateStars(5000, 0, 3), 3, 'High score with full shields yields 3 stars');
+  assert.strictEqual(calculateStars(1000, 0, 1), 1, 'Low score with depleted shields yields 1 star');
+});
+
+// 18. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });

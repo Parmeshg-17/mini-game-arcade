@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="100%" height="100%">
+  <defs>
+    <!-- Background Space Gradient -->
+    <linearGradient id="sdSpaceBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0c09"/>
+      <stop offset="50%" stop-color="#121612"/>
+      <stop offset="100%" stop-color="#191e17"/>
+    </linearGradient>
+
+    <!-- Comet Flame Gradient -->
+    <linearGradient id="cometGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="30%" stop-color="#ff784f"/>
+      <stop offset="100%" stop-color="rgba(255, 120, 79, 0)"/>
+    </linearGradient>
+
+    <!-- Thruster Flame Gradient -->
+    <linearGradient id="thrusterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="rgba(56, 189, 248, 0)"/>
+    </linearGradient>
+
+    <!-- Shield Radial Gradient -->
+    <radialGradient id="shieldGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="70%" stop-color="rgba(56, 189, 248, 0.05)"/>
+      <stop offset="95%" stop-color="rgba(56, 189, 248, 0.6)"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </radialGradient>
+
+    <!-- Glow Filter -->
+    <filter id="neonGlowSD" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="starGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 1. Deep Space Background -->
+  <rect width="640" height="380" fill="url(#sdSpaceBg)"/>
+
+  <!-- Distant Nebular Clouds -->
+  <ellipse cx="200" cy="140" rx="180" ry="90" fill="rgba(56, 189, 248, 0.04)" filter="url(#neonGlowSD)"/>
+  <ellipse cx="480" cy="240" rx="160" ry="100" fill="rgba(213, 255, 85, 0.03)" filter="url(#neonGlowSD)"/>
+
+  <!-- Background Stars -->
+  <g fill="#ffffff">
+    <circle cx="50" cy="40" r="1" opacity="0.4"/>
+    <circle cx="120" cy="90" r="1.5" opacity="0.7"/>
+    <circle cx="210" cy="50" r="1" opacity="0.3"/>
+    <circle cx="290" cy="110" r="2" opacity="0.8"/>
+    <circle cx="380" cy="40" r="1.5" opacity="0.6"/>
+    <circle cx="450" cy="80" r="1" opacity="0.4"/>
+    <circle cx="540" cy="60" r="2" opacity="0.9"/>
+    <circle cx="600" cy="120" r="1" opacity="0.5"/>
+    <circle cx="80" cy="180" r="1.5" opacity="0.5"/>
+    <circle cx="150" cy="240" r="1" opacity="0.4"/>
+    <circle cx="240" cy="210" r="1.5" opacity="0.6"/>
+    <circle cx="500" cy="180" r="1" opacity="0.4"/>
+    <circle cx="580" cy="220" r="2" opacity="0.8"/>
+    <circle cx="70" cy="320" r="1.5" opacity="0.6"/>
+    <circle cx="180" cy="340" r="1" opacity="0.4"/>
+    <circle cx="430" cy="330" r="1.5" opacity="0.7"/>
+    <circle cx="520" cy="310" r="1" opacity="0.5"/>
+    <circle cx="610" cy="350" r="1.5" opacity="0.8"/>
+  </g>
+
+  <!-- Hyperspace Speed Lines -->
+  <g stroke="rgba(244, 242, 233, 0.12)" stroke-width="1.5" stroke-dasharray="16 32">
+    <line x1="100" y1="0" x2="100" y2="380"/>
+    <line x1="220" y1="0" x2="220" y2="380"/>
+    <line x1="420" y1="0" x2="420" y2="380"/>
+    <line x1="540" y1="0" x2="540" y2="380"/>
+  </g>
+
+  <!-- 2. Tumbling Asteroid Hazards -->
+  <!-- Large Asteroid (Left) -->
+  <g filter="url(#neonGlowSD)">
+    <polygon points="120,110 160,85 195,115 185,160 145,180 105,150" fill="#2d332a" stroke="#8e9687" stroke-width="2.5"/>
+    <circle cx="140" cy="125" r="10" fill="#20241e"/>
+    <circle cx="165" cy="145" r="7" fill="#20241e"/>
+  </g>
+
+  <!-- Medium Asteroid (Upper Right) -->
+  <g filter="url(#neonGlowSD)">
+    <polygon points="480,90 515,70 540,95 530,130 495,140 470,115" fill="#363d33" stroke="#a7ada0" stroke-width="2"/>
+    <circle cx="505" cy="105" r="8" fill="#20241e"/>
+  </g>
+
+  <!-- Small Asteroid (Lower Left) -->
+  <polygon points="170,280 195,265 210,285 200,310 180,315 165,300" fill="#2d332a" stroke="#8e9687" stroke-width="2"/>
+
+  <!-- 3. Plasma Comet with Fiery Streak -->
+  <g filter="url(#starGlow)">
+    <path d="M420,20 L370,130 L395,120 Z" fill="url(#cometGrad)" opacity="0.6"/>
+    <circle cx="370" cy="130" r="15" fill="#ff784f"/>
+    <circle cx="370" cy="130" r="7" fill="#ffffff"/>
+  </g>
+
+  <!-- 4. Collectible Star Crystals -->
+  <g filter="url(#starGlow)">
+    <!-- Crystal 1 -->
+    <polygon points="250,90 262,105 250,120 238,105" fill="#fbbf24"/>
+    <circle cx="250" cy="105" r="3" fill="#ffffff"/>
+
+    <!-- Crystal 2 -->
+    <polygon points="460,260 470,272 460,284 450,272" fill="#fbbf24"/>
+    <circle cx="460" cy="272" r="2.5" fill="#ffffff"/>
+  </g>
+
+  <!-- 5. Pulsing Cyber Space Mine -->
+  <g filter="url(#starGlow)">
+    <!-- Mine Spikes -->
+    <line x1="490" y1="210" x2="530" y2="210" stroke="#f43f5e" stroke-width="2.5"/>
+    <line x1="510" y1="190" x2="510" y2="230" stroke="#f43f5e" stroke-width="2.5"/>
+    <line x1="496" y1="196" x2="524" y2="224" stroke="#f43f5e" stroke-width="2.5"/>
+    <line x1="496" y1="224" x2="524" y2="196" stroke="#f43f5e" stroke-width="2.5"/>
+    <circle cx="510" cy="210" r="11" fill="#ef4444"/>
+    <circle cx="510" cy="210" r="5" fill="#ffffff"/>
+  </g>
+
+  <!-- 6. Hero Cyber Starship (Center Bottom) -->
+  <g transform="translate(320, 240)">
+    <!-- Thruster Exhaust Flames -->
+    <polygon points="-12,24 -7,60 -2,24" fill="url(#thrusterGrad)"/>
+    <polygon points="2,24 7,60 12,24" fill="url(#thrusterGrad)"/>
+
+    <!-- Kinetic Energy Shield Bubble -->
+    <circle cx="0" cy="0" r="48" fill="url(#shieldGlow)" stroke="#38bdf8" stroke-width="2.5" filter="url(#neonGlowSD)"/>
+
+    <!-- Starship Hull -->
+    <polygon points="0,-36 28,18 14,14 0,22 -14,14 -28,18" fill="#1b2019" stroke="#d5ff55" stroke-width="3" filter="url(#neonGlowSD)"/>
+
+    <!-- Hull Inner Decals -->
+    <polygon points="0,-22 14,10 0,6 -14,10" fill="#242c22" stroke="#d5ff55" stroke-width="1.5"/>
+
+    <!-- Glowing Cyan Cockpit -->
+    <ellipse cx="0" cy="-6" rx="5" ry="11" fill="#38bdf8" filter="url(#starGlow)"/>
+    <ellipse cx="0" cy="-8" rx="2" ry="4" fill="#ffffff"/>
+
+    <!-- Wingtip Cannons -->
+    <rect x="-29" y="10" width="3" height="10" fill="#ff784f"/>
+    <rect x="26" y="10" width="3" height="10" fill="#ff784f"/>
+  </g>
+
+  <!-- Dynamic Near-Miss HUD Callout -->
+  <g filter="url(#starGlow)">
+    <rect x="240" y="22" width="160" height="28" rx="6" fill="#20241e" stroke="#d5ff55" stroke-width="1.5"/>
+    <text x="320" y="41" font-family="monospace" font-size="12" font-weight="bold" fill="#d5ff55" text-anchor="middle">NEAR MISS! +150</text>
+  </g>
+</svg>

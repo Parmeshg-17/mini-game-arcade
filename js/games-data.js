@@ -68,6 +68,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/bubble-pop.svg',
     controlsSummary: 'Mouse Drag or Touch to aim • Click/Release to fire • Tap Next Bubble or S to Swap • P to Pause • R to Restart',
     features: ['Laser Ricochet Aiming', 'Hexagonal Grid & Avalanches', 'Ammo Counter & Bubble Swap', 'Bomb & Power Boosters']
+  },
+  {
+    id: 'space-dodge',
+    title: 'Space Dodge',
+    category: 'Action',
+    tags: ['action', 'arcade', 'space', 'dodge', 'reflex', 'survival', 'starship', 'asteroids', 'sci-fi'],
+    badge: 'New',
+    tagline: 'Pilot cyber starship. Dodge asteroids. Survive deep space.',
+    description: 'Pilot an agile cyber starship through hazardous asteroid belts, dodging plasma comets and space mines. Squeeze past cosmic debris for near-miss bonuses, gather golden crystals, deploy kinetic energy shields, and trigger devastating EMP shockwaves across 3 progressive sectors or Endless Hyperspace.',
+    route: 'games/space-dodge/index.html',
+    thumbnail: 'assets/games/space-dodge.svg',
+    controlsSummary: 'Mouse Drag or Touch • Arrow keys / WASD to fly • Space for EMP Blast • P to Pause • R to Restart • M to Mute',
+    features: ['3 Sector Waves & Endless', 'Energy Shields & EMP Blasts', 'Near-Miss Dodge Streaks', 'Parallax Starfield & Crystals']
   }
 ];
 

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Space Dodge — Play Free on Mini Game Arcade</title>
+  <meta name="description" content="Play Space Dodge online for free. Navigate a responsive cyber starship through dense asteroid belts, dodge plasma comets, and trigger EMP shockwaves.">
+  <meta name="theme-color" content="#10120f">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="Space Dodge — Mini Game Arcade">
+  <meta property="og:description" content="Pilot a cyber starship, dodge cosmic hazards, gather crystals, and survive deep space in this responsive browser arcade game.">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Root-relative stylesheet link with file:// fallback -->
+  <link rel="stylesheet" href="/games/space-dodge/style.css" id="game-stylesheet">
+  <script>
+    if (window.location.protocol === 'file:') {
+      const link = document.getElementById('game-stylesheet');
+      if (link) link.href = 'style.css';
+    }
+  </script>
+</head>
+<body class="game-page-body">
+
+  <!-- Screen reader live announcer -->
+  <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;"></div>
+
+  <!-- Arcade Top Navigation Bar -->
+  <nav class="arcade-nav-bar" aria-label="Game page navigation">
+    <div class="nav-content-container">
+      <a href="../../index.html" class="back-link">
+        <span class="back-arrow">←</span>
+        <span>Back to Arcade</span>
+      </a>
+
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="crumb-separator">/</span>
+        <a href="../../index.html#games-section">Games</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-current">Space Dodge</span>
+      </div>
+
+      <a href="#controls-guide" class="nav-guide-link">Controls & Rules</a>
+    </div>
+  </nav>
+
+  <!-- Main Stage Container -->
+  <main class="game-stage-wrapper">
+
+    <!-- Editorial Header -->
+    <header class="game-editorial-header">
+      <div class="game-eyebrow-row">
+        <span class="badge-arcade">ACTION // REFLEX</span>
+        <span id="sector-badge" class="badge-tagline">SECTOR 1</span>
+      </div>
+      <h1 class="game-title">Space Dodge</h1>
+      <p class="game-subheading">Pilot a cyber starship through dense asteroid belts, evade plasma comets, and deploy EMP shockwaves.</p>
+    </header>
+
+    <!-- Arcade Play Card -->
+    <section class="arcade-play-card" id="space-stage-card" aria-label="Interactive Space Dodge Game Stage">
+
+      <!-- Mode Selector -->
+      <div class="mode-selector-wrap">
+        <div class="segmented-control" role="tablist" aria-label="Game Mode">
+          <button id="mode-sector-btn" class="segment-btn active" role="tab" aria-selected="true" type="button">
+            <span>🚀</span>
+            <span>Sector Campaign</span>
+          </button>
+          <button id="mode-endless-btn" class="segment-btn" role="tab" aria-selected="false" type="button">
+            <span>🌌</span>
+            <span>Endless Hyperspace</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Match HUD -->
+      <div class="match-hud-bar" role="region" aria-label="Flight Status">
+        <div class="hud-group">
+          <span class="hud-pill highlight-lime" title="Current Score">
+            <span>SCORE</span>
+            <span id="score-display">0</span>
+          </span>
+          <span id="timer-display" class="hud-pill highlight-cyan" title="Time Survived">00:00</span>
+          <span id="dodges-display" class="hud-pill" title="Obstacles Dodged">Dodges: 0</span>
+          <span id="dist-display" class="hud-pill" title="Distance Traveled">0m</span>
+          <span id="crystals-display" class="hud-pill" title="Crystals Collected">💎 0</span>
+        </div>
+
+        <div class="hud-group">
+          <span id="shield-indicator" class="hud-pill highlight-cyan" title="Shield Status">SHIELD: 100%</span>
+          <span class="hud-pill" title="Personal Best Score">
+            <span>BEST</span>
+            <span id="best-display">0</span>
+          </span>
+          <button id="pause-btn" class="ctrl-btn" type="button" aria-label="Pause Flight" title="Pause (P)">⏸</button>
+          <button id="audio-toggle-btn" class="audio-btn" type="button" aria-label="Toggle Sound" title="Sound Toggle (M)">
+            <span id="audio-icon">🔊</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas Stage & Overlays -->
+      <div class="stage-canvas-container">
+        <canvas id="space-canvas" width="480" height="640" aria-label="Space Dodge Playfield"></canvas>
+
+        <!-- Overlay 1: Start / Ready -->
+        <div id="overlay-start" class="stage-overlay show" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Prepare for Launch</h2>
+          <p class="overlay-subtitle">Drag with touch/mouse or use arrow keys to navigate the asteroid storm. Collect gold crystals and near-miss hazards for massive score streaks!</p>
+          <button id="start-btn" class="btn-arcade-action" type="button">
+            <span>Launch Starship</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        <!-- Overlay 2: Paused -->
+        <div id="overlay-pause" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Flight Paused</h2>
+          <p class="overlay-subtitle">Engines idling. Press Resume or Space to jump back into hyperspace.</p>
+          <div class="hud-group">
+            <button id="resume-btn" class="btn-arcade-action" type="button">Resume (P)</button>
+            <button id="restart-btn" class="btn-secondary-arcade" type="button">Restart (R)</button>
+          </div>
+        </div>
+
+        <!-- Overlay 3: Sector Cleared / Victory -->
+        <div id="overlay-win" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Sector Cleared!</h2>
+          <p class="overlay-subtitle">Asteroid storm navigated with exceptional pilot reflex!</p>
+          <div class="overlay-stats-grid">
+            <div class="stat-box">
+              <span class="stat-label">Total Score</span>
+              <span id="win-score-val" class="stat-val">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Rating</span>
+              <span id="win-stars-val" class="stat-val stars">★★★</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Hazards Dodged</span>
+              <span id="win-dodges-val" class="stat-val">0 Dodges</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Flight Time</span>
+              <span id="win-time-val" class="stat-val">00:00</span>
+            </div>
+          </div>
+          <div class="hud-group">
+            <button id="next-sector-btn" class="btn-arcade-action" type="button">Next Sector →</button>
+            <button id="play-again-btn" class="btn-secondary-arcade" type="button">Restart Campaign</button>
+          </div>
+        </div>
+
+        <!-- Overlay 4: Game Over -->
+        <div id="overlay-gameover" class="stage-overlay" role="dialog" aria-live="polite">
+          <h2 class="overlay-title">Hull Breached</h2>
+          <p class="overlay-subtitle">Your starship was destroyed by deep-space hazards!</p>
+          <div class="overlay-stats-grid">
+            <div class="stat-box">
+              <span class="stat-label">Final Score</span>
+              <span id="go-score-val" class="stat-val">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Distance</span>
+              <span id="go-dist-val" class="stat-val">0m</span>
+            </div>
+          </div>
+          <button id="gameover-restart-btn" class="btn-arcade-action" type="button">
+            <span>Try Again</span>
+            <span>↺</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- EMP Action Dock Bar -->
+      <div class="emp-action-dock" role="toolbar" aria-label="Ship Actions">
+        <button id="emp-btn" class="emp-btn" type="button" title="Deploy EMP Shockwave (Spacebar)">
+          <span>⚡</span>
+          <span>Deploy EMP Shockwave (Space)</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Controls & Game Rules -->
+    <section class="controls-guide-section" id="controls-guide" aria-label="Controls and Rules Guide">
+      <article class="guide-article">
+        <h3><span>🎮</span> Flight Controls & Shortcuts</h3>
+        <ul>
+          <li><span class="key-box">Touch / Mouse Drag</span> Steer your cyber starship smoothly in any direction.</li>
+          <li><span class="key-box">Arrow Keys / WASD</span> Pilot the ship with momentum & banking tilt.</li>
+          <li><span class="key-box">Space</span> Deploy EMP Shockwave to vaporize all hazards on screen!</li>
+          <li><span class="key-box">P</span> Pause or resume flight.</li>
+          <li><span class="key-box">R</span> Restart current sector.</li>
+          <li><span class="key-box">M</span> Toggle sound effects.</li>
+        </ul>
+      </article>
+
+      <article class="guide-article">
+        <h3><span>⚡</span> Pilot Tactics & Hazard Guide</h3>
+        <ul>
+          <li><strong>Near-Miss Streaks:</strong> Squeeze narrowly past incoming asteroids for <strong>+150 Near-Miss bonuses</strong>!</li>
+          <li><strong>Energy Shields:</strong> Your ship starts equipped with a protective kinetic shield that absorbs a hit.</li>
+          <li><strong>Energy Crystals:</strong> Collect floating golden crystals (💎) for +250 points.</li>
+          <li><strong>Hazard Types:</strong> Fast plasma comets, jagged asteroids, and pulsing cyber space mines.</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- Quick Footer Links -->
+    <footer class="game-page-footer">
+      <p>&copy; 2026 Mini Game Arcade. All games are original and free to play.</p>
+      <div class="footer-links">
+        <a href="../../index.html">Arcade Home</a>
+        <a href="../../about.html">About</a>
+        <a href="../../contact.html">Contact</a>
+        <a href="../../privacy.html">Privacy Policy</a>
+        <a href="../../terms.html">Terms of Service</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Scripts (Root-relative paths with cache-busting and file:// fallback) -->
+  <script src="/games/space-dodge/js/engine.js?v=1.0.0"></script>
+  <script src="/games/space-dodge/js/audio.js?v=1.0.0"></script>
+  <script src="/games/space-dodge/js/game.js?v=1.0.0"></script>
+  <script>
+    if (window.location.protocol === 'file:' && typeof SpaceEngine === 'undefined') {
+      ['engine.js', 'audio.js', 'game.js'].forEach(function(s) {
+        var scriptEl = document.createElement('script');
+        scriptEl.src = 'js/' + s + '?v=1.0.0';
+        scriptEl.async = false;
+        document.body.appendChild(scriptEl);
+      });
+    }
+  </script>
+</body>
+</html>
