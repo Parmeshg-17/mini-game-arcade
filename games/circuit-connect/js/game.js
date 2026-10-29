@@ -13,6 +13,7 @@
 
   const levelTitleDisplay = document.getElementById('level-title-display');
   const chapterDisplay = document.getElementById('chapter-display');
+  const typeDisplay = document.getElementById('type-display');
   const movesDisplay = document.getElementById('moves-display');
   const parDisplay = document.getElementById('par-display');
   const targetsDisplay = document.getElementById('targets-display');
@@ -30,6 +31,7 @@
   // Overlays
   const overlayWin = document.getElementById('overlay-win');
   const winTitle = document.getElementById('win-title');
+  const winCountdownText = document.getElementById('win-countdown-text');
   const winStarsVal = document.getElementById('win-stars-val');
   const winMovesVal = document.getElementById('win-moves-val');
   const winParVal = document.getElementById('win-par-val');
@@ -131,6 +133,10 @@
     }
     if (chapterDisplay) {
       chapterDisplay.textContent = lvl.chapter;
+    }
+    if (typeDisplay) {
+      typeDisplay.textContent = `${lvl.typeIcon || '⚡'} ${lvl.typeName || 'Color Flow'}`;
+      typeDisplay.className = `hud-pill ${lvl.typeBadge || 'highlight-gold'}`;
     }
     if (movesDisplay) {
       movesDisplay.textContent = `Moves: ${flowState.moves} / ${lvl.moveLimit}`;
@@ -482,6 +488,21 @@
   canvas.addEventListener('pointerup', onPointerEnd);
   canvas.addEventListener('pointercancel', onPointerEnd);
 
+  // Auto-advance timer refs
+  let autoAdvanceTimeout = null;
+  let autoAdvanceInterval = null;
+
+  function clearAutoAdvance() {
+    if (autoAdvanceTimeout) {
+      clearTimeout(autoAdvanceTimeout);
+      autoAdvanceTimeout = null;
+    }
+    if (autoAdvanceInterval) {
+      clearInterval(autoAdvanceInterval);
+      autoAdvanceInterval = null;
+    }
+  }
+
   /**
    * Victory / Completion Check
    */
@@ -511,7 +532,7 @@
 
       setTimeout(() => {
         showWinOverlay(res.stars);
-      }, 350);
+      }, 300);
     } else if (flowState.moves >= flowState.level.moveLimit) {
       showOverloadOverlay();
     }
@@ -519,25 +540,56 @@
 
   function showWinOverlay(stars) {
     hideAllOverlays();
-    if (overlayWin) {
-      overlayWin.classList.add('active');
-      if (winStarsVal) winStarsVal.textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
-      if (winMovesVal) winMovesVal.textContent = flowState.moves.toString();
-      if (winParVal) winParVal.textContent = flowState.level.par.toString();
-      if (winTimeVal && timerDisplay) winTimeVal.textContent = timerDisplay.textContent;
+    if (!overlayWin) return;
+
+    overlayWin.classList.add('active', 'show');
+    if (winStarsVal) winStarsVal.textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+    if (winMovesVal) winMovesVal.textContent = flowState.moves.toString();
+    if (winParVal) winParVal.textContent = flowState.level.par.toString();
+    if (winTimeVal && timerDisplay) winTimeVal.textContent = timerDisplay.textContent;
+
+    const hasNextLevel = currentLevelIdx < CircuitEngine.LEVELS.length - 1;
+    if (nextLevelBtn) {
+      nextLevelBtn.textContent = hasNextLevel ? 'Next Level → (Enter)' : 'Finish Arcade 🏆';
+      nextLevelBtn.focus();
+    }
+
+    clearAutoAdvance();
+    if (hasNextLevel && winCountdownText) {
+      let remain = 2.5;
+      winCountdownText.style.display = 'inline-flex';
+      winCountdownText.innerHTML = `<span>⏳</span><span>Next Level in <strong>${remain.toFixed(1)}s</strong> (or click below)</span>`;
+
+      autoAdvanceInterval = setInterval(() => {
+        remain = Math.max(0, remain - 0.5);
+        if (winCountdownText) {
+          winCountdownText.innerHTML = `<span>⏳</span><span>Next Level in <strong>${remain.toFixed(1)}s</strong> (or click below)</span>`;
+        }
+      }, 500);
+
+      autoAdvanceTimeout = setTimeout(() => {
+        clearAutoAdvance();
+        if (overlayWin && overlayWin.classList.contains('show')) {
+          if (nextLevelBtn) nextLevelBtn.click();
+        }
+      }, 2600);
+    } else if (winCountdownText) {
+      winCountdownText.style.display = 'inline-flex';
+      winCountdownText.innerHTML = `<span>👑</span><span>Grandmaster! All 30 Levels Mastered!</span>`;
     }
   }
 
   function showOverloadOverlay() {
     hideAllOverlays();
     if (overlayOverload) {
-      overlayOverload.classList.add('active');
+      overlayOverload.classList.add('active', 'show');
     }
   }
 
   function hideAllOverlays() {
+    clearAutoAdvance();
     [overlayWin, overlayOverload, overlayLevelSelect].forEach(ov => {
-      if (ov) ov.classList.remove('active');
+      if (ov) ov.classList.remove('active', 'show');
     });
   }
 
@@ -545,6 +597,7 @@
    * Level Selection Modal
    */
   function openLevelSelect() {
+    clearAutoAdvance();
     if (!overlayLevelSelect || !levelGridContainer) return;
     levelGridContainer.innerHTML = '';
 
@@ -559,6 +612,7 @@
       btn.innerHTML = `
         <span class="lvl-num">Lvl ${lvl.id}</span>
         <span class="lvl-size">${lvl.rows}x${lvl.cols}</span>
+        <span class="lvl-type-tag">${lvl.typeIcon || '⚡'} ${lvl.typeName || ''}</span>
         <span class="lvl-stars">${starsStr}</span>
       `;
 
@@ -570,7 +624,7 @@
       levelGridContainer.appendChild(btn);
     });
 
-    overlayLevelSelect.classList.add('active');
+    overlayLevelSelect.classList.add('active', 'show');
   }
 
   /**
@@ -686,6 +740,20 @@
     if (e.key === 'm' || e.key === 'M') {
       if (audioToggleBtn) audioToggleBtn.click();
       return;
+    }
+
+    // Win modal active keyboard navigation
+    if (overlayWin && overlayWin.classList.contains('show')) {
+      if (e.code === 'Space' || e.key === 'Enter' || e.key === 'ArrowRight') {
+        clearAutoAdvance();
+        if (nextLevelBtn) nextLevelBtn.click();
+        return;
+      }
+      if (e.key === 'r' || e.key === 'R') {
+        clearAutoAdvance();
+        if (replayBtn) replayBtn.click();
+        return;
+      }
     }
 
     if (!flowState || flowState.isSolved || isPaused) return;

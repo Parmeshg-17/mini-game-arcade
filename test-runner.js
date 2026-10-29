@@ -1235,6 +1235,11 @@ it('Circuit Connect engine evaluates directional connectivity, bridge overpasses
   const undoRes = undoMove(state);
   assert.strictEqual(undoRes, true, 'Undo should succeed');
 
+  // 10. Distinct Level Archetypes
+  const levelTypes = new Set(LEVELS.map(l => l.typeKey));
+  assert(levelTypes.size >= 5, 'Must feature at least 5 distinct level archetypes (e.g. perimeter, crossroad, chokepoint, spiral, diamond, dense)');
+  assert(LEVELS.every(l => l.typeName && l.typeIcon), 'All levels must define human-readable type names and icons');
+
 });
 
 // 29. Security & Clean Static Deployment Verification
