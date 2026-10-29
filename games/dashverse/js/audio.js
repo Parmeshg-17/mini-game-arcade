@@ -286,6 +286,60 @@
     });
   }
 
+  /**
+   * Prismatic crystal gem pickup - rapid shimmering arpeggio
+   */
+  function playGem() {
+    if (isMuted) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const notes = [587.33, 880.00, 1174.66, 1760.00]; // D5, A5, D6, A6
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.04);
+
+      gain.gain.setValueAtTime(0.18, now + idx * 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 0.16);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + idx * 0.04);
+      osc.stop(now + idx * 0.04 + 0.18);
+    });
+  }
+
+  /**
+   * Warp Portal gate passage - triumphant cosmic chord
+   */
+  function playPortal() {
+    if (isMuted) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    [440, 554.37, 659.25, 880].forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, now);
+      osc.frequency.exponentialRampToValueAtTime(freq * 1.5, now + 0.35);
+
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.4);
+    });
+  }
+
   function toggleMute() {
     isMuted = !isMuted;
     try {
@@ -302,7 +356,9 @@
   exports.playDoubleJump = playDoubleJump;
   exports.playSlide = playSlide;
   exports.playCoin = playCoin;
+  exports.playGem = playGem;
   exports.playPackage = playPackage;
+  exports.playPortal = playPortal;
   exports.playSpring = playSpring;
   exports.playHit = playHit;
   exports.playGameOver = playGameOver;
@@ -311,3 +367,4 @@
   exports.isMuted = getMuted;
 
 })(typeof module !== 'undefined' && module.exports ? module.exports : (window.DashverseAudio = {}));
+

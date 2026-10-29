@@ -119,6 +119,27 @@
   let particleList = [];
   let animTick = 0;
 
+  // Visual Assets Preloader
+  const ASSETS = {
+    heroBanner: { src: 'assets/hero-banner.avif', img: null, loaded: false },
+    charCipher: { src: 'assets/char-cipher.avif', img: null, loaded: false },
+    spikes: { src: 'assets/obstacle-spikes.avif', img: null, loaded: false },
+    padBoost: { src: 'assets/pad-boost.avif', img: null, loaded: false },
+    platformGrass: { src: 'assets/platform-grass.avif', img: null, loaded: false },
+    portalGate: { src: 'assets/portal-gate.avif', img: null, loaded: false },
+    platformCyber: { src: 'assets/platform-cyber.avif', img: null, loaded: false },
+    hazardSlime: { src: 'assets/hazard-slime.avif', img: null, loaded: false },
+    gemPrismatic: { src: 'assets/gem-prismatic.avif', img: null, loaded: false }
+  };
+
+  Object.keys(ASSETS).forEach(key => {
+    const item = ASSETS[key];
+    const img = new Image();
+    img.onload = () => { item.img = img; item.loaded = true; };
+    img.onerror = () => { item.loaded = false; };
+    img.src = item.src;
+  });
+
   // Parallax Scenery Elements
   const cityBuildings = [];
   for (let i = 0; i < 18; i++) {
@@ -215,6 +236,14 @@
         if (updateRes.event === 'spring_launch') {
           DashverseAudio.playSpring();
           spawnBurst(gameState.runner.x + 20, gameState.runner.y + 40, '#d5ff55', 18);
+        } else if (updateRes.event === 'gem_collected') {
+          DashverseAudio.playGem();
+          spawnBurst(gameState.runner.x + 20, gameState.runner.y + 20, '#38bdf8', 16);
+          spawnBurst(gameState.runner.x + 20, gameState.runner.y + 20, '#c084fc', 16);
+        } else if (updateRes.event === 'portal_warp') {
+          DashverseAudio.playPortal();
+          spawnBurst(gameState.runner.x + 20, gameState.runner.y + 20, '#38bdf8', 26);
+          spawnBurst(gameState.runner.x + 20, gameState.runner.y + 20, '#ffd166', 26);
         } else if (updateRes.event === 'shield_absorbed') {
           DashverseAudio.playHit();
           spawnBurst(gameState.runner.x + 20, gameState.runner.y + 25, '#38bdf8', 22);
@@ -368,10 +397,27 @@
       ctx.fillStyle = roof.color;
       ctx.fillRect(roof.x, roof.y, roof.w, roof.h);
 
+      // Top Edge Platform Caps (Cyber grid or Grass rooftop)
+      if (roof.theme === 'grass' && ASSETS.platformGrass.loaded) {
+        const tileW = 54;
+        const tileH = 36;
+        for (let tx = roof.x; tx < roof.x + roof.w; tx += tileW) {
+          const drawW = Math.min(tileW, roof.x + roof.w - tx);
+          ctx.drawImage(ASSETS.platformGrass.img, 0, 0, 128, 85, tx, roof.y - 12, drawW, tileH);
+        }
+      } else if (ASSETS.platformCyber.loaded) {
+        const tileW = 54;
+        const tileH = 34;
+        for (let tx = roof.x; tx < roof.x + roof.w; tx += tileW) {
+          const drawW = Math.min(tileW, roof.x + roof.w - tx);
+          ctx.drawImage(ASSETS.platformCyber.img, 0, 0, 128, 80, tx, roof.y - 10, drawW, tileH);
+        }
+      }
+
       // Glowing Neon Edge Conduit
-      ctx.strokeStyle = '#38bdf8';
+      ctx.strokeStyle = roof.theme === 'grass' ? '#4ade80' : '#38bdf8';
       ctx.lineWidth = 2.5;
-      ctx.shadowColor = '#38bdf8';
+      ctx.shadowColor = roof.theme === 'grass' ? '#4ade80' : '#38bdf8';
       ctx.shadowBlur = 8;
       ctx.beginPath();
       ctx.moveTo(roof.x, roof.y);
@@ -395,7 +441,62 @@
   function renderObstacles() {
     ctx.save();
     gameState.obstacles.forEach(ob => {
-      if (ob.type === DashverseEngine.HAZARDS.VENT) {
+      if (ob.type === DashverseEngine.HAZARDS.SPIKES) {
+        // Spiked Stone Block Hazard
+        if (ASSETS.spikes.loaded) {
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 8;
+          ctx.drawImage(ASSETS.spikes.img, ob.x - 2, ob.y - 4, ob.w + 4, ob.h + 4);
+        } else {
+          // Fallback vector spikes
+          ctx.fillStyle = '#64748b';
+          ctx.fillRect(ob.x, ob.y + 14, ob.w, ob.h - 14);
+          ctx.fillStyle = '#e2e8f0';
+          for (let sx = ob.x + 4; sx < ob.x + ob.w - 4; sx += 10) {
+            ctx.beginPath();
+            ctx.moveTo(sx, ob.y + 14);
+            ctx.lineTo(sx + 4, ob.y);
+            ctx.lineTo(sx + 8, ob.y + 14);
+            ctx.closePath();
+            ctx.fill();
+          }
+        }
+      } else if (ob.type === DashverseEngine.HAZARDS.SLIME_TRAP) {
+        // Toxic Purple Slime Hazard
+        if (ASSETS.hazardSlime.loaded) {
+          ctx.shadowColor = '#c084fc';
+          ctx.shadowBlur = 10;
+          ctx.drawImage(ASSETS.hazardSlime.img, ob.x - 2, ob.y - 4, ob.w + 4, ob.h + 4);
+        } else {
+          ctx.fillStyle = '#7e22ce';
+          ctx.fillRect(ob.x, ob.y + 10, ob.w, ob.h - 10);
+          ctx.fillStyle = '#c084fc';
+          ctx.beginPath();
+          ctx.arc(ob.x + 10, ob.y + 8, 6, 0, Math.PI * 2);
+          ctx.arc(ob.x + 24, ob.y + 7, 7, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (ob.type === DashverseEngine.HAZARDS.SPRING_PAD) {
+        // Directional Boost Arrow Spring Pad
+        if (ASSETS.padBoost.loaded) {
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 12;
+          ctx.drawImage(ASSETS.padBoost.img, ob.x - 4, ob.y - 14, ob.w + 8, ob.h + 16);
+        } else {
+          ctx.fillStyle = '#d5ff55';
+          ctx.shadowColor = '#d5ff55';
+          ctx.shadowBlur = 12;
+          ctx.fillRect(ob.x, ob.y, ob.w, ob.h);
+
+          ctx.strokeStyle = '#0b0f19';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(ob.x + 12, ob.y + 8);
+          ctx.lineTo(ob.x + 20, ob.y + 2);
+          ctx.lineTo(ob.x + 28, ob.y + 8);
+          ctx.stroke();
+        }
+      } else if (ob.type === DashverseEngine.HAZARDS.VENT) {
         // Air Vent Hurdle
         ctx.fillStyle = '#1e2638';
         ctx.fillRect(ob.x, ob.y, ob.w, ob.h);
@@ -454,20 +555,6 @@
         ctx.moveTo(ob.x + 5, ob.y + 4);
         ctx.lineTo(ob.x + 29, ob.y + 4);
         ctx.stroke();
-      } else if (ob.type === DashverseEngine.HAZARDS.SPRING_PAD) {
-        // Neon Spring Booster
-        ctx.fillStyle = '#d5ff55';
-        ctx.shadowColor = '#d5ff55';
-        ctx.shadowBlur = 12;
-        ctx.fillRect(ob.x, ob.y, ob.w, ob.h);
-
-        ctx.strokeStyle = '#0b0f19';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(ob.x + 12, ob.y + 8);
-        ctx.lineTo(ob.x + 20, ob.y + 2);
-        ctx.lineTo(ob.x + 28, ob.y + 8);
-        ctx.stroke();
       }
     });
     ctx.restore();
@@ -480,7 +567,40 @@
 
       const bobY = Math.sin(animTick * 0.1 + p.x) * 4;
 
-      if (p.type === DashverseEngine.PICKUPS.DATA_SHARD) {
+      if (p.type === DashverseEngine.PICKUPS.PRISMATIC_GEM) {
+        // Glowing Prismatic Crystal Gem
+        if (ASSETS.gemPrismatic.loaded) {
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 14;
+          ctx.drawImage(ASSETS.gemPrismatic.img, p.x - 2, p.y + bobY - 2, p.w + 4, p.h + 4);
+        } else {
+          ctx.fillStyle = '#38bdf8';
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 12;
+          ctx.beginPath();
+          ctx.moveTo(p.x + p.w / 2, p.y + bobY);
+          ctx.lineTo(p.x + p.w, p.y + p.h / 2 + bobY);
+          ctx.lineTo(p.x + p.w / 2, p.y + p.h + bobY);
+          ctx.lineTo(p.x, p.y + p.h / 2 + bobY);
+          ctx.closePath();
+          ctx.fill();
+        }
+      } else if (p.type === DashverseEngine.PICKUPS.WARP_PORTAL) {
+        // Dimensional Delivery Warp Portal
+        if (ASSETS.portalGate.loaded) {
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 18;
+          ctx.drawImage(ASSETS.portalGate.img, p.x - 4, p.y + bobY - 6, p.w + 8, p.h + 10);
+        } else {
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 3;
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 16;
+          ctx.beginPath();
+          ctx.ellipse(p.x + p.w / 2, p.y + p.h / 2 + bobY, p.w / 2, p.h / 2, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      } else if (p.type === DashverseEngine.PICKUPS.DATA_SHARD) {
         // Glowing Data Shard Crystal
         ctx.fillStyle = '#d5ff55';
         ctx.shadowColor = '#d5ff55';
@@ -564,6 +684,32 @@
 
     ctx.shadowBlur = 8;
     ctx.shadowColor = char.color;
+
+    // Custom Sprite Rendering for Cipher
+    if (char.id === 'cipher' && ASSETS.charCipher.loaded) {
+      if (runner.isSliding) {
+        ctx.save();
+        ctx.translate(rx + 24, ry + 36);
+        ctx.rotate(0.32);
+        ctx.drawImage(ASSETS.charCipher.img, -24, -20, 48, 44);
+        ctx.restore();
+        ctx.fillStyle = char.accent;
+        ctx.fillRect(rx, ry + 38, 6, 8);
+      } else if (!runner.isGrounded) {
+        const bobAir = Math.sin(animTick * 0.2) * 2;
+        ctx.drawImage(ASSETS.charCipher.img, rx, ry + bobAir, 48, 54);
+        ctx.fillStyle = '#38bdf8';
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 14;
+        ctx.fillRect(rx + 14, ry + 48, 8, 8);
+        ctx.fillRect(rx + 28, ry + 48, 8, 8);
+      } else {
+        const runBounce = Math.abs(Math.sin(animTick * 0.35)) * 3;
+        ctx.drawImage(ASSETS.charCipher.img, rx, ry - runBounce, 48, 56);
+      }
+      ctx.restore();
+      return;
+    }
 
     if (runner.isSliding) {
       // Sliding posture (low horizontal dash)
@@ -760,13 +906,22 @@
     DashverseEngine.CHARACTERS.forEach(char => {
       const isUnlocked = unlockedIds.includes(char.id);
       const isEquipped = equippedId === char.id;
+      const isCipher = char.id === 'cipher';
+      const isDash = char.id === 'dash';
+
+      let portraitInner = `<div class="char-avatar" style="background:${char.color};"></div>`;
+      if (isCipher && ASSETS.charCipher.loaded) {
+        portraitInner = `<img src="assets/char-cipher.avif" alt="Cipher" class="char-portrait-img">`;
+      } else if (isDash && ASSETS.heroBanner.loaded) {
+        portraitInner = `<img src="assets/hero-banner.avif" alt="Dash" class="char-portrait-img">`;
+      }
 
       const card = document.createElement('div');
       card.className = `shop-char-card ${isEquipped ? 'equipped' : (isUnlocked ? 'unlocked' : 'locked')}`;
 
       card.innerHTML = `
         <div class="char-portrait" style="border-color:${char.color};">
-          <div class="char-avatar" style="background:${char.color};"></div>
+          ${portraitInner}
           <span class="char-title-tag">${char.name}</span>
         </div>
         <div class="char-info">
@@ -1066,3 +1221,4 @@
   requestAnimationFrame(gameLoop);
 
 })();
+

@@ -1300,6 +1300,23 @@ it('Dedicated Dashverse page (games/dashverse/index.html) has all DOM elements r
   // Verify vector thumbnail exists
   const thumbPath = path.join(__dirname, 'assets/games/dashverse.svg');
   assert(fs.existsSync(thumbPath), 'Dashverse vector thumbnail must exist');
+
+  // Verify all 9 visual graphic assets exist
+  const expectedAssets = [
+    'hero-banner.avif',
+    'char-cipher.avif',
+    'obstacle-spikes.avif',
+    'pad-boost.avif',
+    'platform-grass.avif',
+    'portal-gate.avif',
+    'platform-cyber.avif',
+    'hazard-slime.avif',
+    'gem-prismatic.avif'
+  ];
+  for (const assetFile of expectedAssets) {
+    const assetPath = path.join(__dirname, 'games/dashverse/assets', assetFile);
+    assert(fs.existsSync(assetPath), `Asset file ${assetFile} must exist in games/dashverse/assets/`);
+  }
 });
 
 // 30. Dashverse Parkour Physics, Jumping, Sliding Hitbox, Missions & Daily Engine

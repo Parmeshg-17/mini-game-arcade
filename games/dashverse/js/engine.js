@@ -29,16 +29,20 @@
   // Obstacle & Hazard Types
   const HAZARDS = {
     VENT: 'vent',                   // Low ground hurdle (Jump over)
+    SPIKES: 'spikes',               // Spiked stone block hazard (Jump over)
+    SLIME_TRAP: 'slime_trap',       // Toxic purple slime obstacle (Jump over)
     LASER_BARRIER: 'laser_barrier', // High security beam (Slide under)
     AERIAL_DRONE: 'aerial_drone',   // Flying drone (Dodge)
     ROOFTOP_GAP: 'rooftop_gap',     // Pit between buildings (Jump across)
-    SPRING_PAD: 'spring_pad'        // Launches runner high into air
+    SPRING_PAD: 'spring_pad'        // Directional boost launcher
   };
 
   // Collectibles
   const PICKUPS = {
     DATA_SHARD: 'data_shard',       // +10 pts, +1 cyber coin
+    PRISMATIC_GEM: 'prismatic_gem', // +50 pts, +5 coins (Rare glowing gem)
     CYBER_PACKAGE: 'cyber_package', // +100 pts, mission item
+    WARP_PORTAL: 'warp_portal',     // +500 pts, dimensional checkpoint
     SHIELD_ORB: 'shield_orb',       // 1-hit invulnerability barrier
     MAGNET_ORB: 'magnet_orb'        // Attracts all shards for 8s
   };
@@ -52,6 +56,7 @@
       cost: 0,
       color: '#38bdf8', // Neon Cyan
       accent: '#d5ff55', // Lime
+      avatar: 'assets/hero-banner.avif',
       desc: 'Balanced parkour agility with rapid recovery. The legendary metropolis courier.',
       perk: 'Balanced Agility',
       magnetRadius: 70,
@@ -66,6 +71,7 @@
       cost: 150,
       color: '#22c55e', // Matrix Green
       accent: '#a855f7', // Purple
+      avatar: 'assets/char-cipher.avif',
       desc: 'Hacks local electromagnetic fields to draw distant data shards into range.',
       perk: '+80% Magnet Pull Radius',
       magnetRadius: 130,
@@ -365,6 +371,16 @@
           state.coins += coinVal;
           state.score += 25 * state.multiplier;
           state.sessionStats.shards += coinVal;
+        } else if (p.type === PICKUPS.PRISMATIC_GEM) {
+          state.coins += 5;
+          state.score += 75 * state.multiplier;
+          state.sessionStats.shards += 5;
+          return { event: 'gem_collected' };
+        } else if (p.type === PICKUPS.WARP_PORTAL) {
+          state.score += 500 * state.multiplier;
+          state.coins += 10;
+          state.sessionStats.packages++;
+          return { event: 'portal_warp' };
         } else if (p.type === PICKUPS.CYBER_PACKAGE) {
           state.score += 250 * state.multiplier;
           state.coins += 5;
@@ -453,7 +469,8 @@
         w: width,
         h: height,
         color: colorPalette[colIdx],
-        border: borderPalette[colIdx]
+        border: borderPalette[colIdx],
+        theme: Math.random() < 0.65 ? 'cyber' : 'grass'
       };
       state.rooftops.push(newRoof);
 
@@ -475,7 +492,7 @@
       // Obstacle roll based on distance difficulty
       const roll = Math.random();
 
-      if (roll < 0.40) {
+      if (roll < 0.22) {
         // Ground hurdle (Roof vent / Air conditioning unit) - Jump over
         state.obstacles.push({
           type: HAZARDS.VENT,
@@ -487,9 +504,33 @@
           glow: 'rgba(255, 71, 87, 0.4)',
           passed: false
         });
-      } else if (roll < 0.70) {
+      } else if (roll < 0.38) {
+        // Spiked Stone Block Hazard - Jump over!
+        state.obstacles.push({
+          type: HAZARDS.SPIKES,
+          x: obX,
+          y: roof.y - 34,
+          w: 34,
+          h: 34,
+          color: '#94a3b8',
+          glow: 'rgba(148, 163, 184, 0.4)',
+          passed: false
+        });
+      } else if (roll < 0.50) {
+        // Purple Toxic Slime Hazard - Jump over!
+        state.obstacles.push({
+          type: HAZARDS.SLIME_TRAP,
+          x: obX,
+          y: roof.y - 28,
+          w: 36,
+          h: 28,
+          color: '#c084fc',
+          glow: 'rgba(192, 132, 252, 0.4)',
+          passed: false
+        });
+      } else if (roll < 0.72) {
         // Overhead Laser Barrier - Slide under!
-        // Beam hangs at Y ~ roof.y - 72, height 44 -> player in RUN (height 56) hits it, SLIDE (height 26) passes under!
+        // Beam hangs at Y ~ roof.y - 70, height 42 -> player in RUN (height 56) hits it, SLIDE (height 26) passes under!
         state.obstacles.push({
           type: HAZARDS.LASER_BARRIER,
           x: obX,
@@ -500,7 +541,7 @@
           glow: 'rgba(56, 189, 248, 0.5)',
           passed: false
         });
-      } else if (roll < 0.88) {
+      } else if (roll < 0.86) {
         // Aerial Patrol Drone
         state.obstacles.push({
           type: HAZARDS.AERIAL_DRONE,
@@ -513,13 +554,13 @@
           passed: false
         });
       } else {
-        // Spring Pad
+        // Spring Booster Pad
         state.obstacles.push({
           type: HAZARDS.SPRING_PAD,
           x: obX,
-          y: roof.y - 12,
+          y: roof.y - 14,
           w: 40,
-          h: 12,
+          h: 14,
           color: '#d5ff55',
           glow: 'rgba(213, 255, 85, 0.6)',
           passed: false
@@ -546,14 +587,51 @@
       });
     }
 
-    // Occasional Cyber Package or Shield
-    if (Math.random() < 0.12) {
+    // Occasional Cyber Package, Prismatic Gem, Warp Portal, or Shield
+    const specialRoll = Math.random();
+    if (specialRoll < 0.08) {
       state.pickups.push({
-        type: Math.random() < 0.6 ? PICKUPS.CYBER_PACKAGE : PICKUPS.SHIELD_ORB,
+        type: PICKUPS.CYBER_PACKAGE,
         x: centerX + 70,
-        y: baseY - 20,
+        y: baseY - 12,
         w: 22,
         h: 22,
+        collected: false
+      });
+    } else if (specialRoll < 0.16) {
+      state.pickups.push({
+        type: PICKUPS.PRISMATIC_GEM,
+        x: centerX + 70,
+        y: baseY - 16,
+        w: 22,
+        h: 26,
+        collected: false
+      });
+    } else if (specialRoll < 0.22) {
+      state.pickups.push({
+        type: PICKUPS.WARP_PORTAL,
+        x: centerX + 90,
+        y: baseY - 35,
+        w: 38,
+        h: 48,
+        collected: false
+      });
+    } else if (specialRoll < 0.28) {
+      state.pickups.push({
+        type: PICKUPS.SHIELD_ORB,
+        x: centerX + 70,
+        y: baseY - 20,
+        w: 20,
+        h: 20,
+        collected: false
+      });
+    } else if (specialRoll < 0.33) {
+      state.pickups.push({
+        type: PICKUPS.MAGNET_ORB,
+        x: centerX + 70,
+        y: baseY - 20,
+        w: 20,
+        h: 20,
         collected: false
       });
     }
@@ -627,3 +705,4 @@
   exports.getDailySeedDate = getDailySeedDate;
 
 })(typeof module !== 'undefined' && module.exports ? module.exports : (window.DashverseEngine = {}));
+
