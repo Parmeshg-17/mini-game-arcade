@@ -43,7 +43,11 @@
     '1': 6, '2': 7, '3': 8
   };
 
-  document.addEventListener('DOMContentLoaded', init);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 
   function init() {
     cacheDom();
@@ -765,3 +769,4 @@
   }
 
 })();
+

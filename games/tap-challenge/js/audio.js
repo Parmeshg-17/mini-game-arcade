@@ -264,3 +264,4 @@
   exports.playWin = playWin;
 
 })(typeof module !== 'undefined' && module.exports ? module.exports : (window.TapAudio = {}));
+

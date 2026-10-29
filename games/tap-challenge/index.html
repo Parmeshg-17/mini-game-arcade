@@ -222,9 +222,20 @@
 
   </main>
 
-  <!-- Modular Scripts -->
-  <script src="js/engine.js"></script>
-  <script src="js/audio.js"></script>
-  <script src="js/game.js"></script>
+  <!-- Modular Scripts with Root-relative paths and file:// fallback -->
+  <script src="/games/tap-challenge/js/engine.js?v=1.0.1"></script>
+  <script src="/games/tap-challenge/js/audio.js?v=1.0.1"></script>
+  <script src="/games/tap-challenge/js/game.js?v=1.0.1"></script>
+  <script>
+    if (window.location.protocol === 'file:' && typeof TapEngine === 'undefined') {
+      ['engine.js', 'audio.js', 'game.js'].forEach(function(s) {
+        var scriptEl = document.createElement('script');
+        scriptEl.src = 'js/' + s + '?v=1.0.1';
+        scriptEl.async = false;
+        document.body.appendChild(scriptEl);
+      });
+    }
+  </script>
 </body>
 </html>
+
