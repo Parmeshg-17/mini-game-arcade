@@ -56,7 +56,7 @@
       cost: 0,
       color: '#38bdf8', // Neon Cyan
       accent: '#d5ff55', // Lime
-      avatar: 'assets/hero-banner.avif',
+      avatar: 'assets/dashverse.avif',
       desc: 'Balanced parkour agility with rapid recovery. The legendary metropolis courier.',
       perk: 'Balanced Agility',
       magnetRadius: 70,
@@ -71,7 +71,7 @@
       cost: 150,
       color: '#22c55e', // Matrix Green
       accent: '#a855f7', // Purple
-      avatar: 'assets/char-cipher.avif',
+      avatar: 'assets/charator.avif',
       desc: 'Hacks local electromagnetic fields to draw distant data shards into range.',
       perk: '+80% Magnet Pull Radius',
       magnetRadius: 130,

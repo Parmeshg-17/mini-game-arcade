@@ -1301,10 +1301,12 @@ it('Dedicated Dashverse page (games/dashverse/index.html) has all DOM elements r
   const thumbPath = path.join(__dirname, 'assets/games/dashverse.svg');
   assert(fs.existsSync(thumbPath), 'Dashverse vector thumbnail must exist');
 
-  // Verify all 9 visual graphic assets exist
+  // Verify all visual graphic assets exist
   const expectedAssets = [
     'hero-banner.avif',
     'char-cipher.avif',
+    'charator.avif',
+    'dashverse.avif',
     'obstacle-spikes.avif',
     'pad-boost.avif',
     'platform-grass.avif',

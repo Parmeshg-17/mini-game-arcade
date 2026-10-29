@@ -121,7 +121,9 @@
 
   // Visual Assets Preloader
   const ASSETS = {
-    heroBanner: { src: 'assets/hero-banner.avif', img: null, loaded: false },
+    heroBanner: { src: 'assets/dashverse.avif', img: null, loaded: false },
+    dashverse: { src: 'assets/dashverse.avif', img: null, loaded: false },
+    charator: { src: 'assets/charator.avif', img: null, loaded: false },
     charCipher: { src: 'assets/char-cipher.avif', img: null, loaded: false },
     spikes: { src: 'assets/obstacle-spikes.avif', img: null, loaded: false },
     padBoost: { src: 'assets/pad-boost.avif', img: null, loaded: false },
@@ -685,19 +687,20 @@
     ctx.shadowBlur = 8;
     ctx.shadowColor = char.color;
 
-    // Custom Sprite Rendering for Cipher
-    if (char.id === 'cipher' && ASSETS.charCipher.loaded) {
+    // Custom Sprite Rendering for runner (Cipher or Dash)
+    const charSprite = (ASSETS.charator.loaded && ASSETS.charator.img) || (ASSETS.charCipher.loaded && ASSETS.charCipher.img);
+    if ((char.id === 'cipher' || char.id === 'dash') && charSprite) {
       if (runner.isSliding) {
         ctx.save();
         ctx.translate(rx + 24, ry + 36);
         ctx.rotate(0.32);
-        ctx.drawImage(ASSETS.charCipher.img, -24, -20, 48, 44);
+        ctx.drawImage(charSprite, -24, -20, 48, 44);
         ctx.restore();
         ctx.fillStyle = char.accent;
         ctx.fillRect(rx, ry + 38, 6, 8);
       } else if (!runner.isGrounded) {
         const bobAir = Math.sin(animTick * 0.2) * 2;
-        ctx.drawImage(ASSETS.charCipher.img, rx, ry + bobAir, 48, 54);
+        ctx.drawImage(charSprite, rx, ry + bobAir, 48, 54);
         ctx.fillStyle = '#38bdf8';
         ctx.shadowColor = '#38bdf8';
         ctx.shadowBlur = 14;
@@ -705,7 +708,7 @@
         ctx.fillRect(rx + 28, ry + 48, 8, 8);
       } else {
         const runBounce = Math.abs(Math.sin(animTick * 0.35)) * 3;
-        ctx.drawImage(ASSETS.charCipher.img, rx, ry - runBounce, 48, 56);
+        ctx.drawImage(charSprite, rx, ry - runBounce, 48, 56);
       }
       ctx.restore();
       return;
@@ -910,10 +913,10 @@
       const isDash = char.id === 'dash';
 
       let portraitInner = `<div class="char-avatar" style="background:${char.color};"></div>`;
-      if (isCipher && ASSETS.charCipher.loaded) {
-        portraitInner = `<img src="assets/char-cipher.avif" alt="Cipher" class="char-portrait-img">`;
-      } else if (isDash && ASSETS.heroBanner.loaded) {
-        portraitInner = `<img src="assets/hero-banner.avif" alt="Dash" class="char-portrait-img">`;
+      if (isCipher && (ASSETS.charator.loaded || ASSETS.charCipher.loaded)) {
+        portraitInner = `<img src="assets/charator.avif" alt="Cipher" class="char-portrait-img">`;
+      } else if (isDash && (ASSETS.dashverse.loaded || ASSETS.heroBanner.loaded)) {
+        portraitInner = `<img src="assets/dashverse.avif" alt="Dash" class="char-portrait-img">`;
       }
 
       const card = document.createElement('div');
