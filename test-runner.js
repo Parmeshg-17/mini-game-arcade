@@ -181,10 +181,11 @@ it('Search and category filter logic filters games correctly', () => {
   assert(resNumber.some(g => g.id === 'number-puzzle'));
   assert(resNumber.some(g => g.id === 'tap-challenge'));
 
-  // Tag search for tap/reflex
+  // Tag search for tap (matches tap-challenge and stack-rush)
   const resTap = filterGames('tap', 'All');
-  assert.strictEqual(resTap.length, 1);
-  assert.strictEqual(resTap[0].id, 'tap-challenge');
+  assert.strictEqual(resTap.length, 2);
+  assert(resTap.some(g => g.id === 'tap-challenge'));
+  assert(resTap.some(g => g.id === 'stack-rush'));
 
   // Tag search for block (matches block-puzzle and stack-rush)
   const resBlock = filterGames('block', 'All');
@@ -985,6 +986,51 @@ it('Stack Rush engine executes 3D platform rotations, voxel drops, layer clearin
   // 8. Random shape generation
   const piece = rollShape(() => 0.5);
   assert(piece.id && piece.name && piece.color && Array.isArray(piece.blocks));
+
+  // 9. Ketchapp-Style 3D Slicing Stacker Mechanics
+  const { sliceBlock, getLayerHue, getFaceColors, projectIsometricBox, evaluateTowerStars } = engine;
+  assert(typeof sliceBlock === 'function', 'sliceBlock must be defined');
+
+  // Case A: Perfect drop within tolerance
+  const prevBox = { x: 0, z: 0, w: 100, d: 100 };
+  const perfectBox = { x: 2, z: 0, w: 100, d: 100 };
+  const perfRes = sliceBlock(prevBox, perfectBox, 'x', 3.5);
+  assert.strictEqual(perfRes.status, 'perfect', 'Drop within 3.5px tolerance is PERFECT');
+  assert.strictEqual(perfRes.overlap.w, 100, 'Preserves full width on perfect');
+  assert.strictEqual(perfRes.cut, null, 'No debris on perfect');
+
+  // Case B: Trimming overhang
+  const overhangingBox = { x: 20, z: 0, w: 100, d: 100 };
+  const trimRes = sliceBlock(prevBox, overhangingBox, 'x', 3.5);
+  assert.strictEqual(trimRes.status, 'trim', 'Overhanging drop is trimmed');
+  assert.strictEqual(trimRes.overlap.w, 80, 'New width is trimmed to 80px');
+  assert.strictEqual(trimRes.cut.w, 20, 'Cut piece width is 20px');
+  assert(trimRes.cut.x > trimRes.overlap.x, 'Cut piece is on the positive overhang side');
+
+  // Case C: Complete Miss
+  const missedBox = { x: 120, z: 0, w: 100, d: 100 };
+  const missRes = sliceBlock(prevBox, missedBox, 'x', 3.5);
+  assert.strictEqual(missRes.status, 'miss', 'Box outside base bounds is a miss');
+  assert.strictEqual(missRes.overlap, null, 'No overlap on miss');
+
+  // Case D: Dynamic rainbow palette & Face Shading
+  const hue0 = getLayerHue(0);
+  const hue1 = getLayerHue(1);
+  assert.notStrictEqual(hue0, hue1, 'Hues advance across layers');
+  const faces = getFaceColors(270);
+  assert(faces.top && faces.left && faces.right && faces.edge, 'Generates top, left, right faces');
+
+  // Case E: Isometric 3D Box Projection
+  const box3D = { x: 0, y: 0, z: 0, w: 100, h: 16, d: 100 };
+  const proj3D = projectIsometricBox(box3D, 0, 200, 200, 1.0);
+  assert.strictEqual(proj3D.top.length, 4, 'Top face has 4 vertices');
+  assert.strictEqual(proj3D.left.length, 4, 'Left face has 4 vertices');
+  assert.strictEqual(proj3D.right.length, 4, 'Right face has 4 vertices');
+
+  // Case F: Star rating evaluation
+  assert.strictEqual(evaluateTowerStars(40), 3, '40 blocks yields 3 stars');
+  assert.strictEqual(evaluateTowerStars(20), 2, '20 blocks yields 2 stars');
+  assert.strictEqual(evaluateTowerStars(5), 1, '5 blocks yields 1 star');
 });
 
 // 26. Security & Clean Static Deployment Verification

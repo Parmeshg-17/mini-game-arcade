@@ -1,983 +1,923 @@
 /**
- * Stack Rush — Interactive 3D Canvas Controller
- * Manages 3D isometric axonometric rendering, platform rotation mechanics,
- * drag swipe touch input, next block preview, layer blast particles, and gem unlocks.
+ * Stack Rush — Ketchapp-Style 3D Slicing Tower Game Controller
+ * One-button stacking: blocks oscillate horizontally across alternating axes (X / Z).
+ * Tap, click, or press Space to drop and trim overhanging edges with satisfying 3D debris physics,
+ * ascending musical chime combos on PERFECT alignments, particle sparkle bursts,
+ * dynamic camera height tracking, and instant restart.
  */
 (function() {
   'use strict';
 
-  // DOM Elements cache
-  const dom = {};
+  const Engine = window.StackEngine;
+  const Audio = window.StackAudio;
 
-  // Game State
+  if (!Engine || !Audio) {
+    console.error('Stack Rush: Required engine or audio modules missing.');
+    return;
+  }
+
+  // DOM Elements
+  const canvas = document.getElementById('stack-canvas');
+  const ctx = canvas.getContext('2d');
+  const nextCanvas = document.getElementById('next-canvas');
+  const nextCtx = nextCanvas ? nextCanvas.getContext('2d') : null;
+
+  const scoreDisplay = document.getElementById('score-display');
+  const layersDisplay = document.getElementById('layers-display');
+  const movesDisplay = document.getElementById('moves-display');
+  const gemsDisplay = document.getElementById('gems-display');
+  const timerDisplay = document.getElementById('timer-display');
+  const comboDisplay = document.getElementById('combo-display');
+  const bestDisplay = document.getElementById('best-display');
+  const themeSelect = document.getElementById('theme-select');
+
+  const pauseBtn = document.getElementById('pause-btn');
+  const audioToggleBtn = document.getElementById('audio-toggle-btn');
+  const audioIcon = document.getElementById('audio-icon');
+
+  const overlayStart = document.getElementById('overlay-start');
+  const startBtn = document.getElementById('start-btn');
+  const overlayPause = document.getElementById('overlay-pause');
+  const resumeBtn = document.getElementById('resume-btn');
+  const restartBtn = document.getElementById('restart-btn');
+
+  const overlayWin = document.getElementById('overlay-win');
+  const winTitle = document.getElementById('win-title');
+  const winSummary = document.getElementById('win-summary');
+  const winScoreVal = document.getElementById('win-score-val');
+  const winStarsVal = document.getElementById('win-stars-val');
+  const winMovesVal = document.getElementById('win-moves-val');
+  const winLayersVal = document.getElementById('win-layers-val');
+  const winGemsVal = document.getElementById('win-gems-val');
+  const playAgainBtn = document.getElementById('play-again-btn');
+
+  const overlayGameOver = document.getElementById('overlay-gameover');
+  const goScoreVal = document.getElementById('go-score-val');
+  const goMovesVal = document.getElementById('go-moves-val');
+  const goLayersVal = document.getElementById('go-layers-val');
+  const goGemsVal = document.getElementById('go-gems-val');
+  const tryAgainBtn = document.getElementById('try-again-btn');
+
+  const btnRotLeft = document.getElementById('btn-rot-left');
+  const btnDrop = document.getElementById('btn-drop');
+  const btnRotRight = document.getElementById('btn-rot-right');
+
+  const modeClassicBtn = document.getElementById('mode-classic-btn');
+  const modeChallengeBtn = document.getElementById('mode-challenge-btn');
+  const modeBlitzBtn = document.getElementById('mode-blitz-btn');
+
+  // Game Constants
+  const BASE_WIDTH = Engine.INITIAL_SIZE || 140;
+  const BASE_DEPTH = Engine.INITIAL_SIZE || 140;
+  const BLOCK_HEIGHT = Engine.BLOCK_HEIGHT || 16;
+  const MOVE_RANGE = Engine.MOVE_RANGE || 200;
+
+  // State Management
   const state = {
     mode: 'classic', // 'classic' | 'challenge' | 'blitz'
-    status: 'ready', // 'ready' | 'playing' | 'paused' | 'cleared' | 'gameover'
-    tower: [],
+    status: 'ready', // 'ready' | 'playing' | 'paused' | 'gameover' | 'win'
+
     score: 0,
+    perfectCount: 0,
+    streak: 0,
     moves: 0,
-    layersCleared: 0,
-    comboStreak: 0,
-    gems: 0,
-    timer: 0,
-    timerInterval: null,
-    targetLayers: 5, // For challenge mode
-    blitzDuration: 60,
+    elapsedSeconds: 0,
+    blitzRemaining: 60,
+    bestScore: 0,
 
-    // Platform rotation (in radians)
-    platformAngle: 0,
-    targetAngle: 0,
+    // 3D Tower Stack
+    stack: [],       // Array of placed block objects: { x, y, z, w, h, d, hue, faceColors }
+    debris: [],      // Falling trimmed pieces: { x, y, z, w, h, d, vx, vy, vz, rotX, rotZ, hue, alpha }
+    sparkles: [],    // Particle bursts on perfect drops
 
-    // Active block in chute
-    currentShape: null,
-    nextShape: null,
-    blockX: 1, // centered on 3x3 platform
-    blockZ: 1,
-    blockStepRotation: 0, // 0, 1, 2, 3 (90 deg steps)
-    dropY: 0,
+    // Active Moving Block
+    moving: {
+      x: 0,
+      y: 0,
+      z: 0,
+      w: BASE_WIDTH,
+      h: BLOCK_HEIGHT,
+      d: BASE_DEPTH,
+      axis: 'x',     // Alternates 'x' and 'z'
+      dir: 1,        // Current travel direction
+      speed: 2.5,
+      hue: 270,
+      faceColors: null
+    },
 
-    // Touch / Mouse drag tracking
-    isDraggingPlatform: false,
-    dragStartX: 0,
-    dragStartAngle: 0,
+    // Camera
+    cameraY: 0,
+    targetCameraY: 0,
 
-    // Active visual theme
-    themeKey: 'cyber',
-    unlockedThemes: ['cyber'],
-
-    // Particle explosions for layer clears
-    particles: [],
-
-    // Best scores
-    bestScores: {
-      classic: 0,
-      challenge: 0,
-      blitz: 0
-    }
+    // Feedback
+    bannerText: '',
+    bannerTimer: 0,
+    bannerColor: '#d5ff55'
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  let animationFrameId = null;
+  let timerIntervalId = null;
+  let lastFrameTime = performance.now();
+  let moveTime = 0;
 
-  function init() {
-    cacheDom();
-    loadPersistedData();
-    bindEvents();
-    setupCanvas();
-    switchMode('classic');
+  // Initialize Personal Best
+  try {
+    const savedBest = localStorage.getItem('stack_rush_best');
+    if (savedBest) state.bestScore = parseInt(savedBest, 10) || 0;
+  } catch (e) {}
+  updateHUD();
 
-    // Start 60fps render loop
-    requestAnimationFrame(gameLoop);
-  }
-
-  function cacheDom() {
-    dom.stageCard = document.getElementById('stack-stage-card');
-    dom.canvas = document.getElementById('stack-canvas');
-    dom.ctx = dom.canvas?.getContext('2d');
-
-    dom.nextCanvas = document.getElementById('next-canvas');
-    dom.nextCtx = dom.nextCanvas?.getContext('2d');
-
-    dom.scoreDisplay = document.getElementById('score-display');
-    dom.layersDisplay = document.getElementById('layers-display');
-    dom.movesDisplay = document.getElementById('moves-display');
-    dom.timerDisplay = document.getElementById('timer-display');
-    dom.gemsDisplay = document.getElementById('gems-display');
-    dom.comboDisplay = document.getElementById('combo-display');
-    dom.bestDisplay = document.getElementById('best-display');
-
-    dom.modeClassicBtn = document.getElementById('mode-classic-btn');
-    dom.modeChallengeBtn = document.getElementById('mode-challenge-btn');
-    dom.modeBlitzBtn = document.getElementById('mode-blitz-btn');
-
-    dom.themeSelect = document.getElementById('theme-select');
-    dom.audioToggleBtn = document.getElementById('audio-toggle-btn');
-    dom.audioIcon = document.getElementById('audio-icon');
-    dom.pauseBtn = document.getElementById('pause-btn');
-
-    dom.btnRotLeft = document.getElementById('btn-rot-left');
-    dom.btnRotRight = document.getElementById('btn-rot-right');
-    dom.btnDrop = document.getElementById('btn-drop');
-
-    dom.overlayStart = document.getElementById('overlay-start');
-    dom.overlayPause = document.getElementById('overlay-pause');
-    dom.overlayWin = document.getElementById('overlay-win');
-    dom.overlayGameOver = document.getElementById('overlay-gameover');
-
-    dom.startBtn = document.getElementById('start-btn');
-    dom.resumeBtn = document.getElementById('resume-btn');
-    dom.restartBtn = document.getElementById('restart-btn');
-    dom.playAgainBtn = document.getElementById('play-again-btn');
-    dom.tryAgainBtn = document.getElementById('try-again-btn');
-
-    dom.winTitle = document.getElementById('win-title');
-    dom.winScoreVal = document.getElementById('win-score-val');
-    dom.winMovesVal = document.getElementById('win-moves-val');
-    dom.winLayersVal = document.getElementById('win-layers-val');
-    dom.winGemsVal = document.getElementById('win-gems-val');
-    dom.winStarsVal = document.getElementById('win-stars-val');
-    dom.winSummary = document.getElementById('win-summary');
-
-    dom.goScoreVal = document.getElementById('go-score-val');
-    dom.goMovesVal = document.getElementById('go-moves-val');
-    dom.goLayersVal = document.getElementById('go-layers-val');
-    dom.goGemsVal = document.getElementById('go-gems-val');
-
-    dom.srAnnouncer = document.getElementById('sr-announcer');
-  }
-
-  function loadPersistedData() {
-    try {
-      state.bestScores.classic = parseInt(localStorage.getItem('arcade_stackrush_best_classic') || '0', 10);
-      state.bestScores.challenge = parseInt(localStorage.getItem('arcade_stackrush_best_challenge') || '0', 10);
-      state.bestScores.blitz = parseInt(localStorage.getItem('arcade_stackrush_best_blitz') || '0', 10);
-      state.gems = parseInt(localStorage.getItem('arcade_stackrush_gems') || '0', 10);
-
-      const savedUnlocked = localStorage.getItem('arcade_stackrush_unlocked_themes');
-      if (savedUnlocked) {
-        state.unlockedThemes = JSON.parse(savedUnlocked);
-      }
-
-      const savedTheme = localStorage.getItem('arcade_stackrush_active_theme');
-      if (savedTheme && window.StackEngine?.THEMES[savedTheme]) {
-        state.themeKey = savedTheme;
-      }
-    } catch (e) {}
-
-    updateBestDisplay();
-    updateThemeSelector();
-  }
-
-  function savePersistedData() {
-    try {
-      if (state.score > (state.bestScores[state.mode] || 0)) {
-        state.bestScores[state.mode] = state.score;
-        localStorage.setItem(`arcade_stackrush_best_${state.mode}`, state.score.toString());
-      }
-      localStorage.setItem('arcade_stackrush_gems', state.gems.toString());
-      localStorage.setItem('arcade_stackrush_unlocked_themes', JSON.stringify(state.unlockedThemes));
-      localStorage.setItem('arcade_stackrush_active_theme', state.themeKey);
-    } catch (e) {}
-
-    updateBestDisplay();
-  }
-
-  function updateBestDisplay() {
-    if (!dom.bestDisplay) return;
-    const best = state.bestScores[state.mode] || 0;
-    dom.bestDisplay.textContent = best > 0 ? `${best} pts` : '—';
-    if (dom.gemsDisplay) dom.gemsDisplay.textContent = `💎 ${state.gems}`;
-  }
-
-  function updateThemeSelector() {
-    if (!dom.themeSelect) return;
-    const Engine = window.StackEngine;
-    if (!Engine) return;
-
-    dom.themeSelect.innerHTML = '';
-    Object.keys(Engine.THEMES).forEach(key => {
-      const t = Engine.THEMES[key];
+  // Setup Theme Selector
+  function setupThemeSelector() {
+    if (!themeSelect) return;
+    themeSelect.innerHTML = '';
+    const themes = [
+      { id: 'cyber', name: 'Cyber Neon' },
+      { id: 'gold', name: 'Obsidian Gold' },
+      { id: 'synthwave', name: 'Retro Synth' },
+      { id: 'matrix', name: 'Matrix Jade' }
+    ];
+    themes.forEach(t => {
       const opt = document.createElement('option');
-      opt.value = key;
-      const isUnlocked = state.unlockedThemes.includes(key);
-      opt.textContent = isUnlocked ? t.name : `${t.name} (💎 ${t.cost})`;
-      if (key === state.themeKey) opt.selected = true;
-      dom.themeSelect.appendChild(opt);
+      opt.value = t.id;
+      opt.textContent = t.name;
+      themeSelect.appendChild(opt);
+    });
+    themeSelect.addEventListener('change', () => {
+      // Refresh current colors if needed
     });
   }
+  setupThemeSelector();
 
-  function setupCanvas() {
-    if (!dom.canvas) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const rect = dom.canvas.getBoundingClientRect();
-
-    dom.canvas.width = Math.floor(rect.width * dpr);
-    dom.canvas.height = Math.floor(rect.height * dpr);
-
-    if (dom.nextCanvas) {
-      const nextRect = dom.nextCanvas.getBoundingClientRect();
-      dom.nextCanvas.width = Math.floor(nextRect.width * dpr);
-      dom.nextCanvas.height = Math.floor(nextRect.height * dpr);
-    }
+  // Resize Handlers
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
   }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
 
-  function bindEvents() {
-    window.addEventListener('resize', setupCanvas);
+  /**
+   * Resets and starts a fresh match.
+   */
+  function startGame(selectedMode) {
+    if (selectedMode) state.mode = selectedMode;
 
-    // Mode buttons
-    if (dom.modeClassicBtn) dom.modeClassicBtn.addEventListener('click', () => switchMode('classic'));
-    if (dom.modeChallengeBtn) dom.modeChallengeBtn.addEventListener('click', () => switchMode('challenge'));
-    if (dom.modeBlitzBtn) dom.modeBlitzBtn.addEventListener('click', () => switchMode('blitz'));
-
-    // Audio & Pause
-    if (dom.audioToggleBtn) dom.audioToggleBtn.addEventListener('click', handleAudioToggle);
-    if (dom.pauseBtn) dom.pauseBtn.addEventListener('click', togglePause);
-
-    // Platform rotation touch / mouse gestures
-    if (dom.canvas) {
-      dom.canvas.addEventListener('pointerdown', onCanvasPointerDown);
-      window.addEventListener('pointermove', onWindowPointerMove);
-      window.addEventListener('pointerup', onWindowPointerUp);
-    }
-
-    // Direct UI control buttons
-    if (dom.btnRotLeft) dom.btnRotLeft.addEventListener('click', () => rotatePlatform(-Math.PI / 2));
-    if (dom.btnRotRight) dom.btnRotRight.addEventListener('click', () => rotatePlatform(Math.PI / 2));
-    if (dom.btnDrop) dom.btnDrop.addEventListener('click', dropActiveBlock);
-
-    // Theme selector
-    if (dom.themeSelect) dom.themeSelect.addEventListener('change', handleThemeChange);
-
-    // Overlay buttons
-    if (dom.startBtn) dom.startBtn.addEventListener('click', startGame);
-    if (dom.resumeBtn) dom.resumeBtn.addEventListener('click', resumeGame);
-    if (dom.restartBtn) dom.restartBtn.addEventListener('click', restartGame);
-    if (dom.playAgainBtn) dom.playAgainBtn.addEventListener('click', restartGame);
-    if (dom.tryAgainBtn) dom.tryAgainBtn.addEventListener('click', restartGame);
-
-    // Keyboard listener
-    window.addEventListener('keydown', handleKeyDown);
-
-    updateAudioIcon();
-  }
-
-  function switchMode(newMode) {
-    if (state.status === 'playing') {
-      stopTimer();
-    }
-    state.mode = newMode;
-
-    [dom.modeClassicBtn, dom.modeChallengeBtn, dom.modeBlitzBtn].forEach(btn => {
-      if (btn) {
-        btn.classList.remove('active');
-        btn.setAttribute('aria-selected', 'false');
-      }
-    });
-
-    if (newMode === 'classic' && dom.modeClassicBtn) {
-      dom.modeClassicBtn.classList.add('active');
-      dom.modeClassicBtn.setAttribute('aria-selected', 'true');
-    } else if (newMode === 'challenge' && dom.modeChallengeBtn) {
-      dom.modeChallengeBtn.classList.add('active');
-      dom.modeChallengeBtn.setAttribute('aria-selected', 'true');
-    } else if (newMode === 'blitz' && dom.modeBlitzBtn) {
-      dom.modeBlitzBtn.classList.add('active');
-      dom.modeBlitzBtn.setAttribute('aria-selected', 'true');
-    }
-
-    updateBestDisplay();
-    prepareBoard();
-  }
-
-  function prepareBoard() {
-    stopTimer();
-    const Engine = window.StackEngine;
-
-    state.tower = Engine ? Engine.createEmptyTower() : [];
-    state.status = 'ready';
     state.score = 0;
+    state.perfectCount = 0;
+    state.streak = 0;
     state.moves = 0;
-    state.layersCleared = 0;
-    state.comboStreak = 0;
-    state.platformAngle = 0;
-    state.targetAngle = 0;
-    state.particles = [];
+    state.elapsedSeconds = 0;
+    state.blitzRemaining = 60;
+    state.stack = [];
+    state.debris = [];
+    state.sparkles = [];
+    state.cameraY = 0;
+    state.targetCameraY = 0;
+    moveTime = 0;
 
-    if (state.mode === 'blitz') {
-      state.timer = state.blitzDuration;
-    } else {
-      state.timer = 0;
-    }
+    // Create Base Pedestal (Layer 0)
+    const baseHue = Engine.getLayerHue(0);
+    const baseBlock = {
+      x: 0,
+      y: 0,
+      z: 0,
+      w: BASE_WIDTH,
+      h: BLOCK_HEIGHT,
+      d: BASE_DEPTH,
+      hue: baseHue,
+      faceColors: Engine.getFaceColors(baseHue)
+    };
+    state.stack.push(baseBlock);
 
-    // Deal initial pieces
-    state.currentShape = Engine ? Engine.rollShape() : null;
-    state.nextShape = Engine ? Engine.rollShape() : null;
-    resetActiveBlockPosition();
+    // Spawn first moving block (Layer 1)
+    spawnNextMovingBlock();
 
-    updateHUD();
-    renderNextPiecePreview();
-    showStartOverlay();
-  }
-
-  function resetActiveBlockPosition() {
-    state.blockX = 0;
-    state.blockZ = 0;
-    state.blockStepRotation = 0;
-    updateGhostDrop();
-  }
-
-  function updateGhostDrop() {
-    const Engine = window.StackEngine;
-    if (!Engine || !state.currentShape) return;
-
-    const rotatedBlocks = Engine.normalizeBlocks(Engine.rotateBlocks(state.currentShape.blocks, state.blockStepRotation));
-    state.dropY = Engine.getDropY(state.tower, rotatedBlocks, state.blockX, state.blockZ);
-  }
-
-  function onCanvasPointerDown(e) {
-    if (state.status !== 'playing' && state.status !== 'ready') return;
-    state.isDraggingPlatform = true;
-    state.dragStartX = e.clientX;
-    state.dragStartAngle = state.platformAngle;
-  }
-
-  function onWindowPointerMove(e) {
-    if (!state.isDraggingPlatform) return;
-    const deltaX = e.clientX - state.dragStartX;
-    // Map horizontal pixel swipe to smooth platform rotation
-    state.targetAngle = state.dragStartAngle + (deltaX * 0.012);
-  }
-
-  function onWindowPointerUp(e) {
-    if (!state.isDraggingPlatform) return;
-    state.isDraggingPlatform = false;
-
-    // Optional snap to nearest 45 or 90 degrees
-    const nearestQuad = Math.round(state.targetAngle / (Math.PI / 2)) * (Math.PI / 2);
-    state.targetAngle = nearestQuad;
-
-    if (window.StackAudio) window.StackAudio.playRotate();
-  }
-
-  function rotatePlatform(angleDelta) {
-    state.targetAngle += angleDelta;
-    if (window.StackAudio) window.StackAudio.playRotate();
-  }
-
-  function dropActiveBlock() {
-    if (state.status !== 'playing') return;
-    const Engine = window.StackEngine;
-    if (!Engine || !state.currentShape) return;
-
-    const rotatedBlocks = Engine.normalizeBlocks(Engine.rotateBlocks(state.currentShape.blocks, state.blockStepRotation));
-    const landingY = Engine.getDropY(state.tower, rotatedBlocks, state.blockX, state.blockZ);
-
-    if (landingY === -1) {
-      // Tower topped out! Game Over
-      endGame(false);
-      return;
-    }
-
-    // Lock block into tower
-    const lockRes = Engine.lockShape(state.tower, rotatedBlocks, state.blockX, landingY, state.blockZ, state.currentShape.color);
-    state.tower = lockRes.newTower;
-    state.moves++;
-
-    if (window.StackAudio) window.StackAudio.playDrop();
-
-    // Check completed horizontal layers
-    const fullLayers = Engine.checkCompletedLayers(state.tower);
-    const layersCount = fullLayers.length;
-
-    if (layersCount > 0) {
-      state.comboStreak++;
-      state.layersCleared += layersCount;
-
-      // Spawn 3D particle blast for clearing layers
-      spawnLayerClearParticles(fullLayers);
-
-      const clearRes = Engine.clearCompletedLayers(state.tower, fullLayers);
-      state.tower = clearRes.newTower;
-
-      const scored = Engine.calculateScoreAndGems(lockRes.lockedCount, layersCount, state.comboStreak);
-      state.score += scored.score;
-      state.gems += scored.gems;
-
-      if (window.StackAudio) {
-        window.StackAudio.playLayerClear(layersCount);
-        window.StackAudio.playGem();
-      }
-
-      if (state.mode === 'blitz') {
-        state.timer = Math.min(state.blitzDuration, state.timer + (layersCount * 4));
-      }
-
-      savePersistedData();
-    } else {
-      state.comboStreak = 0;
-      const scored = Engine.calculateScoreAndGems(lockRes.lockedCount, 0, 0);
-      state.score += scored.score;
-      state.gems += scored.gems;
-    }
-
-    // Advance next piece
-    state.currentShape = state.nextShape;
-    state.nextShape = Engine.rollShape();
-    resetActiveBlockPosition();
-
-    updateHUD();
-    renderNextPiecePreview();
-
-    // Challenge Mode Win Condition
-    if (state.mode === 'challenge' && state.layersCleared >= state.targetLayers) {
-      endGame(true);
-      return;
-    }
-
-    // Check if new piece can fit at top
-    updateGhostDrop();
-    if (state.dropY === -1) {
-      endGame(false);
-    }
-  }
-
-  function spawnLayerClearParticles(layers) {
-    const Engine = window.StackEngine;
-    if (!Engine || !dom.canvas) return;
-
-    layers.forEach(layerY => {
-      for (let x = 0; x < 3; x++) {
-        for (let z = 0; z < 3; z++) {
-          const pt = Engine.projectIso(x, layerY, z, state.platformAngle, dom.canvas.width / 2, dom.canvas.height * 0.72);
-          for (let p = 0; p < 4; p++) {
-            state.particles.push({
-              x: pt.screenX,
-              y: pt.screenY,
-              vx: (Math.random() - 0.5) * 6,
-              vy: (Math.random() - 1.2) * 6,
-              color: '#ffd166',
-              size: Math.random() * 4 + 2,
-              life: 1.0
-            });
-          }
-        }
-      }
-    });
-
-    triggerScreenShake();
-  }
-
-  function triggerScreenShake() {
-    if (dom.stageCard) {
-      dom.stageCard.classList.add('shake-active');
-      setTimeout(() => dom.stageCard.classList.remove('shake-active'), 250);
-    }
-  }
-
-  function handleThemeChange() {
-    const key = dom.themeSelect?.value;
-    const Engine = window.StackEngine;
-    const theme = Engine?.THEMES[key];
-    if (!theme) return;
-
-    if (!state.unlockedThemes.includes(key)) {
-      if (state.gems >= theme.cost) {
-        state.gems -= theme.cost;
-        state.unlockedThemes.push(key);
-        state.themeKey = key;
-        savePersistedData();
-        updateThemeSelector();
-        if (window.StackAudio) window.StackAudio.playGem();
-      } else {
-        alert(`Need ${theme.cost} gems to unlock this theme! You have ${state.gems} gems.`);
-        dom.themeSelect.value = state.themeKey;
-      }
-    } else {
-      state.themeKey = key;
-      savePersistedData();
-    }
-  }
-
-  function startGame() {
-    hideOverlays();
     state.status = 'playing';
+    hideAllOverlays();
     startTimer();
     updateHUD();
-    announceSR('Stack Rush match started! Rotate the platform and drop blocks.');
-  }
 
-  function startTimer() {
-    stopTimer();
-    state.timerInterval = setInterval(() => {
-      if (state.status !== 'playing') return;
-
-      if (state.mode === 'blitz') {
-        state.timer--;
-        if (state.timer <= 0) {
-          state.timer = 0;
-          updateHUD();
-          endGame(false);
-          return;
-        }
-      } else {
-        state.timer++;
-      }
-      updateHUD();
-    }, 1000);
-  }
-
-  function stopTimer() {
-    clearInterval(state.timerInterval);
-    state.timerInterval = null;
-  }
-
-  function updateHUD() {
-    if (dom.scoreDisplay) dom.scoreDisplay.textContent = `Score: ${state.score}`;
-    if (dom.movesDisplay) dom.movesDisplay.textContent = `Blocks: ${state.moves}`;
-    if (dom.gemsDisplay) dom.gemsDisplay.textContent = `💎 ${state.gems}`;
-
-    if (dom.layersDisplay) {
-      if (state.mode === 'challenge') {
-        dom.layersDisplay.textContent = `Layers: ${state.layersCleared} / ${state.targetLayers}`;
-      } else {
-        dom.layersDisplay.textContent = `Layers: ${state.layersCleared}`;
-      }
-    }
-
-    if (dom.timerDisplay) {
-      const mins = Math.floor(state.timer / 60);
-      const secs = state.timer % 60;
-      dom.timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    if (dom.comboDisplay) {
-      if (state.comboStreak > 1) {
-        dom.comboDisplay.textContent = `⚡ ${state.comboStreak}x Combo`;
-        dom.comboDisplay.className = 'hud-pill highlight-gold';
-      } else {
-        dom.comboDisplay.textContent = 'Streak: 0';
-        dom.comboDisplay.className = 'hud-pill';
-      }
-    }
-  }
-
-  function endGame(isVictory = false) {
-    stopTimer();
-    savePersistedData();
-
-    if (isVictory) {
-      state.status = 'cleared';
-      if (window.StackAudio) window.StackAudio.playWin();
-
-      if (dom.winTitle) dom.winTitle.textContent = 'Tower Master Cleared!';
-      if (dom.winScoreVal) dom.winScoreVal.textContent = state.score.toString();
-      if (dom.winMovesVal) dom.winMovesVal.textContent = state.moves.toString();
-      if (dom.winLayersVal) dom.winLayersVal.textContent = state.layersCleared.toString();
-      if (dom.winGemsVal) dom.winGemsVal.textContent = state.gems.toString();
-      if (dom.winStarsVal) dom.winStarsVal.textContent = '★★★';
-      if (dom.winSummary) dom.winSummary.textContent = `Spectacular 3D stacking! Cleared ${state.layersCleared} layers in ${state.moves} blocks!`;
-
-      showOverlay(dom.overlayWin);
-      announceSR(`Victory! Tower challenge completed in ${state.moves} moves.`);
-    } else {
-      state.status = 'gameover';
-      if (window.StackAudio) window.StackAudio.playGameOver();
-
-      if (dom.goScoreVal) dom.goScoreVal.textContent = state.score.toString();
-      if (dom.goMovesVal) dom.goMovesVal.textContent = state.moves.toString();
-      if (dom.goLayersVal) dom.goLayersVal.textContent = state.layersCleared.toString();
-      if (dom.goGemsVal) dom.goGemsVal.textContent = state.gems.toString();
-
-      showOverlay(dom.overlayGameOver);
-      announceSR(`Game Over! Final score: ${state.score} with ${state.layersCleared} layers cleared.`);
-    }
-  }
-
-  function handleKeyDown(e) {
-    const key = e.key.toLowerCase();
-
-    if (key === 'p') {
-      e.preventDefault();
-      togglePause();
-      return;
-    }
-    if (key === 'r') {
-      e.preventDefault();
-      restartGame();
-      return;
-    }
-    if (key === 'm') {
-      e.preventDefault();
-      handleAudioToggle();
-      return;
-    }
-
-    if (state.status !== 'playing') {
-      if (key === ' ' || key === 'enter') {
-        if (state.status === 'ready') {
-          e.preventDefault();
-          startGame();
-        }
-      }
-      return;
-    }
-
-    // Platform rotation keys: Left / Right or A / D
-    if (key === 'arrowleft' || key === 'a') {
-      e.preventDefault();
-      rotatePlatform(-Math.PI / 4);
-      return;
-    }
-    if (key === 'arrowright' || key === 'd') {
-      e.preventDefault();
-      rotatePlatform(Math.PI / 4);
-      return;
-    }
-
-    // Rotate active falling block locally: Up or W
-    if (key === 'arrowup' || key === 'w') {
-      e.preventDefault();
-      state.blockStepRotation = (state.blockStepRotation + 1) % 4;
-      updateGhostDrop();
-      if (window.StackAudio) window.StackAudio.playRotate();
-      return;
-    }
-
-    // Drop block: Space or Down or Enter
-    if (key === ' ' || key === 'arrowdown' || key === 's' || key === 'enter') {
-      e.preventDefault();
-      dropActiveBlock();
-    }
-  }
-
-  function togglePause() {
-    if (state.status === 'playing') {
-      state.status = 'paused';
-      stopTimer();
-      showOverlay(dom.overlayPause);
-      announceSR('Game paused. Press P to resume.');
-    } else if (state.status === 'paused') {
-      resumeGame();
-    }
-  }
-
-  function resumeGame() {
-    if (state.status !== 'paused') return;
-    hideOverlays();
-    state.status = 'playing';
-    startTimer();
-    announceSR('Game resumed.');
-  }
-
-  function restartGame() {
-    prepareBoard();
-    startGame();
-  }
-
-  function handleAudioToggle() {
-    if (window.StackAudio) {
-      window.StackAudio.toggleMute();
-      updateAudioIcon();
-    }
-  }
-
-  function updateAudioIcon() {
-    if (!dom.audioIcon) return;
-    const isMuted = window.StackAudio ? window.StackAudio.isMuted() : false;
-    dom.audioIcon.textContent = isMuted ? '🔇' : '🔊';
-  }
-
-  function showStartOverlay() {
-    hideOverlays();
-    if (dom.overlayStart) {
-      dom.overlayStart.classList.add('show');
-    }
-  }
-
-  function showOverlay(overlay) {
-    hideOverlays();
-    if (overlay) overlay.classList.add('show');
-  }
-
-  function hideOverlays() {
-    [dom.overlayStart, dom.overlayPause, dom.overlayWin, dom.overlayGameOver].forEach(o => {
-      if (o) o.classList.remove('show');
-    });
-  }
-
-  function announceSR(msg) {
-    if (dom.srAnnouncer) {
-      dom.srAnnouncer.textContent = msg;
+    lastFrameTime = performance.now();
+    if (!animationFrameId) {
+      animationFrameId = requestAnimationFrame(gameLoop);
     }
   }
 
   /**
-   * Main 60 FPS Canvas Render Loop
+   * Spawns the next moving block on top of the stack.
    */
-  function gameLoop() {
-    // Smooth platform rotation damping
-    state.platformAngle += (state.targetAngle - state.platformAngle) * 0.15;
+  function spawnNextMovingBlock() {
+    const top = state.stack[state.stack.length - 1];
+    const layerIdx = state.stack.length;
+    // Alternate axes: even layer indices move on X, odd on Z
+    const axis = (layerIdx % 2 === 1) ? 'x' : 'z';
+    const hue = Engine.getLayerHue(layerIdx);
 
-    renderMainCanvas();
-    renderParticles();
+    // Speed scales slightly with height
+    const speed = Math.min(Engine.MAX_SPEED, Engine.BASE_SPEED + Math.min(layerIdx * 0.08, 3.5));
 
-    requestAnimationFrame(gameLoop);
+    state.moving = {
+      x: axis === 'x' ? -MOVE_RANGE : top.x,
+      y: layerIdx * BLOCK_HEIGHT,
+      z: axis === 'z' ? -MOVE_RANGE : top.z,
+      w: top.w,
+      h: BLOCK_HEIGHT,
+      d: top.d,
+      axis: axis,
+      dir: 1,
+      speed: speed,
+      hue: hue,
+      faceColors: Engine.getFaceColors(hue)
+    };
+
+    moveTime = 0;
+
+    // Draw mini preview in next-canvas
+    drawNextPreview();
   }
 
-  function renderMainCanvas() {
-    const ctx = dom.ctx;
-    const canvas = dom.canvas;
-    const Engine = window.StackEngine;
-    if (!ctx || !canvas || !Engine) return;
+  /**
+   * Main Action: Drop & Slice block on one-button tap/click.
+   */
+  function dropBlock() {
+    if (state.status !== 'playing') {
+      if (state.status === 'ready' || state.status === 'gameover' || state.status === 'win') {
+        startGame();
+      }
+      return;
+    }
 
-    const theme = Engine.THEMES[state.themeKey] || Engine.THEMES.cyber;
+    state.moves++;
+    const prev = state.stack[state.stack.length - 1];
+    const curr = state.moving;
+    const sliceRes = Engine.sliceBlock(prev, curr, curr.axis);
 
-    // Clear background
-    ctx.fillStyle = theme.bgBase;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (sliceRes.status === 'perfect') {
+      // PERFECT SNAP!
+      state.streak++;
+      state.perfectCount++;
+      state.score++;
 
-    const originX = canvas.width / 2;
-    const originY = canvas.height * 0.74;
-    const tileSize = Math.min(canvas.width, canvas.height) * 0.13;
-    const layerHeight = tileSize * 0.62;
+      const newBlock = {
+        x: sliceRes.overlap.x,
+        y: curr.y,
+        z: sliceRes.overlap.z,
+        w: sliceRes.overlap.w,
+        h: curr.h,
+        d: sliceRes.overlap.d,
+        hue: curr.hue,
+        faceColors: curr.faceColors
+      };
+      state.stack.push(newBlock);
 
-    // 1. Draw 3D Platform Pedestal Base
-    drawPlatformPedestal(ctx, originX, originY, tileSize, theme);
+      // Audio & Sparkles
+      Audio.playPerfect(state.streak);
+      triggerSparkles(newBlock);
 
-    // 2. Collect all voxels in the scene for painter's depth sorting
-    const voxels = [];
+      triggerBanner(state.streak > 1 ? `PERFECT x${state.streak}!` : 'PERFECT!', '#38bdf8');
 
-    // Tower placed voxels
-    for (let y = 0; y < 10; y++) {
-      for (let x = 0; x < 3; x++) {
-        for (let z = 0; z < 3; z++) {
-          const color = state.tower[y]?.[x]?.[z];
-          if (color) {
-            const pt = Engine.projectIso(x, y, z, state.platformAngle, originX, originY, tileSize, layerHeight);
-            voxels.push({
-              x, y, z,
-              screenX: pt.screenX,
-              screenY: pt.screenY,
-              depth: pt.depth,
-              color: color,
-              isGhost: false
-            });
-          }
+      // Combo expansion bonus
+      if (state.streak >= Engine.COMBO_STREAK_BONUS) {
+        if (newBlock.w < BASE_WIDTH || newBlock.d < BASE_DEPTH) {
+          newBlock.w = Math.min(BASE_WIDTH, newBlock.w + Engine.BONUS_EXPANSION);
+          newBlock.d = Math.min(BASE_DEPTH, newBlock.d + Engine.BONUS_EXPANSION);
+          Audio.playComboBonus();
+          triggerBanner('COMBO EXPANSION! +8px', '#d5ff55');
         }
       }
-    }
 
-    // Ghost landing voxels
-    if (state.status === 'playing' && state.currentShape && state.dropY !== -1) {
-      const rotatedBlocks = Engine.normalizeBlocks(Engine.rotateBlocks(state.currentShape.blocks, state.blockStepRotation));
-      rotatedBlocks.forEach(b => {
-        const x = state.blockX + b.x;
-        const y = state.dropY + b.y;
-        const z = state.blockZ + b.z;
-        const pt = Engine.projectIso(x, y, z, state.platformAngle, originX, originY, tileSize, layerHeight);
-        voxels.push({
-          x, y, z,
-          screenX: pt.screenX,
-          screenY: pt.screenY,
-          depth: pt.depth,
-          color: state.currentShape.color,
-          isGhost: true
-        });
-      });
-    }
-
-    // Active falling block in top chute
-    if (state.status === 'playing' && state.currentShape) {
-      const topChuteY = 9.8;
-      const rotatedBlocks = Engine.normalizeBlocks(Engine.rotateBlocks(state.currentShape.blocks, state.blockStepRotation));
-      rotatedBlocks.forEach(b => {
-        const x = state.blockX + b.x;
-        const y = topChuteY + b.y;
-        const z = state.blockZ + b.z;
-        const pt = Engine.projectIso(x, y, z, state.platformAngle, originX, originY, tileSize, layerHeight);
-        voxels.push({
-          x, y, z,
-          screenX: pt.screenX,
-          screenY: pt.screenY,
-          depth: pt.depth,
-          color: state.currentShape.color,
-          isGhost: false,
-          isActiveChute: true
-        });
-      });
-    }
-
-    // Sort voxels back-to-front by depth (lowest depth drawn first)
-    voxels.sort((a, b) => a.depth - b.depth);
-
-    // Draw each 3D cube
-    voxels.forEach(v => {
-      drawIsoCube(ctx, v.screenX, v.screenY, tileSize, layerHeight, v.color, v.isGhost, v.isActiveChute);
-    });
-
-    // 3. Draw Height Limit Warning Line at Top
-    drawCeilingLimit(ctx, originX, originY, tileSize, layerHeight);
-  }
-
-  function drawPlatformPedestal(ctx, originX, originY, tileSize, theme) {
-    const Engine = window.StackEngine;
-    // Base 4 corner points
-    const p0 = Engine.projectIso(0, 0, 0, state.platformAngle, originX, originY, tileSize, 0);
-    const p1 = Engine.projectIso(3, 0, 0, state.platformAngle, originX, originY, tileSize, 0);
-    const p2 = Engine.projectIso(3, 0, 3, state.platformAngle, originX, originY, tileSize, 0);
-    const p3 = Engine.projectIso(0, 0, 3, state.platformAngle, originX, originY, tileSize, 0);
-
-    // Pedestal rim
-    ctx.beginPath();
-    ctx.moveTo(p0.screenX, p0.screenY);
-    ctx.lineTo(p1.screenX, p1.screenY);
-    ctx.lineTo(p2.screenX, p2.screenY);
-    ctx.lineTo(p3.screenX, p3.screenY);
-    ctx.closePath();
-
-    ctx.fillStyle = theme.platform;
-    ctx.fill();
-    ctx.lineWidth = 2.5;
-    ctx.strokeStyle = theme.accent;
-    ctx.stroke();
-
-    // 3x3 Grid lines on pedestal
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = theme.gridLines;
-    for (let i = 1; i < 3; i++) {
-      const ga = Engine.projectIso(i, 0, 0, state.platformAngle, originX, originY, tileSize, 0);
-      const gb = Engine.projectIso(i, 0, 3, state.platformAngle, originX, originY, tileSize, 0);
-      ctx.beginPath();
-      ctx.moveTo(ga.screenX, ga.screenY);
-      ctx.lineTo(gb.screenX, gb.screenY);
-      ctx.stroke();
-
-      const gc = Engine.projectIso(0, 0, i, state.platformAngle, originX, originY, tileSize, 0);
-      const gd = Engine.projectIso(3, 0, i, state.platformAngle, originX, originY, tileSize, 0);
-      ctx.beginPath();
-      ctx.moveTo(gc.screenX, gc.screenY);
-      ctx.lineTo(gd.screenX, gd.screenY);
-      ctx.stroke();
-    }
-  }
-
-  function drawIsoCube(ctx, x, y, tileSize, layerHeight, color, isGhost = false, isActiveChute = false) {
-    const hw = tileSize * 0.433; // half width
-    const hh = tileSize * 0.25;  // half height of top rhombus
-    const h = layerHeight * 0.88;
-
-    ctx.save();
-    if (isGhost) {
-      ctx.globalAlpha = 0.35;
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 3]);
-    } else if (isActiveChute) {
-      ctx.shadowColor = color;
-      ctx.shadowBlur = 12;
-    }
-
-    // Top Face (Rhombus)
-    ctx.beginPath();
-    ctx.moveTo(x, y - h);
-    ctx.lineTo(x + hw, y - h - hh);
-    ctx.lineTo(x, y - h - hh * 2);
-    ctx.lineTo(x - hw, y - h - hh);
-    ctx.closePath();
-    ctx.fillStyle = color;
-    ctx.fill();
-    ctx.stroke();
-
-    if (!isGhost) {
-      // Left Face
-      ctx.beginPath();
-      ctx.moveTo(x - hw, y - h - hh);
-      ctx.lineTo(x, y - h);
-      ctx.lineTo(x, y);
-      ctx.lineTo(x - hw, y - hh);
-      ctx.closePath();
-      ctx.fillStyle = shadeColor(color, -25);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-      ctx.stroke();
-
-      // Right Face
-      ctx.beginPath();
-      ctx.moveTo(x, y - h);
-      ctx.lineTo(x + hw, y - h - hh);
-      ctx.lineTo(x + hw, y - hh);
-      ctx.lineTo(x, y);
-      ctx.closePath();
-      ctx.fillStyle = shadeColor(color, -40);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-      ctx.stroke();
-    }
-
-    ctx.restore();
-  }
-
-  function drawCeilingLimit(ctx, originX, originY, tileSize, layerHeight) {
-    const Engine = window.StackEngine;
-    const topY = 9.2;
-    const p0 = Engine.projectIso(0, topY, 0, state.platformAngle, originX, originY, tileSize, layerHeight);
-    const p1 = Engine.projectIso(3, topY, 0, state.platformAngle, originX, originY, tileSize, layerHeight);
-    const p2 = Engine.projectIso(3, topY, 3, state.platformAngle, originX, originY, tileSize, layerHeight);
-    const p3 = Engine.projectIso(0, topY, 3, state.platformAngle, originX, originY, tileSize, layerHeight);
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(p0.screenX, p0.screenY);
-    ctx.lineTo(p1.screenX, p1.screenY);
-    ctx.lineTo(p2.screenX, p2.screenY);
-    ctx.lineTo(p3.screenX, p3.screenY);
-    ctx.closePath();
-    ctx.strokeStyle = 'rgba(255, 71, 87, 0.4)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([6, 4]);
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  function renderParticles() {
-    const ctx = dom.ctx;
-    if (!ctx || state.particles.length === 0) return;
-
-    for (let i = state.particles.length - 1; i >= 0; i--) {
-      const p = state.particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.2; // gravity
-      p.life -= 0.025;
-
-      if (p.life <= 0) {
-        state.particles.splice(i, 1);
-        continue;
+      checkWinConditions();
+      if (state.status === 'playing') {
+        spawnNextMovingBlock();
+        updateCamera();
       }
 
-      ctx.save();
-      ctx.globalAlpha = p.life;
-      ctx.fillStyle = p.color;
-      ctx.fillRect(p.x, p.y, p.size, p.size);
-      ctx.restore();
+    } else if (sliceRes.status === 'trim') {
+      // TRIM OVERHANG
+      state.streak = 0;
+      state.score++;
+
+      // Overlap stays on the tower
+      const newBlock = {
+        x: sliceRes.overlap.x,
+        y: curr.y,
+        z: sliceRes.overlap.z,
+        w: sliceRes.overlap.w,
+        h: curr.h,
+        d: sliceRes.overlap.d,
+        hue: curr.hue,
+        faceColors: curr.faceColors
+      };
+      state.stack.push(newBlock);
+
+      // Cut piece becomes falling debris
+      spawnCutDebris(sliceRes.cut, curr.y, curr.hue, curr.faceColors);
+
+      Audio.playTrim();
+
+      checkWinConditions();
+      if (state.status === 'playing') {
+        spawnNextMovingBlock();
+        updateCamera();
+      }
+
+    } else {
+      // TOTAL MISS -> GAME OVER
+      Audio.playMiss();
+      // Drop entire moving block as falling debris
+      spawnCutDebris({
+        x: curr.x,
+        z: curr.z,
+        w: curr.w,
+        d: curr.d,
+        axis: curr.axis,
+        dir: curr.dir
+      }, curr.y, curr.hue, curr.faceColors, true);
+
+      endGame(false);
     }
+
+    updateHUD();
   }
 
-  function renderNextPiecePreview() {
-    const ctx = dom.nextCtx;
-    const canvas = dom.nextCanvas;
-    const Engine = window.StackEngine;
-    if (!ctx || !canvas || !Engine || !state.nextShape) return;
+  /**
+   * Spawns physics falling debris for sliced-off pieces.
+   */
+  function spawnCutDebris(cutInfo, y, hue, faceColors, isFullMiss = false) {
+    if (!cutInfo) return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const ox = canvas.width / 2;
-    const oy = canvas.height * 0.65;
-    const size = canvas.width * 0.28;
-
-    state.nextShape.blocks.forEach(b => {
-      const pt = Engine.projectIso(b.x, 0, b.z, 0, ox, oy, size, size * 0.6);
-      drawIsoCube(ctx, pt.screenX, pt.screenY, size, size * 0.6, state.nextShape.color);
+    const lateralForce = isFullMiss ? 2.5 : 1.2;
+    state.debris.push({
+      x: cutInfo.x,
+      y: y,
+      z: cutInfo.z,
+      w: cutInfo.w,
+      h: BLOCK_HEIGHT,
+      d: cutInfo.d,
+      vx: cutInfo.axis === 'x' ? (cutInfo.dir * lateralForce) : 0,
+      vy: 1.0,
+      vz: cutInfo.axis === 'z' ? (cutInfo.dir * lateralForce) : 0,
+      rotX: 0,
+      rotZ: 0,
+      vRotX: (Math.random() - 0.5) * 0.08,
+      vRotZ: (Math.random() - 0.5) * 0.08,
+      hue: hue,
+      faceColors: faceColors,
+      alpha: 1.0
     });
   }
 
-  function shadeColor(color, percent) {
-    let R = parseInt(color.substring(1, 3), 16) || 120;
-    let G = parseInt(color.substring(3, 5), 16) || 120;
-    let B = parseInt(color.substring(5, 7), 16) || 120;
-
-    R = Math.min(255, Math.max(0, Math.floor(R * (100 + percent) / 100)));
-    G = Math.min(255, Math.max(0, Math.floor(G * (100 + percent) / 100)));
-    B = Math.min(255, Math.max(0, Math.floor(B * (100 + percent) / 100)));
-
-    const RR = (R.toString(16).length === 1 ? '0' : '') + R.toString(16);
-    const GG = (G.toString(16).length === 1 ? '0' : '') + G.toString(16);
-    const BB = (B.toString(16).length === 1 ? '0' : '') + B.toString(16);
-
-    return `#${RR}${GG}${BB}`;
+  /**
+   * Spawns a fountain of luminous sparkle particles rising from a PERFECT block.
+   */
+  function triggerSparkles(block) {
+    const particleCount = 35;
+    for (let i = 0; i < particleCount; i++) {
+      state.sparkles.push({
+        x: block.x + (Math.random() - 0.5) * block.w,
+        y: block.y + block.h,
+        z: block.z + (Math.random() - 0.5) * block.d,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: 2.5 + Math.random() * 3.5, // Erupt upwards!
+        vz: (Math.random() - 0.5) * 1.5,
+        size: 2.5 + Math.random() * 3.5,
+        life: 1.0,
+        decay: 0.02 + Math.random() * 0.02,
+        hue: block.hue + (Math.random() * 20 - 10)
+      });
+    }
   }
+
+  /**
+   * Updates smooth camera target tracking.
+   */
+  function updateCamera() {
+    // Keep top of stack at comfortable height
+    const topY = state.stack.length * BLOCK_HEIGHT;
+    state.targetCameraY = Math.max(0, topY - 140);
+  }
+
+  /**
+   * Checks win conditions for challenge and blitz modes.
+   */
+  function checkWinConditions() {
+    if (state.mode === 'challenge' && state.score >= 50) {
+      endGame(true);
+    }
+  }
+
+  /**
+   * Concludes the match.
+   */
+  function endGame(isVictory) {
+    state.status = isVictory ? 'win' : 'gameover';
+    stopTimer();
+
+    // Check Personal Best
+    let isNewBest = false;
+    if (state.score > state.bestScore) {
+      state.bestScore = state.score;
+      isNewBest = true;
+      try {
+        localStorage.setItem('stack_rush_best', state.bestScore.toString());
+      } catch (e) {}
+    }
+
+    if (isVictory) {
+      Audio.playWin();
+      showWinModal();
+    } else {
+      Audio.playGameOver();
+      showGameOverModal(isNewBest);
+    }
+
+    updateHUD();
+  }
+
+  // Floating Banner Text
+  function triggerBanner(text, color = '#d5ff55') {
+    state.bannerText = text;
+    state.bannerColor = color;
+    state.bannerTimer = 45; // ~0.75 seconds
+  }
+
+  // Overlays
+  function hideAllOverlays() {
+    [overlayStart, overlayPause, overlayWin, overlayGameOver].forEach(el => {
+      if (el) el.classList.remove('show');
+    });
+  }
+
+  function showWinModal() {
+    if (!overlayWin) return;
+    if (winTitle) winTitle.textContent = 'Tower Mastered!';
+    if (winSummary) winSummary.textContent = 'Spectacular stacking! Reached 50 blocks with towering precision.';
+    if (winScoreVal) winScoreVal.textContent = state.score;
+    if (winStarsVal) winStarsVal.textContent = '★★★';
+    if (winMovesVal) winMovesVal.textContent = state.moves;
+    if (winLayersVal) winLayersVal.textContent = state.score;
+    if (winGemsVal) winGemsVal.textContent = `💎 ${state.perfectCount * 5}`;
+    overlayWin.classList.add('show');
+  }
+
+  function showGameOverModal(isNewBest) {
+    if (!overlayGameOver) return;
+    const title = overlayGameOver.querySelector('.overlay-title');
+    const subtitle = overlayGameOver.querySelector('.overlay-subtitle');
+    if (title) title.textContent = isNewBest ? 'New Personal Best!' : 'Tower Complete!';
+    if (subtitle) subtitle.textContent = `Stacked to a height of ${state.score} blocks. Tap anywhere to try again!`;
+    if (goScoreVal) goScoreVal.textContent = state.score;
+    if (goMovesVal) goMovesVal.textContent = state.moves;
+    if (goLayersVal) goLayersVal.textContent = state.score;
+    if (goGemsVal) goGemsVal.textContent = `💎 ${state.perfectCount * 2}`;
+    overlayGameOver.classList.add('show');
+  }
+
+  // Timer Management
+  function startTimer() {
+    stopTimer();
+    timerIntervalId = setInterval(() => {
+      if (state.status === 'playing') {
+        state.elapsedSeconds++;
+        if (state.mode === 'blitz') {
+          state.blitzRemaining--;
+          if (state.blitzRemaining <= 0) {
+            endGame(false);
+          }
+        }
+        updateHUD();
+      }
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (timerIntervalId) {
+      clearInterval(timerIntervalId);
+      timerIntervalId = null;
+    }
+  }
+
+  function updateHUD() {
+    if (scoreDisplay) scoreDisplay.textContent = `Height: ${state.score}`;
+    if (layersDisplay) layersDisplay.textContent = `Streak: ${state.streak}`;
+    if (movesDisplay) movesDisplay.textContent = `Blocks: ${state.moves}`;
+    if (gemsDisplay) gemsDisplay.textContent = `💎 ${state.perfectCount * 2}`;
+    if (comboDisplay) comboDisplay.textContent = state.streak > 1 ? `x${state.streak} COMBO` : 'Align & Drop';
+    if (bestDisplay) bestDisplay.textContent = state.bestScore.toString();
+
+    if (timerDisplay) {
+      if (state.mode === 'blitz') {
+        timerDisplay.textContent = `${state.blitzRemaining}s`;
+      } else {
+        const mins = Math.floor(state.elapsedSeconds / 60);
+        const secs = state.elapsedSeconds % 60;
+        timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }
+    }
+  }
+
+  // =========================================================================
+  // 60 FPS Canvas Isometric Renderer
+  // =========================================================================
+
+  function gameLoop(now) {
+    const dt = Math.min(32, now - lastFrameTime);
+    lastFrameTime = now;
+
+    update(dt);
+    render();
+
+    animationFrameId = requestAnimationFrame(gameLoop);
+  }
+
+  function update(dt) {
+    if (state.status === 'playing') {
+      moveTime += dt * 0.001 * state.moving.speed;
+
+      // Oscillate moving block along active axis
+      const offset = Math.sin(moveTime * Math.PI) * MOVE_RANGE;
+      const top = state.stack[state.stack.length - 1];
+
+      if (state.moving.axis === 'x') {
+        state.moving.x = top.x + offset;
+        state.moving.z = top.z;
+      } else {
+        state.moving.x = top.x;
+        state.moving.z = top.z + offset;
+      }
+
+      // Smooth camera interpolation
+      state.cameraY += (state.targetCameraY - state.cameraY) * 0.08;
+    }
+
+    // Update debris physics
+    for (let i = state.debris.length - 1; i >= 0; i--) {
+      const d = state.debris[i];
+      d.vy -= 0.35; // Gravity acceleration downward
+      d.x += d.vx;
+      d.y += d.vy;
+      d.z += d.vz;
+      d.rotX += d.vRotX;
+      d.rotZ += d.vRotZ;
+      d.alpha -= 0.012;
+
+      // Remove when fallen far below view
+      if (d.alpha <= 0 || d.y < state.cameraY - 200) {
+        state.debris.splice(i, 1);
+      }
+    }
+
+    // Update sparkles
+    for (let i = state.sparkles.length - 1; i >= 0; i--) {
+      const sp = state.sparkles[i];
+      sp.x += sp.vx;
+      sp.y += sp.vy;
+      sp.z += sp.vz;
+      sp.vy -= 0.08; // Slight gravity
+      sp.life -= sp.decay;
+      if (sp.life <= 0) {
+        state.sparkles.splice(i, 1);
+      }
+    }
+
+    // Update banner
+    if (state.bannerTimer > 0) {
+      state.bannerTimer--;
+    }
+  }
+
+  function render() {
+    const width = canvas.width;
+    const height = canvas.height;
+    ctx.clearRect(0, 0, width, height);
+
+    // Dynamic scale and viewport origin
+    const originX = width / 2;
+    const originY = height * 0.68;
+    const scale = Math.min(width, height) / 480;
+
+    // 1. Draw Atmospheric Background & Futuristic Ground Grid
+    drawAtmosphere(width, height, originX, originY, scale);
+
+    // 2. Render Placed Blocks from bottom to top
+    for (let i = 0; i < state.stack.length; i++) {
+      const b = state.stack[i];
+      drawIsometricBlock(b, state.cameraY, originX, originY, scale, 1.0);
+    }
+
+    // 3. Render Falling Debris
+    for (const d of state.debris) {
+      drawIsometricBlock(d, state.cameraY, originX, originY, scale, d.alpha);
+    }
+
+    // 4. Render Active Moving Block
+    if (state.status === 'playing') {
+      drawIsometricBlock(state.moving, state.cameraY, originX, originY, scale, 1.0, true);
+    }
+
+    // 5. Render Sparkle Particles
+    drawSparkles(originX, originY, scale);
+
+    // 6. Render Floating Banner Feedback
+    if (state.bannerTimer > 0 && state.bannerText) {
+      drawBanner(originX, originY, scale);
+    }
+  }
+
+  /**
+   * Draws dark ambient background with blueprint grid lines on floor plane.
+   */
+  function drawAtmosphere(width, height, originX, originY, scale) {
+    // Subtle radial gradient centered on stage
+    const bgGrad = ctx.createRadialGradient(originX, originY * 0.65, 40, originX, originY, width * 0.85);
+    bgGrad.addColorStop(0, '#151922');
+    bgGrad.addColorStop(0.6, '#0f1117');
+    bgGrad.addColorStop(1, '#090a0d');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, width, height);
+
+    // Isometric Floor Grid Plane
+    const cos30 = 0.8660254;
+    const sin30 = 0.5;
+    const gridSize = 40;
+    const gridCount = 6;
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
+    ctx.lineWidth = 1;
+
+    for (let i = -gridCount; i <= gridCount; i++) {
+      // Lines along X
+      const p1x = originX + (-gridCount * gridSize - i * gridSize) * cos30 * scale;
+      const p1y = originY + (-gridCount * gridSize + i * gridSize) * sin30 * scale + state.cameraY * scale;
+      const p2x = originX + (gridCount * gridSize - i * gridSize) * cos30 * scale;
+      const p2y = originY + (gridCount * gridSize + i * gridSize) * sin30 * scale + state.cameraY * scale;
+
+      ctx.beginPath();
+      ctx.moveTo(p1x, p1y);
+      ctx.lineTo(p2x, p2y);
+      ctx.stroke();
+
+      // Lines along Z
+      const q1x = originX + (i * gridSize - (-gridCount * gridSize)) * cos30 * scale;
+      const q1y = originY + (i * gridSize + (-gridCount * gridSize)) * sin30 * scale + state.cameraY * scale;
+      const q2x = originX + (i * gridSize - (gridCount * gridSize)) * cos30 * scale;
+      const q2y = originY + (i * gridSize + (gridCount * gridSize)) * sin30 * scale + state.cameraY * scale;
+
+      ctx.beginPath();
+      ctx.moveTo(q1x, q1y);
+      ctx.lineTo(q2x, q2y);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  /**
+   * Renders a 3D block with top, right, and left faces.
+   */
+  function drawIsometricBlock(box, cameraY, originX, originY, scale, alpha = 1.0, isMoving = false) {
+    const proj = Engine.projectIsometricBox(box, cameraY, originX, originY, scale);
+    const colors = box.faceColors || Engine.getFaceColors(box.hue);
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    // Helper to draw polygon
+    function fillPoly(pts, color) {
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) {
+        ctx.lineTo(pts[i].x, pts[i].y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    // 1. Left Face (Shadowed)
+    fillPoly(proj.left, colors.left);
+
+    // 2. Right Face (Mid-tone)
+    fillPoly(proj.right, colors.right);
+
+    // 3. Top Face (Lit base)
+    fillPoly(proj.top, colors.top);
+
+    // 4. Subtle glowing highlight stroke on top face rim
+    ctx.beginPath();
+    ctx.moveTo(proj.top[0].x, proj.top[0].y);
+    for (let i = 1; i < proj.top.length; i++) {
+      ctx.lineTo(proj.top[i].x, proj.top[i].y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = isMoving ? '#ffffff' : colors.edge;
+    ctx.lineWidth = isMoving ? 2 : 1;
+    ctx.stroke();
+
+    // 5. Subtle glow indicator for moving block
+    if (isMoving) {
+      ctx.shadowColor = colors.top;
+      ctx.shadowBlur = 12;
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  /**
+   * Renders active sparkle particles on canvas.
+   */
+  function drawSparkles(originX, originY, scale) {
+    if (state.sparkles.length === 0) return;
+    const cos30 = 0.8660254;
+    const sin30 = 0.5;
+
+    ctx.save();
+    for (const sp of state.sparkles) {
+      const scrX = originX + (sp.x - sp.z) * cos30 * scale;
+      const scrY = originY + (sp.x + sp.z) * sin30 * scale - (sp.y - state.cameraY) * scale;
+
+      ctx.beginPath();
+      ctx.arc(scrX, scrY, sp.size * scale, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${sp.hue}, 95%, 70%, ${sp.life})`;
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  /**
+   * Floating banner text on PERFECT or combo.
+   */
+  function drawBanner(originX, originY, scale) {
+    ctx.save();
+    const top = state.stack[state.stack.length - 1];
+    const cos30 = 0.8660254;
+    const sin30 = 0.5;
+
+    const topScreenY = originY + (top.x + top.z) * sin30 * scale - (top.y - state.cameraY) * scale;
+
+    ctx.font = `800 ${Math.round(20 * scale)}px 'Space Grotesk', sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillStyle = state.bannerColor;
+    ctx.shadowColor = state.bannerColor;
+    ctx.shadowBlur = 14;
+
+    const alpha = Math.min(1.0, state.bannerTimer / 20);
+    ctx.globalAlpha = alpha;
+    ctx.fillText(state.bannerText, originX, topScreenY - 30 * scale);
+    ctx.restore();
+  }
+
+  /**
+   * Draws upcoming block preview into next-canvas.
+   */
+  function drawNextPreview() {
+    if (!nextCtx || !nextCanvas) return;
+    const w = nextCanvas.width;
+    const h = nextCanvas.height;
+    nextCtx.clearRect(0, 0, w, h);
+
+    const hue = Engine.getLayerHue(state.stack.length);
+    const colors = Engine.getFaceColors(hue);
+    const box = { x: 0, y: 0, z: 0, w: 26, h: 10, d: 26, faceColors: colors, hue: hue };
+
+    const proj = Engine.projectIsometricBox(box, 0, w / 2, h * 0.65, 0.9);
+
+    function fillNext(pts, color) {
+      nextCtx.beginPath();
+      nextCtx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) nextCtx.lineTo(pts[i].x, pts[i].y);
+      nextCtx.closePath();
+      nextCtx.fillStyle = color;
+      nextCtx.fill();
+    }
+
+    fillNext(proj.left, colors.left);
+    fillNext(proj.right, colors.right);
+    fillNext(proj.top, colors.top);
+  }
+
+  // =========================================================================
+  // User Input Bindings — One-Button Accessibility
+  // =========================================================================
+
+  // 1. Canvas / Stage Tap & Click
+  canvas.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    dropBlock();
+  });
+
+  // 2. Primary Drop Action Button
+  if (btnDrop) {
+    btnDrop.addEventListener('click', (e) => {
+      e.preventDefault();
+      dropBlock();
+    });
+  }
+
+  // Auxiliary rotation buttons (for manual nudge or directional preference)
+  if (btnRotLeft) {
+    btnRotLeft.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (state.status === 'playing') {
+        moveTime -= 0.15;
+      }
+    });
+  }
+  if (btnRotRight) {
+    btnRotRight.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (state.status === 'playing') {
+        moveTime += 0.15;
+      }
+    });
+  }
+
+  // 3. Global Keyboard Controls
+  window.addEventListener('keydown', (e) => {
+    // Avoid interfering with inputs
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+    if (e.code === 'Space' || e.code === 'Enter' || e.code === 'ArrowDown') {
+      e.preventDefault();
+      dropBlock();
+    } else if (e.code === 'KeyP') {
+      e.preventDefault();
+      togglePause();
+    } else if (e.code === 'KeyR') {
+      e.preventDefault();
+      startGame();
+    } else if (e.code === 'KeyM') {
+      e.preventDefault();
+      handleAudioToggle();
+    }
+  });
+
+  // Pause Handlers
+  function togglePause() {
+    if (state.status === 'playing') {
+      state.status = 'paused';
+      stopTimer();
+      if (overlayPause) overlayPause.classList.add('show');
+    } else if (state.status === 'paused') {
+      state.status = 'playing';
+      startTimer();
+      if (overlayPause) overlayPause.classList.remove('show');
+      lastFrameTime = performance.now();
+    }
+  }
+
+  if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
+  if (resumeBtn) resumeBtn.addEventListener('click', togglePause);
+  if (restartBtn) restartBtn.addEventListener('click', () => startGame());
+
+  // Audio Toggle
+  function handleAudioToggle() {
+    const isMuted = Audio.toggleMute();
+    if (audioIcon) audioIcon.textContent = isMuted ? '🔇' : '🔊';
+  }
+  if (audioToggleBtn) audioToggleBtn.addEventListener('click', handleAudioToggle);
+  if (audioIcon) audioIcon.textContent = Audio.getMuteState() ? '🔇' : '🔊';
+
+  // Modal Buttons
+  if (startBtn) startBtn.addEventListener('click', () => startGame());
+  if (playAgainBtn) playAgainBtn.addEventListener('click', () => startGame());
+  if (tryAgainBtn) tryAgainBtn.addEventListener('click', () => startGame());
+
+  // Mode Selection Tabs
+  function selectMode(newMode) {
+    [modeClassicBtn, modeChallengeBtn, modeBlitzBtn].forEach(b => {
+      if (b) {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      }
+    });
+
+    if (newMode === 'classic' && modeClassicBtn) {
+      modeClassicBtn.classList.add('active');
+      modeClassicBtn.setAttribute('aria-selected', 'true');
+    } else if (newMode === 'challenge' && modeChallengeBtn) {
+      modeChallengeBtn.classList.add('active');
+      modeChallengeBtn.setAttribute('aria-selected', 'true');
+    } else if (newMode === 'blitz' && modeBlitzBtn) {
+      modeBlitzBtn.classList.add('active');
+      modeBlitzBtn.setAttribute('aria-selected', 'true');
+    }
+
+    startGame(newMode);
+  }
+
+  if (modeClassicBtn) modeClassicBtn.addEventListener('click', () => selectMode('classic'));
+  if (modeChallengeBtn) modeChallengeBtn.addEventListener('click', () => selectMode('challenge'));
+  if (modeBlitzBtn) modeBlitzBtn.addEventListener('click', () => selectMode('blitz'));
+
+  // Initialize preview on load
+  drawNextPreview();
 
 })();

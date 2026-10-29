@@ -57,11 +57,11 @@
     <!-- Editorial Header -->
     <header class="game-editorial-header">
       <div class="game-eyebrow-row">
-        <span class="badge-arcade">ARCADE // 3D PUZZLE</span>
-        <span class="badge-tagline">ROTATING PLATFORM</span>
+        <span class="badge-arcade">ARCADE // 3D STACKER</span>
+        <span class="badge-tagline">ONE-BUTTON GAMEPLAY</span>
       </div>
       <h1 class="game-title">Stack Rush</h1>
-      <p class="game-subheading">Rotate the platform instead of the block! Guide falling pieces onto the 3D rotating tower to clear complete horizontal layers.</p>
+      <p class="game-subheading">Blocks move horizontally across alternating axes. Tap, click, or press Space to drop and build the tallest tower possible. Poorly aligned blocks get trimmed, making each move harder!</p>
     </header>
 
     <!-- Arcade Play Card -->
@@ -125,9 +125,9 @@
         <!-- Overlay 1: Start / Ready -->
         <div id="overlay-start" class="stage-overlay show" role="dialog" aria-live="polite">
           <h2 class="overlay-title">Ready to Stack?</h2>
-          <p class="overlay-subtitle">Rotate the bottom platform by sliding sideways or using A/D! Align blocks to build complete 3×3 layers and collect gems for visual themes.</p>
+          <p class="overlay-subtitle">Blocks move horizontally across alternating axes. Tap anywhere or press Space to drop and build the tallest tower possible. Poorly aligned blocks get trimmed!</p>
           <button id="start-btn" class="btn-arcade-action" type="button">
-            <span>Start Challenge</span>
+            <span>Start Stacking</span>
             <span>→</span>
           </button>
         </div>
@@ -135,7 +135,7 @@
         <!-- Overlay 2: Paused -->
         <div id="overlay-pause" class="stage-overlay" role="dialog" aria-live="polite">
           <h2 class="overlay-title">Game Paused</h2>
-          <p class="overlay-subtitle">Rotate the tower to inspect your gaps and plan your next drop.</p>
+          <p class="overlay-subtitle">Take a breather. Press Space or Resume when you are ready to continue stacking.</p>
           <div class="hud-group">
             <button id="resume-btn" class="btn-arcade-action" type="button">Resume (P)</button>
             <button id="restart-btn" class="btn-secondary-arcade" type="button">Restart (R)</button>
@@ -144,11 +144,11 @@
 
         <!-- Overlay 3: Victory / Challenge Cleared -->
         <div id="overlay-win" class="stage-overlay" role="dialog" aria-live="polite">
-          <h2 id="win-title" class="overlay-title">Challenge Completed!</h2>
-          <p id="win-summary" class="overlay-subtitle">Spectacular 3D stacking! Cleared layers with precision.</p>
+          <h2 id="win-title" class="overlay-title">Tower Mastered!</h2>
+          <p id="win-summary" class="overlay-subtitle">Spectacular 3D stacking! Reached 50 blocks with towering precision.</p>
           <div class="overlay-stats-grid">
             <div class="stat-box">
-              <span class="stat-label">Final Score</span>
+              <span class="stat-label">Final Height</span>
               <span id="win-score-val" class="stat-val">0</span>
             </div>
             <div class="stat-box">
@@ -156,15 +156,15 @@
               <span id="win-stars-val" class="stat-val stars">★★★</span>
             </div>
             <div class="stat-box">
-              <span class="stat-label">Blocks Dropped</span>
+              <span class="stat-label">Blocks Placed</span>
               <span id="win-moves-val" class="stat-val">0</span>
             </div>
             <div class="stat-box">
-              <span class="stat-label">Layers Cleared</span>
+              <span class="stat-label">Tower Score</span>
               <span id="win-layers-val" class="stat-val">0</span>
             </div>
             <div class="stat-box" style="grid-column: span 2;">
-              <span class="stat-label">Gems Earned</span>
+              <span class="stat-label">Perfect Chimes</span>
               <span id="win-gems-val" class="stat-val" style="color: var(--accent-gold);">💎 0</span>
             </div>
           </div>
@@ -175,23 +175,23 @@
 
         <!-- Overlay 4: Game Over (Tower Reached Ceiling) -->
         <div id="overlay-gameover" class="stage-overlay" role="dialog" aria-live="polite">
-          <h2 class="overlay-title">Tower Overflow!</h2>
-          <p class="overlay-subtitle">The block tower reached the ceiling limit. Clear complete layers to keep space open!</p>
+          <h2 class="overlay-title">Tower Complete!</h2>
+          <p class="overlay-subtitle">The block missed the stack below. Tap anywhere or press Space to instantly try again!</p>
           <div class="overlay-stats-grid">
             <div class="stat-box">
-              <span class="stat-label">Score</span>
+              <span class="stat-label">Final Height</span>
               <span id="go-score-val" class="stat-val">0</span>
             </div>
             <div class="stat-box">
-              <span class="stat-label">Blocks</span>
+              <span class="stat-label">Blocks Placed</span>
               <span id="go-moves-val" class="stat-val">0</span>
             </div>
             <div class="stat-box">
-              <span class="stat-label">Layers</span>
+              <span class="stat-label">Tower Score</span>
               <span id="go-layers-val" class="stat-val">0</span>
             </div>
             <div class="stat-box">
-              <span class="stat-label">Gems</span>
+              <span class="stat-label">Gems Earned</span>
               <span id="go-gems-val" class="stat-val" style="color: var(--accent-gold);">💎 0</span>
             </div>
           </div>
@@ -203,17 +203,17 @@
       </div>
 
       <!-- Rotational & Drop Action Bar -->
-      <div class="rotational-control-pad" role="region" aria-label="Platform Controls">
-        <button id="btn-rot-left" class="btn-rotate-arcade" type="button" aria-label="Rotate Platform Left (A / Left Arrow)">
+      <div class="rotational-control-pad" role="region" aria-label="One-Button Stacking Controls">
+        <button id="btn-rot-left" class="btn-rotate-arcade" type="button" aria-label="Nudge Timing (A / Left Arrow)">
           <span>↺</span>
-          <span>Rotate Left (A)</span>
+          <span>Nudge (A)</span>
         </button>
-        <button id="btn-drop" class="btn-drop-action" type="button" aria-label="Hard Drop Block (Space / Down Arrow)">
+        <button id="btn-drop" class="btn-drop-action" type="button" aria-label="Drop Block (Space / Tap)">
           <span>⬇</span>
-          <span>Drop Block (Space)</span>
+          <span>Drop Block (Space / Tap)</span>
         </button>
-        <button id="btn-rot-right" class="btn-rotate-arcade" type="button" aria-label="Rotate Platform Right (D / Right Arrow)">
-          <span>Rotate Right (D)</span>
+        <button id="btn-rot-right" class="btn-rotate-arcade" type="button" aria-label="Nudge Timing (D / Right Arrow)">
+          <span>Nudge (D)</span>
           <span>↻</span>
         </button>
       </div>
@@ -226,26 +226,26 @@
       <div class="rules-grid">
         <div class="rule-card">
           <div class="rule-header">
-            <span>🔄</span>
-            <span>Rotate the Platform</span>
+            <span>🎯</span>
+            <span>One-Button Timing</span>
           </div>
-          <p class="rule-text">The innovative twist! Slide your finger sideways or press <strong>A / D / Left / Right</strong> to spin the 3D bottom platform and align existing gaps with the falling piece.</p>
+          <p class="rule-text">Blocks glide horizontally across alternating axes (X / Z). Tap anywhere on screen, click, or hit <strong>Spacebar</strong> to drop the block with pinpoint timing!</p>
         </div>
 
         <div class="rule-card">
           <div class="rule-header">
-            <span>💥</span>
-            <span>Destroy Complete Layers</span>
+            <span>✂️</span>
+            <span>Precision Trimming</span>
           </div>
-          <p class="rule-text">Fill all 9 cells of any horizontal 3×3 layer to blast it into sparkling crystal fragments. Clear multiple layers at once to trigger massive combo multipliers!</p>
+          <p class="rule-text">Poorly aligned edges are trimmed off and tumble away with realistic 3D physics. Line up within tolerance for <strong>PERFECT!</strong> alignments, harmonious chime streaks, and sparkle bursts!</p>
         </div>
 
         <div class="rule-card">
           <div class="rule-header">
-            <span>💎</span>
-            <span>Gems & Visual Themes</span>
+            <span>📈</span>
+            <span>Increasing Difficulty</span>
           </div>
-          <p class="rule-text">Collect gems from block placements and layer blasts. Use your gems to unlock stunning visual themes like <strong>Obsidian Gold</strong>, <strong>Retro Synth</strong>, and <strong>Matrix Jade</strong>!</p>
+          <p class="rule-text">As your tower grows taller, oscillation speed accelerates and the target platform narrows. Chain 8 consecutive perfects to expand your block size back up!</p>
         </div>
       </div>
 
@@ -253,17 +253,17 @@
         <div class="rule-card">
           <div class="rule-header">
             <span>⌨️</span>
-            <span>Keyboard Controls</span>
+            <span>Desktop Controls</span>
           </div>
-          <p class="rule-text"><strong>A / D</strong> or <strong>Left / Right</strong> to rotate platform. <strong>W / Up</strong> to rotate falling block. <strong>Space / Down</strong> to instantly drop. <strong>P</strong> to Pause, <strong>R</strong> to Restart.</p>
+          <p class="rule-text"><strong>Spacebar / Enter / Down Arrow</strong> to drop block. <strong>P</strong> to Pause, <strong>R</strong> to Restart immediately on game over, <strong>M</strong> to Toggle Audio.</p>
         </div>
 
         <div class="rule-card">
           <div class="rule-header">
             <span>📱</span>
-            <span>Touch Gestures</span>
+            <span>Mobile Controls</span>
           </div>
-          <p class="rule-text">Swipe sideways anywhere on the 3D canvas to smoothly spin the platform. Tap the large <strong>Drop Block</strong> button below the stage to slam the block home.</p>
+          <p class="rule-text">Tap anywhere on the screen or 3D canvas to drop. Instant one-tap restart keeps gameplay fast and addictive on any phone or tablet.</p>
         </div>
 
         <div class="rule-card">
@@ -298,3 +298,4 @@
   </script>
 </body>
 </html>
+

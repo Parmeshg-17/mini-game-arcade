@@ -125,14 +125,14 @@ const ARCADE_GAMES = [
     id: 'stack-rush',
     title: 'Stack Rush',
     category: 'Arcade',
-    tags: ['arcade', '3d', 'stack', 'tetris', 'rotating', 'platform', 'puzzle', 'blocks', 'gems'],
+    tags: ['arcade', '3d', 'stack', 'tower', 'timing', 'reflex', 'blocks', 'trim', 'one-button', 'casual'],
     badge: 'New',
-    tagline: 'Rotate platform. Stack 3D blocks. Blast layers.',
-    description: 'A fresh 3D take on classic block stacking! Rotate the bottom platform in 3D to align falling polyominos with existing gaps. Clear complete horizontal 3×3 layers, chain combo blasts, and collect gems to unlock stunning visual themes.',
+    tagline: 'One-button 3D tower stacker. Time the drop. Trim the excess.',
+    description: 'Blocks glide horizontally across alternating 3D axes. Tap, click, or press Space to drop each block and build the tallest tower possible. Poorly aligned blocks get trimmed with realistic falling debris physics, making each subsequent move harder. Features ascending chime combos, particle sparkle bursts, increasing speed, and instant restart.',
     route: 'games/stack-rush/index.html',
     thumbnail: 'assets/games/stack-rush.svg',
-    controlsSummary: 'Drag sideways / A, D to rotate platform • Space / Down to Drop • W / Up to rotate block • P to Pause • R to Restart • M to Mute',
-    features: ['3D Rotating Platform', 'Layer Blast Combos', 'Gems & Visual Themes', 'Next Block Preview']
+    controlsSummary: 'Tap Screen / Click / Spacebar to Drop • Instant One-Touch Restart • P to Pause • R to Restart • M to Mute',
+    features: ['One-Button Gameplay', 'Satisfying 3D Trimming', 'Ascending Chime Combos', 'Personal Best & Instant Restart']
   }
 ];
 
