@@ -118,7 +118,7 @@
   let animationFrameId = null;
   let timerIntervalId = null;
   let lastFrameTime = performance.now();
-  let moveTime = 0;
+  let movePhase = -Math.PI / 2;
 
   // Initialize Personal Best
   try {
@@ -176,7 +176,7 @@
     state.sparkles = [];
     state.cameraY = 0;
     state.targetCameraY = 0;
-    moveTime = 0;
+    movePhase = -Math.PI / 2;
 
     // Create Base Pedestal (Layer 0)
     const baseHue = Engine.getLayerHue(0);
@@ -212,28 +212,48 @@
   function spawnNextMovingBlock() {
     const top = state.stack[state.stack.length - 1];
     const layerIdx = state.stack.length;
-    // Alternate axes: even layer indices move on X, odd on Z
+    // Alternate axes: odd layer indices move on X, even on Z
     const axis = (layerIdx % 2 === 1) ? 'x' : 'z';
     const hue = Engine.getLayerHue(layerIdx);
 
-    // Speed scales slightly with height
-    const speed = Math.min(Engine.MAX_SPEED, Engine.BASE_SPEED + Math.min(layerIdx * 0.08, 3.5));
+    // Calibrated speed in Hz (cycles/sec) based on game mode:
+    // 0.36 Hz = ~2.78s full cycle, ~1.39s across platform (calm, accessible, skill-based)
+    let baseSpeed = 0.36;
+    let speedGrowth = 0.005;
+    let maxSpeed = 0.58;
+
+    if (state.mode === 'challenge') {
+      baseSpeed = 0.33;
+      speedGrowth = 0.004;
+      maxSpeed = 0.52;
+    } else if (state.mode === 'blitz') {
+      baseSpeed = 0.44;
+      speedGrowth = 0.006;
+      maxSpeed = 0.62;
+    }
+
+    const speed = Math.min(maxSpeed, baseSpeed + layerIdx * speedGrowth);
+
+    // Incoming side: alternate coming from negative side (-1) and positive side (+1)
+    // When phase = -PI/2, sin(-PI/2) = -1 (starts smoothly at -MOVE_RANGE)
+    // When phase = +PI/2, sin(PI/2) = +1 (starts smoothly at +MOVE_RANGE)
+    const startFromNeg = (layerIdx % 2 === 1);
+    movePhase = startFromNeg ? -Math.PI / 2 : Math.PI / 2;
+    const initialOffset = Math.sin(movePhase) * MOVE_RANGE;
 
     state.moving = {
-      x: axis === 'x' ? -MOVE_RANGE : top.x,
+      x: axis === 'x' ? (top.x + initialOffset) : top.x,
       y: layerIdx * BLOCK_HEIGHT,
-      z: axis === 'z' ? -MOVE_RANGE : top.z,
+      z: axis === 'z' ? (top.z + initialOffset) : top.z,
       w: top.w,
       h: BLOCK_HEIGHT,
       d: top.d,
       axis: axis,
-      dir: 1,
+      dir: startFromNeg ? 1 : -1,
       speed: speed,
       hue: hue,
       faceColors: Engine.getFaceColors(hue)
     };
-
-    moveTime = 0;
 
     // Draw mini preview in next-canvas
     drawNextPreview();
@@ -535,10 +555,11 @@
 
   function update(dt) {
     if (state.status === 'playing') {
-      moveTime += dt * 0.001 * state.moving.speed;
+      // Advance phase: speed is frequency in Hz (cycles/sec), dt in ms
+      movePhase += (dt * 0.001) * state.moving.speed * (Math.PI * 2);
 
-      // Oscillate moving block along active axis
-      const offset = Math.sin(moveTime * Math.PI) * MOVE_RANGE;
+      // Smooth sinusoidal oscillation between -MOVE_RANGE and +MOVE_RANGE
+      const offset = Math.sin(movePhase) * MOVE_RANGE;
       const top = state.stack[state.stack.length - 1];
 
       if (state.moving.axis === 'x') {
@@ -826,7 +847,7 @@
     btnRotLeft.addEventListener('click', (e) => {
       e.preventDefault();
       if (state.status === 'playing') {
-        moveTime -= 0.15;
+        movePhase -= 0.15;
       }
     });
   }
@@ -834,7 +855,7 @@
     btnRotRight.addEventListener('click', (e) => {
       e.preventDefault();
       if (state.status === 'playing') {
-        moveTime += 0.15;
+        movePhase += 0.15;
       }
     });
   }

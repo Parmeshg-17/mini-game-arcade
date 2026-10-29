@@ -10,20 +10,20 @@
   // --- Constants for Ketchapp-style Slicing Stacker ---
   const INITIAL_SIZE = 140; // Base platform width and depth
   const BLOCK_HEIGHT = 16;  // Vertical height of each stacked block
-  const PERFECT_TOLERANCE = 3.5; // Pixel alignment tolerance for PERFECT placement
-  const MOVE_RANGE = 200;   // Oscillation half-width
-  const BASE_SPEED = 2.4;   // Initial oscillation speed
-  const MAX_SPEED = 6.2;    // Terminal oscillation speed
+  const PERFECT_TOLERANCE = 4.5; // Calibrated alignment tolerance for satisfying PERFECT placement
+  const MOVE_RANGE = 185;   // Balanced oscillation half-width (smooth crossing past platform edges)
+  const BASE_SPEED = 0.38;  // Relaxed, rhythmic initial speed in Hz (~2.6s cycle, ~1.3s single crossing)
+  const MAX_SPEED = 0.62;   // Upper speed cap in Hz (~1.6s cycle, ~0.8s crossing)
   const COMBO_STREAK_BONUS = 8; // Number of consecutive perfects to expand block size
   const BONUS_EXPANSION = 8;    // Pixels restored on combo streak
 
   /**
    * Computes the movement position for the active block.
-   * Uses sinusoidal or linear ping-pong oscillation.
+   * Speed represents frequency in Hz (cycles per second).
    */
-  function calculateMovingPosition(time, speed, range = MOVE_RANGE) {
-    // Oscillate between -range and +range
-    return Math.sin(time * speed * 0.05) * range;
+  function calculateMovingPosition(timeSeconds, speedHz, range = MOVE_RANGE, phaseOffset = 0) {
+    // Smooth sinusoidal motion with phase offset
+    return Math.sin(timeSeconds * speedHz * Math.PI * 2 + phaseOffset) * range;
   }
 
   /**
