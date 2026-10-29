@@ -77,6 +77,14 @@ it('Every game registered in js/games-data.js has working routes and valid thumb
     // Verify thumbnail file exists
     const thumbPath = path.join(__dirname, game.thumbnail);
     assert(fs.existsSync(thumbPath), `Thumbnail "${game.thumbnail}" for game ${game.id} does not exist!`);
+
+    // Verify game page uses clean URL safe root-relative stylesheet link
+    const pageHtml = fs.readFileSync(routePath, 'utf8');
+    const dirName = path.dirname(game.route).replace(/\\/g, '/');
+    assert(
+      pageHtml.includes(`href="/${dirName}/style.css`),
+      `Game ${game.id} must use root-relative stylesheet href="/${dirName}/style.css" for Vercel clean URL compatibility!`
+    );
   }
 });
 

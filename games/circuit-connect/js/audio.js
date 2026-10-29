@@ -211,3 +211,4 @@
   exports.getMuteState = getMuteState;
 
 })(typeof module !== 'undefined' && module.exports ? module.exports : (window.CircuitAudio = {}));
+

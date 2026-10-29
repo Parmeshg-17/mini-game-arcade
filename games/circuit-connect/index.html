@@ -12,8 +12,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet" />
 
-  <!-- Game Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=1.0.0" />
+  <!-- Root-relative stylesheet link with file:// fallback -->
+  <link rel="stylesheet" href="/games/circuit-connect/style.css?v=1.0.1" id="game-stylesheet" />
+  <script>
+    if (window.location.protocol === 'file:') {
+      var link = document.getElementById('game-stylesheet');
+      if (link) link.href = 'style.css?v=1.0.1';
+    }
+  </script>
 </head>
 <body class="game-page-body">
 
@@ -235,3 +241,4 @@
   </script>
 </body>
 </html>
+
