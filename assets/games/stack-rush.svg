@@ -1,0 +1,199 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360" role="img" aria-label="Stack Rush 3D Rotating Platform Arcade Game Thumbnail">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="srBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b0e0a"/>
+      <stop offset="50%" stop-color="#121811"/>
+      <stop offset="100%" stop-color="#182215"/>
+    </linearGradient>
+
+    <!-- Neon Glow Filters -->
+    <filter id="srGlowLime" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="srGlowCyan" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="srGlowGold" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="srBlastGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Subtle Dot Pattern -->
+    <pattern id="srDotGrid" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#243020" opacity="0.6"/>
+    </pattern>
+  </defs>
+
+  <!-- Deep Stage Background -->
+  <rect width="640" height="360" fill="url(#srBg)"/>
+  <rect width="640" height="360" fill="url(#srDotGrid)"/>
+
+  <!-- Radial Atmosphere Lighting -->
+  <circle cx="320" cy="180" r="170" fill="#d5ff55" opacity="0.06" filter="url(#srGlowLime)"/>
+  <circle cx="200" cy="140" r="130" fill="#38bdf8" opacity="0.06" filter="url(#srGlowCyan)"/>
+
+  <!-- Rotating Platform Base Indicator (Circular Rotation Arrows) -->
+  <g transform="translate(320, 275)">
+    <!-- Elliptical Rotation Ring -->
+    <ellipse cx="0" cy="0" rx="145" ry="42" fill="none" stroke="#2a3824" stroke-width="2"/>
+    <ellipse cx="0" cy="0" rx="145" ry="42" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="24 16" opacity="0.8" filter="url(#srGlowCyan)"/>
+    
+    <!-- Curved Rotation Arrows on Platform Edge -->
+    <path d="M -110 -25 A 145 42 0 0 1 -40 -40" fill="none" stroke="#d5ff55" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="-32,-42 -46,-45 -42,-34" fill="#d5ff55"/>
+
+    <path d="M 110 25 A 145 42 0 0 1 40 40" fill="none" stroke="#d5ff55" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="32,42 46,45 42,34" fill="#d5ff55"/>
+  </g>
+
+  <!-- 3D Isometric Platform Pedestal & Tower -->
+  <g transform="translate(320, 245)">
+    <!-- Base Platform Rhombus -->
+    <polygon points="0,-38 105,18 0,74 -105,18" fill="#1b2319" stroke="#38bdf8" stroke-width="2.5" filter="url(#srGlowCyan)"/>
+    
+    <!-- Platform Pedestal Thickness -->
+    <polygon points="-105,18 0,74 0,92 -105,36" fill="#121811" stroke="#253221" stroke-width="1.5"/>
+    <polygon points="0,74 105,18 105,36 0,92" fill="#0c110b" stroke="#253221" stroke-width="1.5"/>
+
+    <!-- Pedestal Internal 3x3 Grid Lines -->
+    <line x1="-35" y1="-19" x2="70" y2="37" stroke="#2f402a" stroke-width="1.5"/>
+    <line x1="35" y1="-19" x2="-70" y2="37" stroke="#2f402a" stroke-width="1.5"/>
+    <line x1="-70" y1="-1" x2="35" y2="55" stroke="#2f402a" stroke-width="1.5"/>
+    <line x1="70" y1="-1" x2="-35" y2="55" stroke="#2f402a" stroke-width="1.5"/>
+
+    <!-- Layer 0 (Base Cubes) -->
+    <!-- Corner Cube (Back) -->
+    <g transform="translate(0, -38)">
+      <polygon points="0,-18 35,0 0,18 -35,0" fill="#ffd166"/>
+      <polygon points="-35,0 0,18 0,42 -35,24" fill="#d4a337"/>
+      <polygon points="0,18 35,0 35,24 0,42" fill="#aa7c1e"/>
+    </g>
+
+    <!-- Corner Cube (Left) -->
+    <g transform="translate(-70, 0)">
+      <polygon points="0,-18 35,0 0,18 -35,0" fill="#38bdf8"/>
+      <polygon points="-35,0 0,18 0,42 -35,24" fill="#258dbd"/>
+      <polygon points="0,18 35,0 35,24 0,42" fill="#19678c"/>
+    </g>
+
+    <!-- Corner Cube (Right) -->
+    <g transform="translate(70, 0)">
+      <polygon points="0,-18 35,0 0,18 -35,0" fill="#38bdf8"/>
+      <polygon points="-35,0 0,18 0,42 -35,24" fill="#258dbd"/>
+      <polygon points="0,18 35,0 35,24 0,42" fill="#19678c"/>
+    </g>
+
+    <!-- Layer 1 (Mid Layer Cubes) -->
+    <g transform="translate(-35, -38)">
+      <polygon points="0,-18 35,0 0,18 -35,0" fill="#d5ff55" filter="url(#srGlowLime)"/>
+      <polygon points="-35,0 0,18 0,42 -35,24" fill="#a4c935"/>
+      <polygon points="0,18 35,0 35,24 0,42" fill="#7d9c22"/>
+    </g>
+    <g transform="translate(35, -38)">
+      <polygon points="0,-18 35,0 0,18 -35,0" fill="#d5ff55" filter="url(#srGlowLime)"/>
+      <polygon points="-35,0 0,18 0,42 -35,24" fill="#a4c935"/>
+      <polygon points="0,18 35,0 35,24 0,42" fill="#7d9c22"/>
+    </g>
+
+    <!-- Center Layer 2: Exploding Layer Blast! -->
+    <g transform="translate(0, -90)">
+      <!-- Golden Laser Blast Ring -->
+      <ellipse cx="0" cy="0" rx="95" ry="32" fill="none" stroke="#ffd166" stroke-width="3" filter="url(#srBlastGlow)"/>
+      <ellipse cx="0" cy="0" rx="115" ry="38" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="6 4"/>
+      
+      <!-- Shattering Cubes -->
+      <polygon points="0,-18 35,0 0,18 -35,0" fill="#ffffff" filter="url(#srBlastGlow)"/>
+      <polygon points="-35,0 0,18 0,38 -35,20" fill="#ffd166"/>
+      <polygon points="0,18 35,0 35,20 0,38" fill="#ff784f"/>
+    </g>
+
+    <!-- Blast Spark Particles -->
+    <circle cx="-65" cy="-80" r="4" fill="#ffffff" filter="url(#srBlastGlow)"/>
+    <circle cx="75" cy="-95" r="4.5" fill="#ffd166"/>
+    <circle cx="-85" cy="-115" r="3" fill="#d5ff55"/>
+    <circle cx="95" cy="-75" r="3.5" fill="#38bdf8"/>
+    <line x1="45" y1="-120" x2="60" y2="-138" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="-50" y1="-70" x2="-72" y2="-62" stroke="#d5ff55" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- Falling 3D Block in Chute Above -->
+    <g transform="translate(0, -170)">
+      <!-- Translucent Drop Beam Guide -->
+      <polygon points="0,-18 35,0 0,18 -35,0" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="-35" y1="0" x2="-35" y2="80" stroke="#38bdf8" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/>
+      <line x1="35" y1="0" x2="35" y2="80" stroke="#38bdf8" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/>
+      <line x1="0" y1="18" x2="0" y2="98" stroke="#38bdf8" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/>
+
+      <!-- Glowing Descending Twin Block -->
+      <g filter="url(#srGlowCyan)">
+        <polygon points="0,-18 35,0 0,18 -35,0" fill="#38bdf8"/>
+        <polygon points="-35,0 0,18 0,38 -35,20" fill="#248fbe"/>
+        <polygon points="0,18 35,0 35,20 0,38" fill="#186b90"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Left Side Badges & Stats HUD -->
+  <g transform="translate(32, 65)">
+    <!-- Eyebrow Badge -->
+    <rect x="0" y="0" width="138" height="26" rx="6" fill="#192416" stroke="#d5ff55" stroke-width="1"/>
+    <text x="69" y="17" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="bold" fill="#d5ff55" text-anchor="middle">3D ROTATING ARENA</text>
+
+    <!-- Big Score Display -->
+    <text x="0" y="68" font-family="'Space Grotesk', sans-serif" font-size="34" font-weight="800" fill="#ffffff">7,240</text>
+    <text x="0" y="90" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="bold" fill="#d5ff55">TOWER SCORE</text>
+
+    <!-- Layers Cleared Counter -->
+    <rect x="0" y="112" width="138" height="38" rx="8" fill="#171a15" stroke="#2c3527" stroke-width="1.5"/>
+    <text x="14" y="136" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="bold" fill="#889680">LAYERS:</text>
+    <text x="124" y="136" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="bold" fill="#38bdf8" text-anchor="end">8 BLASTS</text>
+  </g>
+
+  <!-- Right Side Badges & Gems Counter -->
+  <g transform="translate(470, 65)">
+    <!-- Gems Pill -->
+    <rect x="0" y="0" width="138" height="36" rx="8" fill="#342b14" stroke="#ffd166" stroke-width="1.5" filter="url(#srGlowGold)"/>
+    <text x="69" y="23" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="800" fill="#ffd166" text-anchor="middle">💎 145 GEMS</text>
+
+    <!-- Combo Blast Pill -->
+    <rect x="0" y="52" width="138" height="42" rx="8" fill="#2d3f18" stroke="#d5ff55" stroke-width="1.5" filter="url(#srGlowLime)"/>
+    <text x="14" y="77" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="bold" fill="#a4c935">COMBO:</text>
+    <text x="124" y="78" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="bold" fill="#d5ff55" text-anchor="end">3x BLAST!</text>
+
+    <!-- Next Piece Preview Box -->
+    <rect x="0" y="108" width="138" height="52" rx="8" fill="#161c14" stroke="#2c3726" stroke-width="1.5"/>
+    <text x="14" y="128" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold" fill="#82947e">NEXT BLOCK:</text>
+    <g transform="translate(100, 134) scale(0.65)">
+      <polygon points="0,-12 24,0 0,12 -24,0" fill="#ff784f"/>
+      <polygon points="-24,0 0,12 0,24 -24,12" fill="#c4532f"/>
+      <polygon points="0,12 24,0 24,12 0,24" fill="#8e371b"/>
+    </g>
+  </g>
+
+  <!-- Bottom Title Tag -->
+  <g transform="translate(320, 348)">
+    <rect x="-160" y="-12" width="320" height="24" rx="6" fill="#10120f" stroke="#252d21" stroke-width="1"/>
+    <text x="0" y="5" font-family="'Space Grotesk', sans-serif" font-size="12" font-weight="bold" fill="#8ca085" text-anchor="middle" letter-spacing="0.08em">STACK RUSH // 3D ROTATING PLATFORM</text>
+  </g>
+</svg>

@@ -120,6 +120,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/block-puzzle.svg',
     controlsSummary: 'Drag & Drop / Tap to Place • 1, 2, 3 to select dock • Arrow keys / WASD to move • Space to Place • P to Pause • R to Restart • M to Mute',
     features: ['8x8 Grid & Polyomino Dock', 'Classic, Challenge & Blitz', 'Row & Column Blast Combos', 'Full Keyboard & Touch Support']
+  },
+  {
+    id: 'stack-rush',
+    title: 'Stack Rush',
+    category: 'Arcade',
+    tags: ['arcade', '3d', 'stack', 'tetris', 'rotating', 'platform', 'puzzle', 'blocks', 'gems'],
+    badge: 'New',
+    tagline: 'Rotate platform. Stack 3D blocks. Blast layers.',
+    description: 'A fresh 3D take on classic block stacking! Rotate the bottom platform in 3D to align falling polyominos with existing gaps. Clear complete horizontal 3×3 layers, chain combo blasts, and collect gems to unlock stunning visual themes.',
+    route: 'games/stack-rush/index.html',
+    thumbnail: 'assets/games/stack-rush.svg',
+    controlsSummary: 'Drag sideways / A, D to rotate platform • Space / Down to Drop • W / Up to rotate block • P to Pause • R to Restart • M to Mute',
+    features: ['3D Rotating Platform', 'Layer Blast Combos', 'Gems & Visual Themes', 'Next Block Preview']
   }
 ];
 

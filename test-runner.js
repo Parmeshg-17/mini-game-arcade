@@ -136,9 +136,10 @@ it('Search and category filter logic filters games correctly', () => {
 
   // Category filter
   const res3 = filterGames('', 'Arcade');
-  assert.strictEqual(res3.length, 2);
+  assert.strictEqual(res3.length, 3);
   assert(res3.some(g => g.id === 'citrus-blitz'));
   assert(res3.some(g => g.id === 'tap-challenge'));
+  assert(res3.some(g => g.id === 'stack-rush'));
 
   // Puzzle category filter matches Tic Tac Toe, Number Puzzle, and Block Puzzle
   const res4 = filterGames('', 'Puzzle');
@@ -185,10 +186,16 @@ it('Search and category filter logic filters games correctly', () => {
   assert.strictEqual(resTap.length, 1);
   assert.strictEqual(resTap[0].id, 'tap-challenge');
 
-  // Tag search for block puzzle
+  // Tag search for block (matches block-puzzle and stack-rush)
   const resBlock = filterGames('block', 'All');
-  assert.strictEqual(resBlock.length, 1);
-  assert.strictEqual(resBlock[0].id, 'block-puzzle');
+  assert.strictEqual(resBlock.length, 2);
+  assert(resBlock.some(g => g.id === 'block-puzzle'));
+  assert(resBlock.some(g => g.id === 'stack-rush'));
+
+  // Tag search for stack rush
+  const resStack = filterGames('stack', 'All');
+  assert.strictEqual(resStack.length, 1);
+  assert.strictEqual(resStack[0].id, 'stack-rush');
 
   // Non-matching category
   const res8 = filterGames('', 'Racing');
@@ -808,7 +815,179 @@ it('Block Puzzle computes valid placements, row/col line clears, combo multiplie
   assert.strictEqual(calculateStars(2000, 10, 'challenge'), 3, 'Challenge target met with 2000 pts yields 3 stars');
 });
 
-// 24. Security & Clean Static Deployment Verification
+// 24. Dedicated Stack Rush Playable Page DOM & Asset Integrity
+it('Dedicated Stack Rush page (games/stack-rush/index.html) has all DOM elements required by game.js', () => {
+  const gameHtmlPath = path.join(__dirname, 'games/stack-rush/index.html');
+  assert(fs.existsSync(gameHtmlPath), 'games/stack-rush/index.html must exist');
+  const gameHtml = fs.readFileSync(gameHtmlPath, 'utf8');
+
+  const requiredIds = [
+    'stack-canvas',
+    'next-canvas',
+    'score-display',
+    'layers-display',
+    'moves-display',
+    'gems-display',
+    'timer-display',
+    'combo-display',
+    'best-display',
+    'theme-select',
+    'pause-btn',
+    'audio-toggle-btn',
+    'audio-icon',
+    'overlay-start',
+    'start-btn',
+    'overlay-pause',
+    'resume-btn',
+    'restart-btn',
+    'overlay-win',
+    'win-title',
+    'win-summary',
+    'win-score-val',
+    'win-stars-val',
+    'win-moves-val',
+    'win-layers-val',
+    'win-gems-val',
+    'play-again-btn',
+    'overlay-gameover',
+    'go-score-val',
+    'go-moves-val',
+    'go-layers-val',
+    'go-gems-val',
+    'try-again-btn',
+    'btn-rot-left',
+    'btn-drop',
+    'btn-rot-right',
+    'mode-classic-btn',
+    'mode-challenge-btn',
+    'mode-blitz-btn'
+  ];
+
+  for (const id of requiredIds) {
+    assert(gameHtml.includes(`id="${id}"`), `Game DOM id="${id}" missing in games/stack-rush/index.html`);
+  }
+
+  // Verify navigation back link to arcade exists
+  assert(gameHtml.includes('href="../../index.html"'), 'Stack Rush must link back to arcade homepage');
+
+  // Verify vector thumbnail exists
+  const thumbPath = path.join(__dirname, 'assets/games/stack-rush.svg');
+  assert(fs.existsSync(thumbPath), 'Stack Rush vector thumbnail must exist');
+});
+
+// 25. Stack Rush 3D Rotating Tower Engine & Layer Blast Mechanics
+it('Stack Rush engine executes 3D platform rotations, voxel drops, layer clearing, and combos correctly', () => {
+  const engine = require('./games/stack-rush/js/engine.js');
+  const {
+    BASE_SIZE,
+    TOWER_HEIGHT,
+    SHAPES_3D,
+    THEMES,
+    createEmptyTower,
+    cloneTower,
+    rotateBlocks,
+    normalizeBlocks,
+    canPlaceAt,
+    getDropY,
+    lockShape,
+    checkCompletedLayers,
+    clearCompletedLayers,
+    calculateScoreAndGems,
+    projectIso,
+    rollShape
+  } = engine;
+
+  // 1. Grid & Shape Constants
+  assert.strictEqual(BASE_SIZE, 3, 'Base grid must be 3x3');
+  assert.strictEqual(TOWER_HEIGHT, 10, 'Tower height must be 10');
+  assert(SHAPES_3D.length >= 6, 'Should have at least 6 distinct 3D polyomino shapes');
+  assert(Object.keys(THEMES).length >= 4, 'Should offer at least 4 visual themes');
+
+  // 2. Empty tower initialization
+  const tower = createEmptyTower();
+  assert.strictEqual(tower.length, 10, 'Tower must have 10 layers');
+  assert.strictEqual(tower[0].length, 3, 'Each layer has 3 rows');
+  assert.strictEqual(tower[0][0].length, 3, 'Each row has 3 columns');
+  assert(tower[0][0].every(cell => cell === null), 'Voxel cells start empty (null)');
+
+  // 3. Platform rotation math
+  const bar = [{ x: 0, y: 0, z: 0 }, { x: 1, y: 0, z: 0 }];
+  const rot1 = rotateBlocks(bar, 1); // 90 deg clockwise around center (1, 1)
+  assert.strictEqual(rot1.length, 2, 'Rotated blocks retain length');
+  // 4 full rotations (360 degrees) return to identical normalized shape
+  const rot4 = rotateBlocks(bar, 4);
+  assert.deepStrictEqual(normalizeBlocks(rot4), normalizeBlocks(bar), '360 degree rotation returns to identical shape');
+
+  // 4. Ghost Drop calculation & collision
+  const unitBlock = [{ x: 1, y: 0, z: 1 }];
+  const dropY0 = getDropY(tower, unitBlock);
+  assert.strictEqual(dropY0, 0, 'Ghost drop lands at ground y=0 on empty tower');
+
+  // Lock a block at (1, 0, 1)
+  const locked1 = lockShape(tower, unitBlock, 0, 0, 0, '#d5ff55');
+  assert.strictEqual(locked1.success, true);
+  assert.strictEqual(locked1.tower[0][1][1], '#d5ff55');
+
+  // Drop another block at (1, 1) -> must land on top at y=1
+  const dropY1 = getDropY(locked1.tower, unitBlock);
+  assert.strictEqual(dropY1, 1, 'Ghost drop stacks on top of existing voxel at y=1');
+
+  // Drop at different horizontal cell (0, 0) -> lands on base y=0
+  const sideBlock = [{ x: 0, y: 0, z: 0 }];
+  const dropYSide = getDropY(locked1.tower, sideBlock);
+  assert.strictEqual(dropYSide, 0, 'Ghost drop at open cell lands on ground y=0');
+
+  // 5. Complete Layer Detection and Clearing
+  const testTower = createEmptyTower();
+  // Fill layer 0 completely (all 9 cells)
+  for (let x = 0; x < 3; x++) {
+    for (let z = 0; z < 3; z++) {
+      testTower[0][x][z] = '#38bdf8';
+    }
+  }
+  // Partially fill layer 1 (2 cells)
+  testTower[1][0][0] = '#ff784f';
+  testTower[1][2][2] = '#ff784f';
+
+  const completed = checkCompletedLayers(testTower);
+  assert.strictEqual(completed.length, 1, 'Should detect 1 completed layer');
+  assert.strictEqual(completed[0], 0, 'Layer 0 is full');
+
+  // Clear completed layer -> layer 1 drops to layer 0, top layer is empty
+  const clearRes = clearCompletedLayers(testTower, completed);
+  assert.strictEqual(clearRes.clearedCount, 1, 'Cleared 1 layer');
+  assert.strictEqual(clearRes.tower[0][0][0], '#ff784f', 'Layer 1 blocks dropped to layer 0');
+  assert.strictEqual(clearRes.tower[0][2][2], '#ff784f', 'Layer 1 blocks dropped to layer 0');
+  assert.strictEqual(clearRes.tower[1][0][0], null, 'Previous layer 1 is now empty');
+  assert(clearRes.tower[9][0].every(cell => cell === null), 'Top ceiling layer is null');
+
+  // 6. Scoring, Combos, and Gems
+  const scoreDrop = calculateScoreAndGems(2, 0, 0);
+  assert.strictEqual(scoreDrop.score, 30, '30 pts for 2 blocks dropped (15 pts per block)');
+  assert.strictEqual(scoreDrop.gems, 2, '2 gems on placement (1 gem per block)');
+
+  // Single layer blast with streak = 0
+  const score1 = calculateScoreAndGems(2, 1, 0);
+  assert.strictEqual(score1.score, 30 + 200, '30 pts + 200 for 1 layer');
+  assert.strictEqual(score1.gems, 2 + 10, '2 gem drop + 10 gems for 1 layer');
+
+  // Double layer blast combo with streak = 1 (1.5x multiplier)
+  const scoreCombo = calculateScoreAndGems(4, 2, 1);
+  assert.strictEqual(scoreCombo.score, 60 + Math.round(550 * 1.5), 'Combo multiplier applied to layer blasts');
+  assert.strictEqual(scoreCombo.gems, 4 + Math.round(25 * 1.5), 'Multi-layer blast yields extra gems');
+
+  // 7. Isometric Axonometric Projection
+  const iso = projectIso(0, 0, 0, 0, 200, 200, 24);
+  assert(typeof iso.screenX === 'number', 'Screen X must be a number');
+  assert(typeof iso.screenY === 'number', 'Screen Y must be a number');
+  assert(typeof iso.depth === 'number', 'Depth must be a number for painter sort');
+
+  // 8. Random shape generation
+  const piece = rollShape(() => 0.5);
+  assert(piece.id && piece.name && piece.color && Array.isArray(piece.blocks));
+});
+
+// 26. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
