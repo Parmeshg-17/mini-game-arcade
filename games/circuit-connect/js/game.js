@@ -1,21 +1,14 @@
 /**
- * Circuit Connect — Interactive Canvas & Board Controller
- * Smooth tile rotations, neon energy flow pulses, bridge overpass rendering,
- * move efficiency tracking, level progression with localStorage, and accessible controls.
+ * Circuit Connect (Color Chain) — Frontend Controller & Canvas Renderer
+ * Smooth drag-to-connect glowing neon lines, backtracking, line cuts,
+ * 100% board coverage check, hints, keyboard & touch accessibility.
  */
 (function() {
   'use strict';
 
-  const Engine = window.CircuitEngine;
-  const Audio = window.CircuitAudio;
-
-  if (!Engine || !Audio) {
-    console.error('Circuit Connect: Required Engine or Audio module missing.');
-    return;
-  }
-
   // DOM Elements
   const canvas = document.getElementById('circuit-canvas');
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
   const levelTitleDisplay = document.getElementById('level-title-display');
@@ -24,6 +17,7 @@
   const parDisplay = document.getElementById('par-display');
   const targetsDisplay = document.getElementById('targets-display');
   const timerDisplay = document.getElementById('timer-display');
+  const coverageDisplay = document.getElementById('coverage-display');
 
   const levelSelectBtn = document.getElementById('level-select-btn');
   const undoBtn = document.getElementById('undo-btn');
@@ -31,8 +25,9 @@
   const pauseBtn = document.getElementById('pause-btn');
   const audioToggleBtn = document.getElementById('audio-toggle-btn');
   const audioIcon = document.getElementById('audio-icon');
+  const hintBtn = document.getElementById('hint-btn');
 
-  // Modals & Overlays
+  // Overlays
   const overlayWin = document.getElementById('overlay-win');
   const winTitle = document.getElementById('win-title');
   const winStarsVal = document.getElementById('win-stars-val');
@@ -50,770 +45,711 @@
   const closeLevelSelectBtn = document.getElementById('close-level-select-btn');
   const levelGridContainer = document.getElementById('level-grid-container');
 
-  // Local Storage Keys
-  const STORAGE_KEY = 'circuit_connect_progress';
+  // Storage Keys
+  const STORAGE_LEVEL_KEY = 'circuit_connect_level';
+  const STORAGE_STARS_KEY = 'circuit_connect_stars';
 
-  // Game State
-  const state = {
-    currentLevelIndex: 0,
-    currentLevelData: null,
-    grid: [],
-    rows: 3,
-    cols: 3,
-
-    movesUsed: 0,
-    parMoves: 4,
-    moveLimit: 12,
-    elapsedSeconds: 0,
-    isSolved: false,
-    isOverloaded: false,
-    isPaused: false,
-
-    // Keyboard selection cursor
-    cursor: { r: 0, c: 0 },
-
-    // Circuit evaluation results
-    circuitResult: {
-      isSolved: false,
-      energizedTiles: new Set(),
-      energizedWires: [],
-      connectedTargets: 0,
-      totalTargets: 0
-    },
-
-    // Move history for Undo
-    history: [],
-
-    // Visual animation states: tileId -> current visual angle
-    visualRotations: {},
-
-    // Pulse animation phase for energized wires
-    pulsePhase: 0,
-
-    // Progress record
-    progress: {}
-  };
-
-  let timerIntervalId = null;
+  // Game Runtime State
+  let currentLevelIdx = 0;
+  let flowState = null;
+  let isPaused = false;
+  let timerInterval = null;
+  let elapsedSeconds = 0;
+  let pointerPos = null; // { x, y } for fingertip glow during drag
+  let cursor = { r: 0, c: 0, active: false };
   let animFrameId = null;
-  let lastTime = performance.now();
+  let pulsePhase = 0;
 
-  // Load Saved Progress
+  // Saved Stars Map: { [levelId]: stars }
+  let userStars = {};
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      state.progress = JSON.parse(saved);
+    const raw = localStorage.getItem(STORAGE_STARS_KEY);
+    if (raw) userStars = JSON.parse(raw);
+    const savedLvl = localStorage.getItem(STORAGE_LEVEL_KEY);
+    if (savedLvl !== null) {
+      currentLevelIdx = Math.max(0, Math.min(CircuitEngine.LEVELS.length - 1, parseInt(savedLvl, 10)));
     }
   } catch (e) {}
 
-  // Save Progress
-  function saveProgress(levelId, stars, moves, time) {
-    if (!state.progress[levelId] || stars > state.progress[levelId].stars) {
-      state.progress[levelId] = {
-        stars,
-        bestMoves: moves,
-        bestTime: time,
-        unlocked: true
-      };
-    }
-    // Unlock next level
-    const nextId = levelId + 1;
-    if (nextId <= Engine.LEVELS.length && (!state.progress[nextId] || !state.progress[nextId].unlocked)) {
-      state.progress[nextId] = state.progress[nextId] || { stars: 0, unlocked: true };
-      state.progress[nextId].unlocked = true;
-    }
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.progress));
-    } catch (e) {}
-  }
-
-  // Ensure Level 1 is always unlocked
-  if (!state.progress[1]) {
-    state.progress[1] = { stars: 0, unlocked: true };
-  }
-
-  // Canvas Resize Handler
-  function resizeCanvas() {
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
-  }
-  window.addEventListener('resize', resizeCanvas);
-
   /**
-   * Initializes and loads a level by index (0-based).
+   * Initialize or switch level
    */
-  function loadLevel(levelIndex) {
-    if (levelIndex < 0 || levelIndex >= Engine.LEVELS.length) {
-      levelIndex = 0;
-    }
+  function loadLevel(idx) {
+    currentLevelIdx = Math.max(0, Math.min(CircuitEngine.LEVELS.length - 1, idx));
+    try {
+      localStorage.setItem(STORAGE_LEVEL_KEY, currentLevelIdx.toString());
+    } catch (e) {}
 
-    state.currentLevelIndex = levelIndex;
-    const levelData = Engine.LEVELS[levelIndex];
-    state.currentLevelData = levelData;
+    const lvlConfig = CircuitEngine.LEVELS[currentLevelIdx];
+    flowState = CircuitEngine.createFlowLevel(lvlConfig);
 
-    state.rows = levelData.rows;
-    state.cols = levelData.cols;
-    state.parMoves = levelData.parMoves;
-    state.moveLimit = levelData.moveLimit;
-    state.movesUsed = 0;
-    state.elapsedSeconds = 0;
-    state.isSolved = false;
-    state.isOverloaded = false;
-    state.history = [];
-    state.cursor = { r: 0, c: 0 };
-
-    // Instantiate board grid
-    state.grid = Engine.createLevelGrid(levelData);
-
-    // Initialize visual rotation tracking for smooth ease
-    state.visualRotations = {};
-    for (let r = 0; r < state.rows; r++) {
-      for (let c = 0; c < state.cols; c++) {
-        const t = state.grid[r][c];
-        state.visualRotations[t.id] = t.rotation * (Math.PI / 2);
-      }
-    }
-
-    // Run initial circuit evaluation
-    updateCircuit();
-
-    hideModals();
+    // Reset timing & cursor
+    stopTimer();
+    elapsedSeconds = 0;
     startTimer();
+
+    cursor.r = Math.floor(lvlConfig.rows / 2);
+    cursor.c = Math.floor(lvlConfig.cols / 2);
+    pointerPos = null;
+
+    hideAllOverlays();
     updateHUD();
     resizeCanvas();
   }
 
-  /**
-   * Re-evaluates circuit connectivity and updates state.
-   */
-  function updateCircuit() {
-    state.circuitResult = Engine.evaluateCircuit(state.grid, state.rows, state.cols);
-    state.isSolved = state.circuitResult.isSolved;
-
-    if (state.isSolved) {
-      handleLevelComplete();
-    } else if (state.moveLimit > 0 && state.movesUsed >= state.moveLimit) {
-      handleCircuitOverload();
-    }
-  }
-
-  /**
-   * Rotates tile at (r, c) by delta turns (+1 = 90 deg clockwise).
-   */
-  function onTileRotate(r, c, delta = 1) {
-    if (state.isSolved || state.isOverloaded || state.isPaused) return;
-    if (r < 0 || r >= state.rows || c < 0 || c >= state.cols) return;
-
-    const tile = state.grid[r][c];
-    if (!tile || tile.fixed || tile.type === Engine.TRACK_TYPES.EMPTY) return;
-
-    // Record for Undo
-    state.history.push({
-      r,
-      c,
-      prevRotation: tile.rotation
-    });
-
-    const success = Engine.rotateTile(state.grid, r, c, delta);
-    if (success) {
-      state.movesUsed++;
-      Audio.playRotate();
-
-      // Trigger circuit evaluation
-      updateCircuit();
-      updateHUD();
-    }
-  }
-
-  /**
-   * Undoes the last tile rotation.
-   */
-  function undoLastMove() {
-    if (state.isSolved || state.history.length === 0) return;
-
-    const last = state.history.pop();
-    const tile = state.grid[last.r][last.c];
-    if (tile) {
-      tile.rotation = last.prevRotation;
-      state.movesUsed = Math.max(0, state.movesUsed - 1);
-      Audio.playRotate();
-      hideModals();
-      state.isOverloaded = false;
-      updateCircuit();
-      updateHUD();
-    }
-  }
-
-  /**
-   * Victory handler: plays sounds, computes stars, updates progress, and shows win modal.
-   */
-  function handleLevelComplete() {
-    stopTimer();
-    Audio.playVictory();
-
-    const stars = Engine.calculateStars(state.movesUsed, state.parMoves);
-    saveProgress(state.currentLevelData.id, stars, state.movesUsed, state.elapsedSeconds);
-
-    setTimeout(() => {
-      showWinModal(stars);
-    }, 450);
-  }
-
-  /**
-   * Overload handler: triggers when move limit is reached.
-   */
-  function handleCircuitOverload() {
-    state.isOverloaded = true;
-    Audio.playError();
-    if (overlayOverload) overlayOverload.classList.add('show');
-  }
-
-  // Floating Modals
-  function hideModals() {
-    [overlayWin, overlayOverload, overlayLevelSelect].forEach(el => {
-      if (el) el.classList.remove('show');
-    });
-  }
-
-  function showWinModal(stars) {
-    if (!overlayWin) return;
-    if (winTitle) winTitle.textContent = 'Circuit Completed!';
-    if (winMovesVal) winMovesVal.textContent = state.movesUsed.toString();
-    if (winParVal) winParVal.textContent = state.parMoves.toString();
-
-    const mins = Math.floor(state.elapsedSeconds / 60);
-    const secs = state.elapsedSeconds % 60;
-    if (winTimeVal) winTimeVal.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-
-    if (winStarsVal) {
-      winStarsVal.textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
-    }
-
-    // Play star sounds sequentially
-    for (let i = 0; i < stars; i++) {
-      setTimeout(() => Audio.playStarChime(i), 200 + i * 220);
-    }
-
-    overlayWin.classList.add('show');
-  }
-
-  function showLevelSelectModal() {
-    if (!overlayLevelSelect || !levelGridContainer) return;
-    levelGridContainer.innerHTML = '';
-
-    Engine.LEVELS.forEach((lvl, idx) => {
-      const card = document.createElement('button');
-      card.type = 'button';
-      card.className = 'level-select-tile';
-
-      const isUnlocked = Boolean(state.progress[lvl.id] && state.progress[lvl.id].unlocked);
-      const starsEarned = state.progress[lvl.id] ? state.progress[lvl.id].stars || 0 : 0;
-
-      if (!isUnlocked) {
-        card.classList.add('locked');
-        card.disabled = true;
-        card.innerHTML = `
-          <span class="lvl-num">${lvl.id}</span>
-          <span class="lvl-lock">🔒</span>
-        `;
-      } else {
-        if (idx === state.currentLevelIndex) card.classList.add('current');
-        const starsStr = '★'.repeat(starsEarned) + '☆'.repeat(3 - starsEarned);
-        card.innerHTML = `
-          <span class="lvl-num">${lvl.id}</span>
-          <span class="lvl-name">${lvl.title}</span>
-          <span class="lvl-stars">${starsEarned > 0 ? starsStr : ''}</span>
-        `;
-        card.addEventListener('click', () => {
-          hideModals();
-          loadLevel(idx);
-        });
-      }
-
-      levelGridContainer.appendChild(card);
-    });
-
-    overlayLevelSelect.classList.add('show');
-  }
-
-  // Timer Management
   function startTimer() {
     stopTimer();
-    timerIntervalId = setInterval(() => {
-      if (!state.isSolved && !state.isPaused && !state.isOverloaded) {
-        state.elapsedSeconds++;
+    timerInterval = setInterval(() => {
+      if (!isPaused && !flowState.isSolved) {
+        elapsedSeconds++;
         updateTimerDisplay();
       }
     }, 1000);
+    updateTimerDisplay();
   }
 
   function stopTimer() {
-    if (timerIntervalId) {
-      clearInterval(timerIntervalId);
-      timerIntervalId = null;
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
     }
   }
 
   function updateTimerDisplay() {
     if (!timerDisplay) return;
-    const mins = Math.floor(state.elapsedSeconds / 60);
-    const secs = state.elapsedSeconds % 60;
-    timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    const m = Math.floor(elapsedSeconds / 60);
+    const s = elapsedSeconds % 60;
+    timerDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   }
 
   function updateHUD() {
-    if (levelTitleDisplay && state.currentLevelData) {
-      levelTitleDisplay.textContent = `Lvl ${state.currentLevelData.id}: ${state.currentLevelData.title}`;
+    if (!flowState) return;
+    const lvl = flowState.level;
+
+    if (levelTitleDisplay) {
+      levelTitleDisplay.textContent = `Lvl ${lvl.id}: ${lvl.title}`;
     }
-    if (chapterDisplay && state.currentLevelData) {
-      chapterDisplay.textContent = state.currentLevelData.chapter || 'Circuit Grid';
+    if (chapterDisplay) {
+      chapterDisplay.textContent = lvl.chapter;
     }
     if (movesDisplay) {
-      movesDisplay.textContent = `Moves: ${state.movesUsed} / ${state.moveLimit}`;
+      movesDisplay.textContent = `Moves: ${flowState.moves} / ${lvl.moveLimit}`;
     }
     if (parDisplay) {
-      parDisplay.textContent = `Par: ${state.parMoves}`;
+      parDisplay.textContent = `Par: ${lvl.par}`;
     }
+
+    const connectedCount = flowState.pairs.filter(p => flowState.connected[p.key]).length;
+    const totalPairs = flowState.pairs.length;
     if (targetsDisplay) {
-      targetsDisplay.textContent = `Terminals: ${state.circuitResult.connectedTargets} / ${state.circuitResult.totalTargets}`;
+      targetsDisplay.textContent = `Pipes: ${connectedCount} / ${totalPairs}`;
     }
-    updateTimerDisplay();
+
+    const cov = CircuitEngine.getBoardCoverage(flowState);
+    if (coverageDisplay) {
+      coverageDisplay.textContent = `Covered: ${cov.percent}%`;
+      coverageDisplay.className = cov.isFull ? 'hud-pill highlight-lime' : 'hud-pill highlight-cyan';
+    }
+
+    // Audio button sync
+    if (audioIcon) {
+      audioIcon.textContent = CircuitAudio.isMuted() ? '🔇' : '🔊';
+    }
   }
 
-  // =========================================================================
-  // Canvas Rendering Loop & Procedural Circuit Graphics
-  // =========================================================================
+  /**
+   * Canvas Resizing with Retina Support
+   */
+  function resizeCanvas() {
+    if (!canvas || !canvas.parentElement) return;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const size = Math.min(rect.width, rect.height) || 480;
+    const dpr = window.devicePixelRatio || 1;
 
-  function gameLoop(now) {
-    const dt = Math.min(32, now - lastTime);
-    lastTime = now;
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    canvas.style.width = `${size}px`;
+    canvas.style.height = `${size}px`;
 
-    update(dt);
-    render();
-
-    animFrameId = requestAnimationFrame(gameLoop);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
   }
 
-  function update(dt) {
-    // Advance pulse animation for glowing wires
-    state.pulsePhase = (state.pulsePhase + dt * 0.003) % (Math.PI * 2);
+  window.addEventListener('resize', resizeCanvas);
 
-    // Smooth visual rotation transitions
-    for (let r = 0; r < state.rows; r++) {
-      for (let c = 0; c < state.cols; c++) {
-        const t = state.grid[r][c];
-        const targetAngle = t.rotation * (Math.PI / 2);
-        let curr = state.visualRotations[t.id];
-        if (curr === undefined) curr = targetAngle;
+  /**
+   * Main Render Loop
+   */
+  function renderLoop() {
+    pulsePhase += 0.05;
+    renderBoard();
+    animFrameId = requestAnimationFrame(renderLoop);
+  }
 
-        // Smooth shortest path interpolation
-        const diff = targetAngle - curr;
-        if (Math.abs(diff) > 0.005) {
-          curr += diff * 0.22;
-        } else {
-          curr = targetAngle;
-        }
-        state.visualRotations[t.id] = curr;
+  function renderBoard() {
+    if (!ctx || !flowState) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const w = rect.width;
+    const h = rect.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const rows = flowState.rows;
+    const cols = flowState.cols;
+    const padding = 12;
+    const boardW = w - padding * 2;
+    const boardH = h - padding * 2;
+    const cellW = boardW / cols;
+    const cellH = boardH / rows;
+
+    // 1. Draw Grid Cells Background
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = padding + c * cellW;
+        const y = padding + r * cellH;
+        const margin = 2;
+
+        ctx.fillStyle = '#14181f';
+        roundRect(ctx, x + margin, y + margin, cellW - margin * 2, cellH - margin * 2, 8);
+        ctx.fill();
+
+        ctx.strokeStyle = '#1e2634';
+        ctx.lineWidth = 1;
+        ctx.stroke();
       }
     }
-  }
 
-  function render() {
-    const width = canvas.width;
-    const height = canvas.height;
-    ctx.clearRect(0, 0, width, height);
+    // 2. Draw Color Paths / Wires
+    for (const key of Object.keys(flowState.paths)) {
+      const path = flowState.paths[key];
+      if (!path || path.length < 2) continue;
 
-    // 1. Draw Deep Cyber Circuit Board Background
-    drawPCBBackground(width, height);
+      const pair = flowState.pairs.find(p => p.key === key);
+      const color = pair ? pair.color : '#38bdf8';
+      const isConnected = flowState.connected[key];
 
-    // Calculate Grid Layout
-    const padding = 28;
-    const boardAreaWidth = width - padding * 2;
-    const boardAreaHeight = height - padding * 2;
-    const cellSize = Math.floor(Math.min(boardAreaWidth / state.cols, boardAreaHeight / state.rows));
-
-    const totalGridWidth = cellSize * state.cols;
-    const totalGridHeight = cellSize * state.rows;
-    const startX = Math.floor((width - totalGridWidth) / 2);
-    const startY = Math.floor((height - totalGridHeight) / 2);
-
-    // 2. Draw Board Grid & Tiles
-    for (let r = 0; r < state.rows; r++) {
-      for (let c = 0; c < state.cols; c++) {
-        const tile = state.grid[r][c];
-        const x = startX + c * cellSize;
-        const y = startY + r * cellSize;
-        const isSelected = (state.cursor.r === r && state.cursor.c === c);
-
-        drawTile(tile, x, y, cellSize, isSelected);
-      }
-    }
-
-    // 3. Victory Circuit Glow Overlay
-    if (state.isSolved) {
       ctx.save();
-      ctx.strokeStyle = 'rgba(213, 255, 85, 0.4)';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(startX - 6, startY - 6, totalGridWidth + 12, totalGridHeight + 12);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      // Pass A: Outer Neon Glow
+      ctx.shadowColor = color;
+      ctx.shadowBlur = isConnected ? 18 : 10;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = cellW * 0.34;
+      ctx.globalAlpha = isConnected ? 0.75 : 0.6;
+      strokePath(ctx, path, padding, cellW, cellH);
+
+      // Pass B: Solid Vibrant Wire Body
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1.0;
+      ctx.lineWidth = cellW * 0.28;
+      ctx.strokeStyle = color;
+      strokePath(ctx, path, padding, cellW, cellH);
+
+      // Pass C: Bright Inner Energy Core
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = cellW * 0.08;
+      ctx.globalAlpha = isConnected ? 0.95 : 0.7;
+      strokePath(ctx, path, padding, cellW, cellH);
+
+      // Pass D: Animated Electric Spark Pulses along completed wire
+      if (isConnected) {
+        const pulseT = (pulsePhase * 0.4) % 1;
+        const totalSegs = path.length - 1;
+        const curSeg = Math.min(totalSegs - 1, Math.floor(pulseT * totalSegs));
+        const segFrac = (pulseT * totalSegs) - curSeg;
+
+        const pA = path[curSeg];
+        const pB = path[curSeg + 1];
+        if (pA && pB) {
+          const sx = padding + (pA.c + 0.5 + (pB.c - pA.c) * segFrac) * cellW;
+          const sy = padding + (pA.r + 0.5 + (pB.r - pA.r) * segFrac) * cellH;
+
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowColor = '#ffffff';
+          ctx.shadowBlur = 12;
+          ctx.beginPath();
+          ctx.arc(sx, sy, cellW * 0.1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
       ctx.restore();
     }
-  }
 
-  /**
-   * Draws PCB blueprint surface with subtle microchip traces.
-   */
-  function drawPCBBackground(width, height) {
-    const grad = ctx.createLinearGradient(0, 0, width, height);
-    grad.addColorStop(0, '#0d1117');
-    grad.addColorStop(1, '#080a0e');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, width, height);
+    // 3. Draw Endpoints (Circular Nodes)
+    for (const p of flowState.pairs) {
+      const isConn = flowState.connected[p.key];
+      drawEndpointNode(ctx, p.p1.r, p.p1.c, p.color, isConn, padding, cellW, cellH);
+      drawEndpointNode(ctx, p.p2.r, p.p2.c, p.color, isConn, padding, cellW, cellH);
+    }
 
-    // Subtle grid dots
-    ctx.fillStyle = 'rgba(56, 189, 248, 0.08)';
-    const dotSpacing = 24;
-    for (let x = dotSpacing / 2; x < width; x += dotSpacing) {
-      for (let y = dotSpacing / 2; y < height; y += dotSpacing) {
-        ctx.fillRect(x, y, 1.5, 1.5);
+    // 4. Draw Active Drag Pointer Flare
+    if (flowState.activeKey && pointerPos) {
+      const pair = flowState.pairs.find(p => p.key === flowState.activeKey);
+      if (pair) {
+        ctx.save();
+        ctx.shadowColor = pair.color;
+        ctx.shadowBlur = 20;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(pointerPos.x, pointerPos.y, cellW * 0.16, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = pair.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(pointerPos.x, pointerPos.y, cellW * 0.28, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
       }
     }
-  }
 
-  /**
-   * Renders an individual circuit tile, its wires, solder points, and glow.
-   */
-  function drawTile(tile, x, y, size, isSelected) {
-    const cx = x + size / 2;
-    const cy = y + size / 2;
-    const angle = state.visualRotations[tile.id] || 0;
-    const isEnergized = state.circuitResult.energizedTiles.has(`${tile.r},${tile.c}`);
-
-    ctx.save();
-
-    // Tile Box Base
-    ctx.fillStyle = '#141820';
-    ctx.strokeStyle = '#222938';
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.roundRect(x + 2, y + 2, size - 4, size - 4, 8);
-    ctx.fill();
-    ctx.stroke();
-
-    // Selection highlight for keyboard navigation
-    if (isSelected && !tile.fixed) {
+    // 5. Draw Keyboard Cursor Frame
+    if (cursor.active) {
+      const cx = padding + cursor.c * cellW;
+      const cy = padding + cursor.r * cellH;
+      ctx.save();
       ctx.strokeStyle = '#d5ff55';
       ctx.lineWidth = 2.5;
       ctx.shadowColor = '#d5ff55';
-      ctx.shadowBlur = 10;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-    }
-
-    if (tile.type === Engine.TRACK_TYPES.EMPTY) {
-      ctx.restore();
-      return;
-    }
-
-    // Apply rotation for wire and component rendering
-    ctx.translate(cx, cy);
-    ctx.rotate(angle);
-
-    const half = size / 2;
-    const wireWidth = Math.max(6, Math.floor(size * 0.16));
-    const activeColor = tile.color || Engine.CIRCUIT_COLORS.CYAN;
-    const wireColor = isEnergized ? activeColor : '#334155';
-
-    // Bridge Overpass Rendering
-    if (tile.type === Engine.TRACK_TYPES.BRIDGE) {
-      // 1. Bottom Wire: East-West ([-half, 0] to [half, 0])
-      ctx.save();
-      ctx.strokeStyle = isEnergized ? Engine.CIRCUIT_COLORS.AMBER : '#334155';
-      ctx.lineWidth = wireWidth;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(-half, 0);
-      ctx.lineTo(half, 0);
+      ctx.shadowBlur = 8;
+      roundRect(ctx, cx + 4, cy + 4, cellW - 8, cellH - 8, 8);
       ctx.stroke();
       ctx.restore();
-
-      // 2. Insulating Bridge Riser Block with Shadow
-      ctx.save();
-      ctx.fillStyle = '#1e293b';
-      ctx.shadowColor = '#000000';
-      ctx.shadowBlur = 6;
-      ctx.beginPath();
-      ctx.roundRect(-wireWidth * 0.9, -wireWidth * 0.9, wireWidth * 1.8, wireWidth * 1.8, 4);
-      ctx.fill();
-      ctx.restore();
-
-      // 3. Top Wire: North-South ([0, -half] to [0, half]) crossing over
-      ctx.save();
-      ctx.strokeStyle = isEnergized ? activeColor : '#475569';
-      ctx.lineWidth = wireWidth;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(0, -half);
-      ctx.lineTo(0, half);
-      ctx.stroke();
-      ctx.restore();
-
-      ctx.restore();
-      return;
     }
-
-    // Standard Wire Paths
-    ctx.strokeStyle = wireColor;
-    ctx.lineWidth = wireWidth;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    if (isEnergized) {
-      ctx.shadowColor = activeColor;
-      ctx.shadowBlur = 12;
-    }
-
-    ctx.beginPath();
-
-    switch (tile.type) {
-      case Engine.TRACK_TYPES.LINE:
-        // North to South
-        ctx.moveTo(0, -half);
-        ctx.lineTo(0, half);
-        break;
-
-      case Engine.TRACK_TYPES.CORNER:
-        // North to East smooth curve
-        ctx.moveTo(0, -half);
-        ctx.quadraticCurveTo(0, 0, half, 0);
-        break;
-
-      case Engine.TRACK_TYPES.T_JUNCTION:
-        // West to East line + North branch
-        ctx.moveTo(-half, 0);
-        ctx.lineTo(half, 0);
-        ctx.moveTo(0, -half);
-        ctx.lineTo(0, 0);
-        break;
-
-      case Engine.TRACK_TYPES.CROSS:
-        // North-South and East-West
-        ctx.moveTo(0, -half);
-        ctx.lineTo(0, half);
-        ctx.moveTo(-half, 0);
-        ctx.lineTo(half, 0);
-        break;
-
-      case Engine.TRACK_TYPES.TERMINAL:
-        // Port North to center terminal
-        ctx.moveTo(0, -half);
-        ctx.lineTo(0, 0);
-        break;
-    }
-    ctx.stroke();
-
-    // Draw Terminal Node (Circle port at center)
-    if (tile.type === Engine.TRACK_TYPES.TERMINAL) {
-      const nodeRadius = Math.max(8, Math.floor(size * 0.22));
-      ctx.beginPath();
-      ctx.arc(0, 0, nodeRadius, 0, Math.PI * 2);
-      ctx.fillStyle = tile.color;
-      ctx.fill();
-
-      // Glow pulse ring
-      if (isEnergized || tile.isSource) {
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-
-        ctx.beginPath();
-        const pulseR = nodeRadius + 3 + Math.sin(state.pulsePhase * 3) * 3;
-        ctx.arc(0, 0, pulseR, 0, Math.PI * 2);
-        ctx.strokeStyle = tile.color;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      } else {
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
-
-      // Terminal Icon / Center Marker
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(0, 0, nodeRadius * 0.35, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Energized Electric Core highlight line
-    if (isEnergized && tile.type !== Engine.TRACK_TYPES.TERMINAL) {
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = Math.max(1.8, wireWidth * 0.3);
-      ctx.shadowBlur = 0;
-      ctx.stroke();
-    }
-
-    ctx.restore();
   }
 
-  // =========================================================================
-  // User Input Bindings & Touch Accessibility
-  // =========================================================================
+  function strokePath(c, path, pad, cw, ch) {
+    if (path.length < 2) return;
+    c.beginPath();
+    c.moveTo(pad + (path[0].c + 0.5) * cw, pad + (path[0].r + 0.5) * ch);
+    for (let i = 1; i < path.length; i++) {
+      c.lineTo(pad + (path[i].c + 0.5) * cw, pad + (path[i].r + 0.5) * ch);
+    }
+    c.stroke();
+  }
 
-  // Click & Tap on Board
+  function drawEndpointNode(c, r, col, color, isConnected, pad, cw, ch) {
+    const cx = pad + (col + 0.5) * cw;
+    const cy = pad + (r + 0.5) * ch;
+    const radius = cw * 0.32;
+    const pulseScale = isConnected ? 1.0 : (1.0 + Math.sin(pulsePhase * 2) * 0.05);
+
+    c.save();
+
+    // Outer Glow Halo
+    c.shadowColor = color;
+    c.shadowBlur = isConnected ? 22 : 14;
+
+    // Glowing Ring
+    c.strokeStyle = color;
+    c.lineWidth = 3.5;
+    c.beginPath();
+    c.arc(cx, cy, radius * pulseScale, 0, Math.PI * 2);
+    c.stroke();
+
+    // Filled Gradient Core
+    const grad = c.createRadialGradient(
+      cx - radius * 0.25,
+      cy - radius * 0.25,
+      radius * 0.1,
+      cx,
+      cy,
+      radius * 0.85
+    );
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.3, color);
+    grad.addColorStop(1, '#0b0e14');
+
+    c.fillStyle = grad;
+    c.beginPath();
+    c.arc(cx, cy, radius * 0.8 * pulseScale, 0, Math.PI * 2);
+    c.fill();
+
+    // Specular Highlight
+    c.fillStyle = 'rgba(255, 255, 255, 0.65)';
+    c.beginPath();
+    c.arc(cx - radius * 0.25, cy - radius * 0.25, radius * 0.25, 0, Math.PI * 2);
+    c.fill();
+
+    c.restore();
+  }
+
+  function roundRect(c, x, y, width, height, radius) {
+    c.beginPath();
+    c.moveTo(x + radius, y);
+    c.lineTo(x + width - radius, y);
+    c.quadraticCurveTo(x + width, y, x + width, y + radius);
+    c.lineTo(x + width, y + height - radius);
+    c.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    c.lineTo(x + radius, y + height);
+    c.quadraticCurveTo(x, y + height, x, y + height - radius);
+    c.lineTo(x, y + radius);
+    c.quadraticCurveTo(x, y, x + radius, y);
+    c.closePath();
+  }
+
+  /**
+   * Pointer Event Coordinates to Grid Cell
+   */
+  function getCellFromCoords(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+
+    const padding = 12;
+    const boardW = rect.width - padding * 2;
+    const boardH = rect.height - padding * 2;
+    const cellW = boardW / flowState.cols;
+    const cellH = boardH / flowState.rows;
+
+    const c = Math.floor((x - padding) / cellW);
+    const r = Math.floor((y - padding) / cellH);
+
+    return {
+      r: Math.max(0, Math.min(flowState.rows - 1, r)),
+      c: Math.max(0, Math.min(flowState.cols - 1, c)),
+      inBounds: r >= 0 && r < flowState.rows && c >= 0 && c < flowState.cols,
+      localX: x,
+      localY: y
+    };
+  }
+
+  /**
+   * Pointer Handlers (Touch & Mouse unified)
+   */
+  let isPointerDown = false;
+
   canvas.addEventListener('pointerdown', (e) => {
     e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    const clientX = e.clientX - rect.left;
-    const clientY = e.clientY - rect.top;
+    if (isPaused || flowState.isSolved) return;
+    canvas.setPointerCapture(e.pointerId);
 
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const x = clientX * scaleX;
-    const y = clientY * scaleY;
+    const pos = getCellFromCoords(e.clientX, e.clientY);
+    if (!pos.inBounds) return;
 
-    const padding = 28;
-    const boardAreaWidth = canvas.width - padding * 2;
-    const boardAreaHeight = canvas.height - padding * 2;
-    const cellSize = Math.floor(Math.min(boardAreaWidth / state.cols, boardAreaHeight / state.rows));
+    isPointerDown = true;
+    pointerPos = { x: pos.localX, y: pos.localY };
+    cursor.r = pos.r;
+    cursor.c = pos.c;
+    cursor.active = false;
 
-    const totalGridWidth = cellSize * state.cols;
-    const totalGridHeight = cellSize * state.rows;
-    const startX = Math.floor((canvas.width - totalGridWidth) / 2);
-    const startY = Math.floor((canvas.height - totalGridHeight) / 2);
-
-    const c = Math.floor((x - startX) / cellSize);
-    const r = Math.floor((y - startY) / cellSize);
-
-    if (r >= 0 && r < state.rows && c >= 0 && c < state.cols) {
-      state.cursor = { r, c };
-      // Right click or Shift-click rotates counter-clockwise
-      const delta = (e.button === 2 || e.shiftKey) ? -1 : 1;
-      onTileRotate(r, c, delta);
+    const res = CircuitEngine.startDrawing(flowState, pos.r, pos.c);
+    if (res && res.success) {
+      CircuitAudio.playStep();
+      updateHUD();
     }
   });
 
-  // Prevent context menu on right click inside canvas
-  canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+  canvas.addEventListener('pointermove', (e) => {
+    if (!isPointerDown || !flowState.activeKey || flowState.isSolved) return;
+    e.preventDefault();
 
-  // Global Keyboard Controls
-  window.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+    const pos = getCellFromCoords(e.clientX, e.clientY);
+    pointerPos = { x: pos.localX, y: pos.localY };
 
-    switch (e.code) {
-      case 'ArrowUp':
-      case 'KeyW':
-        e.preventDefault();
-        state.cursor.r = (state.cursor.r - 1 + state.rows) % state.rows;
-        break;
+    if (!pos.inBounds) return;
 
-      case 'ArrowDown':
-      case 'KeyS':
-        e.preventDefault();
-        state.cursor.r = (state.cursor.r + 1) % state.rows;
-        break;
-
-      case 'ArrowLeft':
-      case 'KeyA':
-        e.preventDefault();
-        state.cursor.c = (state.cursor.c - 1 + state.cols) % state.cols;
-        break;
-
-      case 'ArrowRight':
-      case 'KeyD':
-        e.preventDefault();
-        state.cursor.c = (state.cursor.c + 1) % state.cols;
-        break;
-
-      case 'Space':
-      case 'Enter':
-        e.preventDefault();
-        onTileRotate(state.cursor.r, state.cursor.c, e.shiftKey ? -1 : 1);
-        break;
-
-      case 'KeyQ':
-      case 'KeyZ':
-        e.preventDefault();
-        if (e.ctrlKey || e.metaKey || e.code === 'KeyU') {
-          undoLastMove();
-        } else {
-          onTileRotate(state.cursor.r, state.cursor.c, -1);
-        }
-        break;
-
-      case 'KeyU':
-        e.preventDefault();
-        undoLastMove();
-        break;
-
-      case 'KeyR':
-        e.preventDefault();
-        loadLevel(state.currentLevelIndex);
-        break;
-
-      case 'KeyP':
-        e.preventDefault();
-        togglePause();
-        break;
-
-      case 'KeyM':
-        e.preventDefault();
-        handleAudioToggle();
-        break;
+    const ext = CircuitEngine.extendDrawing(flowState, pos.r, pos.c);
+    if (ext) {
+      if (ext.action === 'connected') {
+        CircuitAudio.playConnect();
+        updateHUD();
+        checkAndHandleCompletion();
+      } else if (ext.action === 'step') {
+        CircuitAudio.playStep();
+        updateHUD();
+      } else if (ext.action === 'backtrack' || ext.action === 'loop') {
+        CircuitAudio.playStep();
+        updateHUD();
+      }
     }
   });
 
-  // Controls UI Action Buttons
-  if (undoBtn) undoBtn.addEventListener('click', undoLastMove);
-  if (restartBtn) restartBtn.addEventListener('click', () => loadLevel(state.currentLevelIndex));
+  function onPointerEnd(e) {
+    if (!isPointerDown) return;
+    isPointerDown = false;
+    pointerPos = null;
 
-  function togglePause() {
-    state.isPaused = !state.isPaused;
-    if (pauseBtn) pauseBtn.textContent = state.isPaused ? '▶' : '⏸';
+    if (flowState.activeKey) {
+      CircuitEngine.finishDrawing(flowState);
+      updateHUD();
+      checkAndHandleCompletion();
+    }
   }
-  if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
 
-  function handleAudioToggle() {
-    const isMuted = Audio.toggleMute();
-    if (audioIcon) audioIcon.textContent = isMuted ? '🔇' : '🔊';
+  canvas.addEventListener('pointerup', onPointerEnd);
+  canvas.addEventListener('pointercancel', onPointerEnd);
+
+  /**
+   * Victory / Completion Check
+   */
+  function checkAndHandleCompletion() {
+    const res = CircuitEngine.checkBoardCompletion(flowState);
+    if (res.isSolved) {
+      stopTimer();
+      CircuitAudio.playWin();
+
+      // Save Stars
+      const lvlId = flowState.level.id;
+      const prevStars = userStars[lvlId] || 0;
+      if (res.stars > prevStars) {
+        userStars[lvlId] = res.stars;
+        try {
+          localStorage.setItem(STORAGE_STARS_KEY, JSON.stringify(userStars));
+        } catch (e) {}
+      }
+
+      // Unlock next level if available
+      const nextIdx = currentLevelIdx + 1;
+      if (nextIdx < CircuitEngine.LEVELS.length) {
+        try {
+          localStorage.setItem(STORAGE_LEVEL_KEY, nextIdx.toString());
+        } catch (e) {}
+      }
+
+      setTimeout(() => {
+        showWinOverlay(res.stars);
+      }, 350);
+    } else if (flowState.moves >= flowState.level.moveLimit) {
+      showOverloadOverlay();
+    }
   }
-  if (audioToggleBtn) audioToggleBtn.addEventListener('click', handleAudioToggle);
-  if (audioIcon) audioIcon.textContent = Audio.getMuteState() ? '🔇' : '🔊';
 
-  // Modal Buttons
-  if (levelSelectBtn) levelSelectBtn.addEventListener('click', showLevelSelectModal);
-  if (closeLevelSelectBtn) closeLevelSelectBtn.addEventListener('click', hideModals);
+  function showWinOverlay(stars) {
+    hideAllOverlays();
+    if (overlayWin) {
+      overlayWin.classList.add('active');
+      if (winStarsVal) winStarsVal.textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+      if (winMovesVal) winMovesVal.textContent = flowState.moves.toString();
+      if (winParVal) winParVal.textContent = flowState.level.par.toString();
+      if (winTimeVal && timerDisplay) winTimeVal.textContent = timerDisplay.textContent;
+    }
+  }
+
+  function showOverloadOverlay() {
+    hideAllOverlays();
+    if (overlayOverload) {
+      overlayOverload.classList.add('active');
+    }
+  }
+
+  function hideAllOverlays() {
+    [overlayWin, overlayOverload, overlayLevelSelect].forEach(ov => {
+      if (ov) ov.classList.remove('active');
+    });
+  }
+
+  /**
+   * Level Selection Modal
+   */
+  function openLevelSelect() {
+    if (!overlayLevelSelect || !levelGridContainer) return;
+    levelGridContainer.innerHTML = '';
+
+    CircuitEngine.LEVELS.forEach((lvl, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'level-item-btn';
+      if (idx === currentLevelIdx) btn.classList.add('current');
+
+      const stars = userStars[lvl.id] || 0;
+      const starsStr = stars > 0 ? '★'.repeat(stars) : '☆☆☆';
+
+      btn.innerHTML = `
+        <span class="lvl-num">Lvl ${lvl.id}</span>
+        <span class="lvl-size">${lvl.rows}x${lvl.cols}</span>
+        <span class="lvl-stars">${starsStr}</span>
+      `;
+
+      btn.addEventListener('click', () => {
+        loadLevel(idx);
+        hideAllOverlays();
+      });
+
+      levelGridContainer.appendChild(btn);
+    });
+
+    overlayLevelSelect.classList.add('active');
+  }
+
+  /**
+   * Button Event Handlers
+   */
+  if (hintBtn) {
+    hintBtn.addEventListener('click', () => {
+      if (flowState.isSolved) return;
+      const res = CircuitEngine.applyHint(flowState);
+      if (res && res.success) {
+        CircuitAudio.playHint();
+        updateHUD();
+        checkAndHandleCompletion();
+      }
+    });
+  }
+
+  if (undoBtn) {
+    undoBtn.addEventListener('click', () => {
+      if (CircuitEngine.undoMove(flowState)) {
+        CircuitAudio.playUndo();
+        updateHUD();
+        hideAllOverlays();
+      }
+    });
+  }
+
+  if (restartBtn) {
+    restartBtn.addEventListener('click', () => {
+      CircuitAudio.playStep();
+      loadLevel(currentLevelIdx);
+    });
+  }
+
+  if (pauseBtn) {
+    pauseBtn.addEventListener('click', () => {
+      isPaused = !isPaused;
+      pauseBtn.textContent = isPaused ? '▶' : '⏸';
+      pauseBtn.title = isPaused ? 'Resume Game' : 'Pause Game';
+    });
+  }
+
+  if (audioToggleBtn) {
+    audioToggleBtn.addEventListener('click', () => {
+      const muted = CircuitAudio.toggleMute();
+      if (audioIcon) audioIcon.textContent = muted ? '🔇' : '🔊';
+    });
+  }
+
+  if (levelSelectBtn) {
+    levelSelectBtn.addEventListener('click', openLevelSelect);
+  }
+
+  if (closeLevelSelectBtn) {
+    closeLevelSelectBtn.addEventListener('click', () => {
+      overlayLevelSelect.classList.remove('active');
+    });
+  }
 
   if (nextLevelBtn) {
     nextLevelBtn.addEventListener('click', () => {
-      hideModals();
-      loadLevel(state.currentLevelIndex + 1);
+      const nextIdx = (currentLevelIdx + 1) % CircuitEngine.LEVELS.length;
+      loadLevel(nextIdx);
     });
   }
+
   if (replayBtn) {
     replayBtn.addEventListener('click', () => {
-      hideModals();
-      loadLevel(state.currentLevelIndex);
+      loadLevel(currentLevelIdx);
     });
   }
 
   if (overloadRestartBtn) {
     overloadRestartBtn.addEventListener('click', () => {
-      hideModals();
-      loadLevel(state.currentLevelIndex);
+      loadLevel(currentLevelIdx);
     });
   }
+
   if (overloadUndoBtn) {
     overloadUndoBtn.addEventListener('click', () => {
-      hideModals();
-      undoLastMove();
+      hideAllOverlays();
+      if (CircuitEngine.undoMove(flowState)) {
+        CircuitAudio.playUndo();
+        updateHUD();
+      }
     });
   }
 
-  // Initial Level Load
-  loadLevel(0);
-  animFrameId = requestAnimationFrame(gameLoop);
+  /**
+   * Keyboard Controls
+   */
+  window.addEventListener('keydown', (e) => {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
+      e.preventDefault();
+    }
+
+    if (e.key === 'u' || e.key === 'U') {
+      if (undoBtn) undoBtn.click();
+      return;
+    }
+    if (e.key === 'h' || e.key === 'H') {
+      if (hintBtn) hintBtn.click();
+      return;
+    }
+    if (e.key === 'r' || e.key === 'R') {
+      if (restartBtn) restartBtn.click();
+      return;
+    }
+    if (e.key === 'p' || e.key === 'P') {
+      if (pauseBtn) pauseBtn.click();
+      return;
+    }
+    if (e.key === 'm' || e.key === 'M') {
+      if (audioToggleBtn) audioToggleBtn.click();
+      return;
+    }
+
+    if (!flowState || flowState.isSolved || isPaused) return;
+
+    cursor.active = true;
+    let moved = false;
+
+    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+      cursor.r = Math.max(0, cursor.r - 1);
+      moved = true;
+    } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+      cursor.r = Math.min(flowState.rows - 1, cursor.r + 1);
+      moved = true;
+    } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+      cursor.c = Math.max(0, cursor.c - 1);
+      moved = true;
+    } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+      cursor.c = Math.min(flowState.cols - 1, cursor.c + 1);
+      moved = true;
+    } else if (e.code === 'Space' || e.key === 'Enter') {
+      if (flowState.activeKey) {
+        CircuitEngine.finishDrawing(flowState);
+        updateHUD();
+        checkAndHandleCompletion();
+      } else {
+        const res = CircuitEngine.startDrawing(flowState, cursor.r, cursor.c);
+        if (res && res.success) {
+          CircuitAudio.playStep();
+          updateHUD();
+        }
+      }
+      return;
+    }
+
+    // Number keys 1-8 to jump to endpoint
+    const num = parseInt(e.key, 10);
+    if (!isNaN(num) && num >= 1 && num <= flowState.pairs.length) {
+      const p = flowState.pairs[num - 1];
+      cursor.r = p.p1.r;
+      cursor.c = p.p1.c;
+      CircuitEngine.startDrawing(flowState, cursor.r, cursor.c);
+      CircuitAudio.playStep();
+      updateHUD();
+      return;
+    }
+
+    // If drawing is active, step along keyboard movement
+    if (moved && flowState.activeKey) {
+      const ext = CircuitEngine.extendDrawing(flowState, cursor.r, cursor.c);
+      if (ext) {
+        if (ext.action === 'connected') {
+          CircuitAudio.playConnect();
+          updateHUD();
+          checkAndHandleCompletion();
+        } else {
+          CircuitAudio.playStep();
+          updateHUD();
+        }
+      }
+    }
+  });
+
+  // Start
+  loadLevel(currentLevelIdx);
+  renderLoop();
 
 })();
-

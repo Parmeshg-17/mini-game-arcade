@@ -1,14 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360" role="img" aria-label="Circuit Connect Logic Puzzle Game Thumbnail">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360" role="img" aria-label="Circuit Connect Color Chain Logic Puzzle Game Thumbnail">
   <defs>
     <!-- Background Gradient -->
     <radialGradient id="ccBg" cx="50%" cy="50%" r="70%">
-      <stop offset="0%" stop-color="#0f172a"/>
-      <stop offset="50%" stop-color="#090d16"/>
-      <stop offset="100%" stop-color="#040609"/>
+      <stop offset="0%" stop-color="#0e1726"/>
+      <stop offset="60%" stop-color="#090d15"/>
+      <stop offset="100%" stop-color="#04060a"/>
     </radialGradient>
 
     <!-- Neon Glow Filters -->
-    <filter id="ccGlowCyan" x="-40%" y="-40%" width="180%" height="180%">
+    <filter id="glowCyan" x="-40%" y="-40%" width="180%" height="180%">
       <feGaussianBlur stdDeviation="6" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
@@ -16,7 +16,7 @@
       </feMerge>
     </filter>
 
-    <filter id="ccGlowLime" x="-40%" y="-40%" width="180%" height="180%">
+    <filter id="glowRed" x="-40%" y="-40%" width="180%" height="180%">
       <feGaussianBlur stdDeviation="6" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
@@ -24,7 +24,7 @@
       </feMerge>
     </filter>
 
-    <filter id="ccGlowRed" x="-40%" y="-40%" width="180%" height="180%">
+    <filter id="glowLime" x="-40%" y="-40%" width="180%" height="180%">
       <feGaussianBlur stdDeviation="6" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
@@ -32,7 +32,7 @@
       </feMerge>
     </filter>
 
-    <filter id="ccGlowGold" x="-40%" y="-40%" width="180%" height="180%">
+    <filter id="glowGold" x="-40%" y="-40%" width="180%" height="180%">
       <feGaussianBlur stdDeviation="6" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
@@ -40,93 +40,101 @@
       </feMerge>
     </filter>
 
-    <pattern id="ccGridDots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-      <circle cx="2" cy="2" r="1" fill="#1e293b" opacity="0.6"/>
+    <pattern id="gridDots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#1e293b" opacity="0.4"/>
     </pattern>
   </defs>
 
   <!-- Deep Stage Background -->
   <rect width="640" height="360" fill="url(#ccBg)"/>
-  <rect width="640" height="360" fill="url(#ccGridDots)"/>
+  <rect width="640" height="360" fill="url(#gridDots)"/>
 
-  <!-- PCB Circuit Grid Container (Center Stage) -->
-  <g transform="translate(180, 40)">
-    <!-- Circuit Board Outer Frame -->
+  <!-- Color Chain Flow Grid Board (Center Stage) -->
+  <g transform="translate(180, 36)">
+    <!-- Outer Card Frame -->
     <rect x="0" y="0" width="280" height="280" rx="16" fill="#0b101b" stroke="#1e293b" stroke-width="2.5"/>
-    <rect x="6" y="6" width="268" height="268" rx="12" fill="#0d1322" stroke="rgba(56, 189, 248, 0.2)" stroke-width="1.2"/>
+    <rect x="5" y="5" width="270" height="270" rx="12" fill="#0d1422" stroke="rgba(56, 189, 248, 0.25)" stroke-width="1.2"/>
 
-    <!-- Subtle PCB Internal Grid Lines -->
-    <g stroke="#162032" stroke-width="1" opacity="0.7">
-      <line x1="70" y1="6" x2="70" y2="274"/>
-      <line x1="140" y1="6" x2="140" y2="274"/>
-      <line x1="210" y1="6" x2="210" y2="274"/>
-      <line x1="6" y1="70" x2="274" y2="70"/>
-      <line x1="6" y1="140" x2="274" y2="140"/>
-      <line x1="6" y1="210" x2="274" y2="210"/>
+    <!-- Subtle Internal Grid Cells (5x5 Grid) -->
+    <g stroke="#182335" stroke-width="1.2" opacity="0.8">
+      <line x1="58" y1="5" x2="58" y2="275"/>
+      <line x1="112" y1="5" x2="112" y2="275"/>
+      <line x1="166" y1="5" x2="166" y2="275"/>
+      <line x1="220" y1="5" x2="220" y2="275"/>
+      <line x1="5" y1="58" x2="275" y2="58"/>
+      <line x1="5" y1="112" x2="275" y2="112"/>
+      <line x1="5" y1="166" x2="275" y2="166"/>
+      <line x1="5" y1="220" x2="275" y2="220"/>
     </g>
 
-    <!-- Circuit Wire 1: Coral Red Loop (Outer Top-Left) -->
-    <path d="M 35 245 L 35 45 Q 35 35 45 35 L 105 35 Q 115 35 115 45 L 115 85 Q 115 140 140 140"
-          fill="none" stroke="#ff4757" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#ccGlowRed)"/>
-    <path d="M 35 245 L 35 45 Q 35 35 45 35 L 105 35 Q 115 35 115 45 L 115 85 Q 115 140 140 140"
-          fill="none" stroke="#ffa8a8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-
-    <!-- Circuit Wire 2: Lime Green Conduit (Left to Center-Right) -->
-    <path d="M 70 210 L 70 85 Q 70 70 85 70 L 125 70 Q 140 70 140 55 L 140 35 Q 140 35 155 35 L 195 35 Q 210 35 210 50 L 210 210"
-          fill="none" stroke="#10b981" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#ccGlowLime)"/>
-    <path d="M 70 210 L 70 85 Q 70 70 85 70 L 125 70 Q 140 70 140 55 L 140 35 Q 140 35 155 35 L 195 35 Q 210 35 210 50 L 210 210"
-          fill="none" stroke="#6ee7b7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-
-    <!-- Circuit Wire 3: Amber Yellow Conduit (Right Border & Bottom Loop) -->
-    <path d="M 140 245 Q 140 260 155 260 L 195 260 Q 210 260 210 245 L 210 245 Q 245 245 245 210 L 245 55 Q 245 35 225 35 L 215 35"
-          fill="none" stroke="#ffd166" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#ccGlowGold)"/>
-    <path d="M 140 245 Q 140 260 155 260 L 195 260 Q 210 260 210 245 L 210 245 Q 245 245 245 210 L 245 55 Q 245 35 225 35 L 215 35"
-          fill="none" stroke="#fff1a8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-
-    <!-- Central Bridge Overpass Block (Red line passes under, Blue line passes over!) -->
-    <!-- Red line crossing under -->
-    <path d="M 140 140 Q 165 140 165 165 Q 165 190 140 190 Q 115 190 115 210"
-          fill="none" stroke="#ff4757" stroke-width="8" stroke-linecap="round" filter="url(#ccGlowRed)"/>
-
-    <!-- Bridge Shadow / Insulator Block -->
-    <rect x="126" y="126" width="28" height="28" rx="6" fill="#0b101b" stroke="#1e293b" stroke-width="1.5"/>
-
-    <!-- Circuit Wire 4: Electric Cyan Main Line (Crossing OVER via Bridge) -->
-    <path d="M 70 245 Q 100 245 110 210 Q 120 175 140 140 Q 160 105 190 85 L 210 85"
-          fill="none" stroke="#38bdf8" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" filter="url(#ccGlowCyan)"/>
-    <path d="M 70 245 Q 100 245 110 210 Q 120 175 140 140 Q 160 105 190 85 L 210 85"
+    <!-- Wire 1: Coral Red Winding Path -->
+    <path d="M 31 31 L 85 31 Q 139 31 139 85 L 139 139 Q 139 193 85 193 L 31 193"
+          fill="none" stroke="#ff4757" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowRed)"/>
+    <path d="M 31 31 L 85 31 Q 139 31 139 85 L 139 139 Q 139 193 85 193 L 31 193"
           fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 
-    <!-- Glowing Source Terminal 1 (Bottom Left Blue) -->
-    <g transform="translate(70, 245)" filter="url(#ccGlowCyan)">
-      <circle cx="0" cy="0" r="14" fill="#0284c7" stroke="#38bdf8" stroke-width="3"/>
-      <circle cx="0" cy="0" r="7" fill="#ffffff"/>
-      <circle cx="0" cy="0" r="20" fill="none" stroke="#38bdf8" stroke-width="1.5" opacity="0.6"/>
+    <!-- Wire 2: Amber Gold Path (Outer Perimeter) -->
+    <path d="M 193 31 L 247 31 Q 251 31 251 35 L 251 247 Q 251 251 247 251 L 139 251"
+          fill="none" stroke="#ffd166" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowGold)"/>
+    <path d="M 193 31 L 247 31 Q 251 31 251 35 L 251 247 Q 251 251 247 251 L 139 251"
+          fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Wire 3: Lime Green Sinuous Path -->
+    <path d="M 85 247 L 85 247 Q 31 247 31 247 L 31 247"
+          fill="none" stroke="#d5ff55" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowLime)"/>
+    <path d="M 31 247 L 85 247"
+          fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Wire 4: Electric Cyan Main Path (Being Dragged!) -->
+    <path d="M 31 139 Q 85 139 85 85 Q 85 31 139 31 L 139 31"
+          fill="none" stroke="#38bdf8" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowCyan)"/>
+    <path d="M 139 85 Q 193 85 193 139 L 193 193"
+          fill="none" stroke="#38bdf8" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowCyan)"/>
+    <path d="M 31 139 Q 85 139 85 85 Q 85 31 139 31"
+          fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 139 85 Q 193 85 193 139 L 193 193"
+          fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Red Endpoints -->
+    <g transform="translate(31, 31)" filter="url(#glowRed)">
+      <circle cx="0" cy="0" r="14" fill="#ff4757" stroke="#ffffff" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="#ffffff"/>
+    </g>
+    <g transform="translate(31, 193)" filter="url(#glowRed)">
+      <circle cx="0" cy="0" r="14" fill="#ff4757" stroke="#ffffff" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="#ffffff"/>
     </g>
 
-    <!-- Glowing Target Terminal 2 (Top Right Blue) -->
-    <g transform="translate(210, 85)" filter="url(#ccGlowCyan)">
-      <circle cx="0" cy="0" r="14" fill="#0284c7" stroke="#38bdf8" stroke-width="3"/>
-      <circle cx="0" cy="0" r="7" fill="#ffffff"/>
-      <circle cx="0" cy="0" r="20" fill="none" stroke="#38bdf8" stroke-width="1.5" opacity="0.6"/>
+    <!-- Yellow Endpoints -->
+    <g transform="translate(193, 31)" filter="url(#glowGold)">
+      <circle cx="0" cy="0" r="14" fill="#ffd166" stroke="#ffffff" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="#ffffff"/>
+    </g>
+    <g transform="translate(139, 251)" filter="url(#glowGold)">
+      <circle cx="0" cy="0" r="14" fill="#ffd166" stroke="#ffffff" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="#ffffff"/>
     </g>
 
-    <!-- Glowing Green Terminal -->
-    <g transform="translate(70, 210)" filter="url(#ccGlowLime)">
-      <circle cx="0" cy="0" r="10" fill="#059669" stroke="#10b981" stroke-width="2.5"/>
-      <circle cx="0" cy="0" r="4.5" fill="#ffffff"/>
+    <!-- Lime Endpoints -->
+    <g transform="translate(31, 247)" filter="url(#glowLime)">
+      <circle cx="0" cy="0" r="14" fill="#d5ff55" stroke="#ffffff" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="#ffffff"/>
+    </g>
+    <g transform="translate(85, 247)" filter="url(#glowLime)">
+      <circle cx="0" cy="0" r="14" fill="#d5ff55" stroke="#ffffff" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="#ffffff"/>
     </g>
 
-    <!-- Glowing Red Terminal -->
-    <g transform="translate(35, 245)" filter="url(#ccGlowRed)">
-      <circle cx="0" cy="0" r="10" fill="#dc2626" stroke="#ff4757" stroke-width="2.5"/>
-      <circle cx="0" cy="0" r="4.5" fill="#ffffff"/>
+    <!-- Cyan Endpoints & Touch Drag Tip -->
+    <g transform="translate(31, 139)" filter="url(#glowCyan)">
+      <circle cx="0" cy="0" r="14" fill="#38bdf8" stroke="#ffffff" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="#ffffff"/>
     </g>
-
-    <!-- Glowing Yellow Terminal -->
-    <g transform="translate(140, 245)" filter="url(#ccGlowGold)">
-      <circle cx="0" cy="0" r="10" fill="#d97706" stroke="#ffd166" stroke-width="2.5"/>
-      <circle cx="0" cy="0" r="4.5" fill="#ffffff"/>
+    <g transform="translate(193, 193)" filter="url(#glowCyan)">
+      <circle cx="0" cy="0" r="14" fill="#38bdf8" stroke="#ffffff" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="#ffffff"/>
+      <!-- Glowing Target Flare -->
+      <circle cx="0" cy="0" r="22" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.8"/>
     </g>
   </g>
 
@@ -138,14 +146,13 @@
 
   <g transform="translate(500, 28)">
     <rect x="0" y="0" width="116" height="26" rx="6" fill="#171a16" stroke="rgba(213, 255, 85, 0.4)" stroke-width="1"/>
-    <text x="58" y="17" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="700" fill="#d5ff55" text-anchor="middle" letter-spacing="0.5">25+ LEVELS</text>
+    <text x="58" y="17" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="700" fill="#d5ff55" text-anchor="middle" letter-spacing="0.5">30 LEVELS</text>
   </g>
 
   <!-- Bottom Title Banner -->
   <g transform="translate(24, 334)">
     <text font-family="'Space Grotesk', -apple-system, sans-serif" font-size="20" font-weight="800" fill="#f3f4f6" letter-spacing="-0.5">
-      CIRCUIT CONNECT <tspan fill="#38bdf8">//</tspan> <tspan font-size="13" font-family="'JetBrains Mono', monospace" font-weight="500" fill="#9ca3af">Rotate & Complete Circuit</tspan>
+      CIRCUIT CONNECT <tspan fill="#38bdf8">//</tspan> <tspan font-size="13" font-family="'JetBrains Mono', monospace" font-weight="500" fill="#9ca3af">Color Chain Flow &amp; 100% Fill</tspan>
     </text>
   </g>
 </svg>
-

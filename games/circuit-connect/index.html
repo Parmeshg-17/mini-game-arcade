@@ -50,10 +50,10 @@
     <header class="game-editorial-header">
       <div class="game-eyebrow-row">
         <span class="badge-arcade">LOGIC // PUZZLE</span>
-        <span class="badge-tagline">CIRCUIT CONNECTOR</span>
+        <span class="badge-tagline">COLOR CHAIN CONNECT</span>
       </div>
       <h1 class="game-title">Circuit Connect</h1>
-      <p class="game-subheading">Rotate tiles and connect matching terminals to complete the electrical circuit before moves run out. Overpass bridges allow complex wires to cross without shorting out!</p>
+      <p class="game-subheading">Connect matching colored neon dots across the grid with continuous glowing wires. Fill 100% of the board without crossing lines to complete the circuit!</p>
     </header>
 
     <!-- Arcade Play Card -->
@@ -64,16 +64,21 @@
         <div class="hud-group">
           <button id="level-select-btn" class="ctrl-btn" type="button" title="Select Level">
             <span>📑</span>
-            <span id="level-title-display">Lvl 1: Genesis Circuit</span>
+            <span id="level-title-display">Lvl 1: Genesis Grid</span>
           </button>
-          <span id="chapter-display" class="hud-pill highlight-cyan">Power Flow</span>
+          <span id="chapter-display" class="hud-pill highlight-cyan">Starter 5x5</span>
           <span id="moves-display" class="hud-pill highlight-lime">Moves: 0 / 12</span>
-          <span id="par-display" class="hud-pill highlight-gold">Par: 4</span>
-          <span id="targets-display" class="hud-pill">Terminals: 0 / 1</span>
+          <span id="par-display" class="hud-pill highlight-gold">Par: 3</span>
+          <span id="targets-display" class="hud-pill">Pipes: 0 / 3</span>
+          <span id="coverage-display" class="hud-pill highlight-cyan">Covered: 0%</span>
           <span id="timer-display" class="hud-pill">00:00</span>
         </div>
 
         <div class="hud-group">
+          <button id="hint-btn" class="ctrl-btn" type="button" aria-label="Use Hint (H)" title="Hint (H)">
+            <span>💡</span>
+            <span>Hint</span>
+          </button>
           <button id="undo-btn" class="ctrl-btn" type="button" aria-label="Undo Move (U)" title="Undo (U)">
             <span>↶</span>
             <span>Undo</span>
@@ -147,6 +152,10 @@
 
       <!-- Action Bar -->
       <div class="circuit-action-bar">
+        <button id="btn-quick-hint" class="btn-arcade-action" type="button" onclick="document.getElementById('hint-btn').click()">
+          <span>💡</span>
+          <span>Get Hint (H)</span>
+        </button>
         <button id="btn-quick-undo" class="btn-secondary-arcade" type="button" onclick="document.getElementById('undo-btn').click()">
           <span>↶</span>
           <span>Undo Move</span>
@@ -169,18 +178,18 @@
       <div class="rules-grid">
         <div class="rule-card">
           <div class="rule-header">
-            <span>🔄</span>
-            <span>Rotate to Connect</span>
+            <span>🔗</span>
+            <span>Connect Matching Dots</span>
           </div>
-          <p class="rule-text">Click or tap any non-fixed tile to rotate it 90° clockwise. Right-click or shift-click to rotate counter-clockwise. Align wire conduits to complete the circuit path.</p>
+          <p class="rule-text">Click or drag between two nodes of the same color to connect them with a continuous glowing wire. No two wires may cross or overlap at any point.</p>
         </div>
 
         <div class="rule-card">
           <div class="rule-header">
-            <span>🌉</span>
-            <span>Bridge Overpasses</span>
+            <span>💯</span>
+            <span>100% Board Fill</span>
           </div>
-          <p class="rule-text">Bridge tiles allow wires to cross over each other without short-circuiting! Vertical current passes over horizontal current, enabling multi-color crossings.</p>
+          <p class="rule-text">The level is complete ONLY when every single cell on the board is covered! Leaving even one empty square means the circuit puzzle is not solved yet.</p>
         </div>
 
         <div class="rule-card">
@@ -188,17 +197,25 @@
             <span>⭐</span>
             <span>Efficiency Stars</span>
           </div>
-          <p class="rule-text">Earn up to <strong>3 Stars</strong> by completing circuits at or below the level's Par Move limit. Level progression and best star ratings are saved locally.</p>
+          <p class="rule-text">Earn up to <strong>3 Stars</strong> by connecting all paths without wasted moves (Par moves). Level progression and star achievements are saved locally.</p>
         </div>
       </div>
 
       <div class="rules-grid" style="margin-top: 0.5rem;">
         <div class="rule-card">
           <div class="rule-header">
+            <span>💡</span>
+            <span>Smart Hint System</span>
+          </div>
+          <p class="rule-text">Progress stalled? Tap the <strong>Hint (H)</strong> button to automatically reveal and draw a verified solution path for one uncompleted color node!</p>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-header">
             <span>⌨️</span>
             <span>Desktop Controls</span>
           </div>
-          <p class="rule-text"><strong>Arrow Keys / WASD</strong> to select tiles. <strong>Spacebar / Enter</strong> to rotate clockwise. <strong>Q / Shift+Space</strong> to rotate counter-clockwise. <strong>U</strong> to Undo, <strong>R</strong> to Restart.</p>
+          <p class="rule-text"><strong>Arrow Keys / WASD</strong> move the grid cursor. <strong>Spacebar / Enter</strong> starts or steps drawing. <strong>1-8</strong> jumps to node. <strong>U</strong> to Undo, <strong>H</strong> for Hint, <strong>R</strong> to Restart.</p>
         </div>
 
         <div class="rule-card">
@@ -206,15 +223,7 @@
             <span>📱</span>
             <span>Mobile Controls</span>
           </div>
-          <p class="rule-text">Tap any tile on your touchscreen to rotate it. Responsive layout with tactile electric sound effects calibrated for phones and tablets.</p>
-        </div>
-
-        <div class="rule-card">
-          <div class="rule-header">
-            <span>⚡</span>
-            <span>Energy Propagation</span>
-          </div>
-          <p class="rule-text">Connected paths illuminate with radiant neon pulses. Power all matching receiver terminals from their source stations to trigger victory fanfare!</p>
+          <p class="rule-text">Touch and drag your finger across the grid from any neon dot. Dragging backward automatically backtracks cleanly. Calibrated for phones & tablets!</p>
         </div>
       </div>
     </section>

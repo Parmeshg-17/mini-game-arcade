@@ -1,7 +1,7 @@
 /**
- * Circuit Connect — Procedural Web Audio API Sound Synthesizer
- * Mechanical switch clicks on tile rotation, electric power connection snaps,
- * neon energy pulses, and triumphant synth victory fanfare.
+ * Circuit Connect (Color Chain) — Procedural Web Audio API Synthesizer
+ * Neon wire drag ticks, harmonic connection chimes, electric cut sparks,
+ * hint chimes, and triumphant victory fanfare.
  */
 (function(exports) {
   'use strict';
@@ -30,9 +30,9 @@
   }
 
   /**
-   * Mechanical rotary switch click.
+   * Subtle soft click/tick when dragging wire into adjacent cell.
    */
-  function playRotate() {
+  function playStep() {
     if (isMuted) return;
     const ctx = getAudioContext();
     if (!ctx) return;
@@ -42,10 +42,114 @@
     const gain = ctx.createGain();
 
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(320, now);
-    osc.frequency.exponentialRampToValueAtTime(80, now + 0.05);
+    osc.frequency.setValueAtTime(440, now);
+    osc.frequency.exponentialRampToValueAtTime(180, now + 0.035);
 
-    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.04);
+  }
+
+  /**
+   * Harmonic chime when a color pair connects!
+   */
+  function playConnect() {
+    if (isMuted) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    // Two-tone bell chord (Root + 5th)
+    [587.33, 880].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + i * 0.03);
+
+      gain.gain.setValueAtTime(0.18, now + i * 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.03 + 0.28);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + i * 0.03);
+      osc.stop(now + i * 0.03 + 0.3);
+    });
+  }
+
+  /**
+   * Electric spark / cut buzz when a wire is severed.
+   */
+  function playCut() {
+    if (isMuted) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(220, now);
+    osc.frequency.linearRampToValueAtTime(110, now + 0.06);
+
+    gain.gain.setValueAtTime(0.12, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.07);
+  }
+
+  /**
+   * Ascending magic chime for Hints.
+   */
+  function playHint() {
+    if (isMuted) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+
+      gain.gain.setValueAtTime(0.15, now + idx * 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.2);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + idx * 0.06);
+      osc.stop(now + idx * 0.06 + 0.22);
+    });
+  }
+
+  /**
+   * Soft undo tick.
+   */
+  function playUndo() {
+    if (isMuted) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(320, now);
+    osc.frequency.exponentialRampToValueAtTime(160, now + 0.05);
+
+    gain.gain.setValueAtTime(0.1, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
 
     osc.connect(gain);
@@ -55,138 +159,41 @@
   }
 
   /**
-   * Electric connection snap / neon line energized.
+   * Victorious neon arcade fanfare.
    */
-  function playConnect() {
+  function playWin() {
     if (isMuted) return;
     const ctx = getAudioContext();
     if (!ctx) return;
 
     const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(587.33, now); // D5
-    osc.frequency.exponentialRampToValueAtTime(880, now + 0.12); // A5
-
-    gain.gain.setValueAtTime(0.2, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.16);
-  }
-
-  /**
-   * Electric spark / current pulse along wire.
-   */
-  function playPowerPulse() {
-    if (isMuted) return;
-    const ctx = getAudioContext();
-    if (!ctx) return;
-
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(1046.5, now); // C6
-    osc.frequency.exponentialRampToValueAtTime(1318.5, now + 0.08); // E6
-
-    gain.gain.setValueAtTime(0.12, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.1);
-  }
-
-  /**
-   * Ascending bell chimes for 3-star victory rating.
-   */
-  function playStarChime(index = 0) {
-    if (isMuted) return;
-    const ctx = getAudioContext();
-    if (!ctx) return;
-
-    const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
-    const freq = notes[index] || 523.25;
-    const now = ctx.currentTime;
-
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq, now);
-
-    gain.gain.setValueAtTime(0.3, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.42);
-  }
-
-  /**
-   * Circuit complete triumphant synth fanfare.
-   */
-  function playVictory() {
-    if (isMuted) return;
-    const ctx = getAudioContext();
-    if (!ctx) return;
-
-    const now = ctx.currentTime;
-    const chords = [
-      { f: 440.00, t: 0.0 }, // A4
-      { f: 554.37, t: 0.08 }, // C#5
-      { f: 659.25, t: 0.16 }, // E5
-      { f: 880.00, t: 0.24 }  // A5
+    const melody = [
+      { f: 523.25, d: 0.10, t: 0.00 }, // C5
+      { f: 659.25, d: 0.10, t: 0.10 }, // E5
+      { f: 783.99, d: 0.10, t: 0.20 }, // G5
+      { f: 1046.50, d: 0.35, t: 0.30 }, // C6
+      { f: 1318.51, d: 0.45, t: 0.45 }  // E6
     ];
 
-    chords.forEach(c => {
+    melody.forEach(n => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
 
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(c.f, now + c.t);
+      osc.frequency.setValueAtTime(n.f, now + n.t);
 
-      gain.gain.setValueAtTime(0.25, now + c.t);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + c.t + 0.45);
+      gain.gain.setValueAtTime(0.22, now + n.t);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + n.t + n.d);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
-      osc.start(now + c.t);
-      osc.stop(now + c.t + 0.48);
+      osc.start(now + n.t);
+      osc.stop(now + n.t + n.d + 0.05);
     });
   }
 
-  /**
-   * Move limit exhausted / circuit overload buzz.
-   */
-  function playError() {
-    if (isMuted) return;
-    const ctx = getAudioContext();
-    if (!ctx) return;
-
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(140, now);
-    osc.frequency.exponentialRampToValueAtTime(80, now + 0.2);
-
-    gain.gain.setValueAtTime(0.25, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.24);
+  function playRotate() {
+    playStep();
   }
 
   function toggleMute() {
@@ -197,18 +204,18 @@
     return isMuted;
   }
 
-  function getMuteState() {
+  function getMuted() {
     return isMuted;
   }
 
-  exports.playRotate = playRotate;
+  exports.playStep = playStep;
   exports.playConnect = playConnect;
-  exports.playPowerPulse = playPowerPulse;
-  exports.playStarChime = playStarChime;
-  exports.playVictory = playVictory;
-  exports.playError = playError;
+  exports.playCut = playCut;
+  exports.playHint = playHint;
+  exports.playUndo = playUndo;
+  exports.playWin = playWin;
+  exports.playRotate = playRotate;
   exports.toggleMute = toggleMute;
-  exports.getMuteState = getMuteState;
+  exports.isMuted = getMuted;
 
 })(typeof module !== 'undefined' && module.exports ? module.exports : (window.CircuitAudio = {}));
-

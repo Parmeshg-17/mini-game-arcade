@@ -482,7 +482,7 @@ body.game-page-body {
   }
 }
 
-.level-select-tile {
+.level-select-tile, .level-item-btn {
   background-color: var(--bg-deep);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
@@ -497,26 +497,32 @@ body.game-page-body {
   transition: all 0.15s ease;
 }
 
-.level-select-tile:hover:not(.locked) {
+.level-select-tile:hover:not(.locked), .level-item-btn:hover:not(.locked) {
   border-color: var(--accent-cyan);
   background-color: var(--accent-cyan-dim);
   transform: translateY(-2px);
 }
 
-.level-select-tile.current {
+.level-select-tile.current, .level-item-btn.current {
   border-color: var(--accent-lime);
   background-color: var(--accent-lime-dim);
 }
 
-.level-select-tile.locked {
+.level-select-tile.locked, .level-item-btn.locked {
   opacity: 0.45;
   cursor: not-allowed;
 }
 
 .lvl-num {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 800;
+}
+
+.lvl-size {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--accent-cyan);
 }
 
 .lvl-name {
@@ -529,7 +535,7 @@ body.game-page-body {
 }
 
 .lvl-stars {
-  font-size: 0.65rem;
+  font-size: 0.6875rem;
   color: var(--accent-gold);
 }
 

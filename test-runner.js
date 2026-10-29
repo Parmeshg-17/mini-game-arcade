@@ -1187,6 +1187,54 @@ it('Circuit Connect engine evaluates directional connectivity, bridge overpasses
   assert.strictEqual(procLevel.rows, 4);
   assert.strictEqual(procLevel.cols, 4);
   assert.strictEqual(procLevel.tiles.length, 16);
+
+  // 9. Color Chain / Flow Engine Mechanics & 100% Board Fill Constraint
+  const {
+    createFlowLevel,
+    startDrawing,
+    extendDrawing,
+    finishDrawing,
+    getBoardCoverage,
+    checkBoardCompletion,
+    applyHint,
+    undoMove
+  } = engine;
+
+  assert(typeof createFlowLevel === 'function', 'createFlowLevel must be defined');
+  const lvl1 = LEVELS[0];
+  const state = createFlowLevel(lvl1);
+  assert.strictEqual(state.rows, lvl1.rows);
+  assert.strictEqual(state.cols, lvl1.cols);
+  assert.strictEqual(state.pairs.length, lvl1.pairs.length);
+
+  // Drawing line
+  const p1 = lvl1.pairs[0].p1;
+  const startRes = startDrawing(state, p1.r, p1.c);
+  assert.strictEqual(startRes.success, true, 'Starting at endpoint must succeed');
+  assert.strictEqual(state.activeKey, lvl1.pairs[0].key);
+
+  // Apply hint for pair 0
+  const hintRes = applyHint(state);
+  assert.strictEqual(hintRes.success, true, 'Applying hint must succeed');
+  assert.strictEqual(state.connected[hintRes.key], true, 'Hinted color must be marked connected');
+
+  // Verify 100% board fill constraint:
+  // With only 1 color solved, checkBoardCompletion must NOT be solved
+  const partialComp = checkBoardCompletion(state);
+  assert.strictEqual(partialComp.isSolved, false, 'Incomplete board must NOT be solved');
+
+  // Complete all colors with hints
+  for (let i = 0; i < lvl1.pairs.length; i++) {
+    applyHint(state);
+  }
+  const fullComp = checkBoardCompletion(state);
+  assert.strictEqual(fullComp.isSolved, true, 'Fully connected board covering 100% of cells must be solved');
+  assert.strictEqual(fullComp.coveredCount, state.totalCells, 'All cells must be covered');
+
+  // Test Undo
+  const undoRes = undoMove(state);
+  assert.strictEqual(undoRes, true, 'Undo should succeed');
+
 });
 
 // 29. Security & Clean Static Deployment Verification

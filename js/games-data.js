@@ -138,14 +138,14 @@ const ARCADE_GAMES = [
     id: 'circuit-connect',
     title: 'Circuit Connect',
     category: 'Puzzle',
-    tags: ['puzzle', 'circuit', 'logic', 'connect', 'rotate', 'wire', 'grid', 'cyber', 'brain'],
+    tags: ['puzzle', 'circuit', 'color-chain', 'flow', 'logic', 'connect', 'wire', 'grid', 'brain'],
     badge: 'New',
-    tagline: 'Rotate tiles. Bridge overpasses. Power the grid.',
-    description: 'Rotate tiles and connect matching terminals to complete the electrical circuit before moves run out. Features 25+ progressive levels, multi-color power conduits, insulated bridge overpasses, procedural level generator, star efficiency ratings, and locally saved progression.',
+    tagline: 'Connect matching colors. Cover 100% of the board.',
+    description: 'Draw continuous glowing paths between matching colored neon dots across the grid. Every single cell on the board must be filled without crossing wires to complete the puzzle! Features 30 progressive handcrafted levels (5x5 to 8x8), smart hint solver, 3-star efficiency ratings, and local progression.',
     route: 'games/circuit-connect/index.html',
     thumbnail: 'assets/games/circuit-connect.svg',
-    controlsSummary: 'Click / Tap to Rotate Clockwise • Right-Click / Shift+Click for Counter-Clockwise • Arrow Keys / WASD to Select • Space to Rotate • U to Undo • R to Restart',
-    features: ['25+ Configurable Levels', 'Bridge Overpasses & Multi-Color', 'Efficiency Star Ratings', 'Progress Saved Locally']
+    controlsSummary: 'Click & Drag / Touch Swipe to Draw Path • Dragging Backward Backtracks • Arrow Keys / WASD + Spacebar to Navigate • H for Hint • U to Undo • R to Restart',
+    features: ['30 Progressive Levels', '100% Board Fill Constraint', 'Smart Hint Solver', 'Progress Saved Locally']
   }
 ];
 
