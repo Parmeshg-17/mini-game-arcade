@@ -1457,7 +1457,7 @@ it('sitemap.xml exists, is valid XML, and contains all 17 canonical pages', () =
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/contact'), 'sitemap.xml must include contact page');
   
   const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
-  assert.strictEqual(urls.length, 17, 'sitemap.xml must contain exactly 17 canonical URLs');
+  assert(urls.length >= 21, 'sitemap.xml must contain all canonical URLs including category hubs');
 });
 
 // 33. Technical SEO: 404 page error handling
@@ -1515,6 +1515,50 @@ it('Citrus Blitz page has H1, FAQ section, breadcrumbs, and crawlable related ga
   assert(cbHtml.includes('class="related-games-section"'), 'Must have crawlable related games grid');
   assert(cbHtml.includes('/games/dashverse'), 'Related games must link to Dashverse');
   assert(cbHtml.includes('/games/stack-rush'), 'Related games must link to Stack Rush');
+});
+
+
+// 36. PWA & Web App Manifest validation
+it('manifest.json and sw.js exist and are configured correctly for PWA installability', () => {
+  const manifestPath = path.join(__dirname, 'manifest.json');
+  assert(fs.existsSync(manifestPath), 'manifest.json must exist at project root');
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  assert.strictEqual(manifest.display, 'standalone', 'PWA display must be standalone');
+  assert.strictEqual(manifest.start_url, '/', 'start_url must be /');
+  assert(Array.isArray(manifest.icons) && manifest.icons.length >= 2, 'manifest must have icons');
+  
+  const swPath = path.join(__dirname, 'sw.js');
+  assert(fs.existsSync(swPath), 'sw.js must exist at project root');
+  const swCode = fs.readFileSync(swPath, 'utf8');
+  assert(swCode.includes('addEventListener(\'install\''), 'sw.js must have install listener');
+  assert(swCode.includes('addEventListener(\'fetch\''), 'sw.js must have fetch listener');
+});
+
+// 37. Category Cluster Hubs validation
+it('Category cluster hubs exist with H1, pre-rendered game cards, and CollectionPage schema', () => {
+  const categories = ['arcade', 'action', 'puzzle', 'casual'];
+  for (const cat of categories) {
+    const catPage = path.join(__dirname, 'category', cat, 'index.html');
+    assert(fs.existsSync(catPage), `Category hub /category/${cat} must exist`);
+    const html = fs.readFileSync(catPage, 'utf8');
+    assert(html.includes('<h1'), `Category ${cat} must have an H1`);
+    assert(html.includes('class="arcade-card"'), `Category ${cat} must have pre-rendered cards`);
+    assert(html.includes('CollectionPage'), `Category ${cat} must have CollectionPage schema`);
+    assert(html.includes('<link rel="canonical"'), `Category ${cat} must have canonical tag`);
+  }
+});
+
+// 38. Dashverse & Stack Rush dedicated FAQ and Guides validation
+it('Dashverse and Stack Rush have FAQ sections, related games, and FAQPage structured data', () => {
+  const dashHtml = fs.readFileSync(path.join(__dirname, 'games/dashverse/index.html'), 'utf8');
+  assert(dashHtml.includes('FAQPage'), 'Dashverse must have FAQPage schema');
+  assert(dashHtml.includes('Frequently Asked Questions'), 'Dashverse must have visible FAQ section');
+  assert(dashHtml.includes('related-games-section'), 'Dashverse must have related games section');
+
+  const stackHtml = fs.readFileSync(path.join(__dirname, 'games/stack-rush/index.html'), 'utf8');
+  assert(stackHtml.includes('FAQPage'), 'Stack Rush must have FAQPage schema');
+  assert(stackHtml.includes('Frequently Asked Questions'), 'Stack Rush must have visible FAQ section');
+  assert(stackHtml.includes('related-games-section'), 'Stack Rush must have related games section');
 });
 
 console.log(`\nQA Test Results: ${passedTests} / ${totalTests} passed.`);

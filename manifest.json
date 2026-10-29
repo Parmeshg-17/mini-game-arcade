@@ -1,0 +1,36 @@
+{
+  "name": "Mini Game Arcade — Free Online Browser Games",
+  "short_name": "Arcade",
+  "description": "Play original, lightweight arcade games instantly in your browser with zero downloads.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#10120f",
+  "theme_color": "#10120f",
+  "categories": [
+    "games",
+    "entertainment",
+    "arcade"
+  ],
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/icon.svg",
+      "sizes": "192x192 512x512 any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

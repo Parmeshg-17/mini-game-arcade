@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Online Action Games | Mini Game Arcade</title>
+  <meta name="description" content="Play free online action browser games at Mini Game Arcade. Sprint across neon skyscrapers in Dashverse, shatter bricks in Brick Breaker, and dodge asteroids in Space Dodge.">
+  <link rel="canonical" href="https://mini-game-arcade-coral.vercel.app/category/action">
+  <meta name="theme-color" content="#10120f">
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- OpenGraph -->
+  <meta property="og:site_name" content="Mini Game Arcade">
+  <meta property="og:title" content="Free Online Action Games | Mini Game Arcade">
+  <meta property="og:description" content="Play free online action browser games at Mini Game Arcade. Sprint across neon skyscrapers in Dashverse, shatter bricks in Brick Breaker, and dodge asteroids in Space Dodge.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mini-game-arcade-coral.vercel.app/category/action">
+  <meta property="og:image" content="https://mini-game-arcade-coral.vercel.app/assets/games/dashverse.svg">
+  <meta property="og:image:alt" content="Free Online Action Games">
+  <meta property="og:image:width" content="640">
+  <meta property="og:image:height" content="360">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Free Online Action Games | Mini Game Arcade">
+  <meta name="twitter:description" content="Play free online action browser games at Mini Game Arcade. Sprint across neon skyscrapers in Dashverse, shatter bricks in Brick Breaker, and dodge asteroids in Space Dodge.">
+  <meta name="twitter:image" content="https://mini-game-arcade-coral.vercel.app/assets/games/dashverse.svg">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://mini-game-arcade-coral.vercel.app/category/action#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://mini-game-arcade-coral.vercel.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Categories",
+          "item": "https://mini-game-arcade-coral.vercel.app/#games-section"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Action",
+          "item": "https://mini-game-arcade-coral.vercel.app/category/action"
+        }
+      ]
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": "https://mini-game-arcade-coral.vercel.app/category/action#webpage",
+      "name": "Free Online Action Games | Mini Game Arcade",
+      "url": "https://mini-game-arcade-coral.vercel.app/category/action",
+      "description": "Play free online action browser games at Mini Game Arcade. Sprint across neon skyscrapers in Dashverse, shatter bricks in Brick Breaker, and dodge asteroids in Space Dodge.",
+      "inLanguage": "en",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://mini-game-arcade-coral.vercel.app/#website"
+      }
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://mini-game-arcade-coral.vercel.app/category/action#games-list",
+      "name": "Action Games",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Brick Breaker",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/brick-breaker",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/brick-breaker.svg",
+            "genre": "Action",
+            "description": "A responsive retro-arcade breakout experience engineered with 100% Canvas 2D physics. Features angle-deflecting paddle rebounds, multi-ball chaos, expanding paddles, particle shatter bursts, and combo score multipliers."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Space Dodge",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/space-dodge",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/space-dodge.svg",
+            "genre": "Action",
+            "description": "Pilot an agile cyber starship through hazardous asteroid belts, dodging plasma comets and space mines. Squeeze past cosmic debris for near-miss bonuses, gather golden crystals, deploy kinetic energy shields, and trigger devastating EMP shockwaves across 3 progressive sectors or Endless Hyperspace."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Dashverse",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/dashverse",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/dashverse.svg",
+            "genre": "Action",
+            "description": "Embark on a high-octane parkour adventure through a neon-lit cyber metropolis. As Dash, vault chasms, double jump over roof vents, slide under overhead laser barriers, collect data shards, unlock cyber couriers, and complete mission-based deliveries."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Google Fonts: Space Grotesk & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/arcade.css">
+  <style>
+    .category-pills-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+      margin-bottom: 32px;
+    }
+    .cat-nav-pill {
+      font-family: var(--font-heading);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .cat-nav-pill:hover {
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+    }
+    .cat-nav-pill.active {
+      color: #10120f;
+      background: var(--accent-lime);
+      border-color: var(--accent-lime);
+    }
+    .cat-badge-count {
+      margin-left: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body class="arcade-body">
+
+  <!-- Global Header Navigation -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="site-logo" aria-label="Mini Game Arcade Homepage">
+        <div class="logo-mark">
+          <span class="logo-spark">✦</span>
+        </div>
+        <div class="logo-text-group">
+          <span class="logo-title">MINI GAME</span>
+          <span class="logo-subtitle">// ARCADE</span>
+        </div>
+      </a>
+
+      <nav class="site-nav" id="main-nav" aria-label="Main Navigation">
+        <a href="/" class="nav-link">All Games</a>
+        <a href="/category/arcade" class="nav-link ">Arcade</a>
+        <a href="/category/action" class="nav-link active">Action</a>
+        <a href="/category/puzzle" class="nav-link ">Puzzle</a>
+        <a href="/category/casual" class="nav-link ">Casual</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/contact" class="nav-link">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="/games/citrus-blitz" class="nav-cta-btn">
+          <span class="cta-dot"></span>
+          <span>Play Citrus Blitz</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Category Main Stage -->
+  <main class="arcade-main">
+    <div class="main-container">
+
+      <!-- Breadcrumbs -->
+      <nav aria-label="Breadcrumbs" style="margin-bottom: 24px;">
+        <ol style="list-style: none; display: flex; gap: 8px; font-size: 0.8125rem; font-family: var(--font-mono); color: var(--text-muted); padding: 0;">
+          <li><a href="/" style="color: var(--text-secondary); text-decoration: none;">Home</a></li>
+          <li>/</li>
+          <li><a href="/#games-section" style="color: var(--text-secondary); text-decoration: none;">Categories</a></li>
+          <li>/</li>
+          <li style="color: var(--accent-lime);">Action</li>
+        </ol>
+      </nav>
+
+      <!-- Category Hero Banner -->
+      <section class="category-hero" style="margin-bottom: 36px;">
+        <div class="hero-eyebrow">
+          <span class="hero-eyebrow-pip"></span>
+          <span class="hero-eyebrow-text">CATEGORY HUB // ACTION</span>
+        </div>
+
+        <h1 class="hero-title" style="font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 16px;">
+          Free Online Action Games
+        </h1>
+
+        <p class="hero-lead" style="max-width: 720px; font-size: 1.0625rem; color: var(--text-secondary); line-height: 1.6;">
+          High-octane reflexes and fast-paced thrill. Outmaneuver obstacles, execute near-miss dodges, and vault rooftops across our hand-crafted collection of free browser action games.
+        </p>
+
+        <!-- Category Nav Pills -->
+        <div class="category-pills-bar">
+          <a href="/" class="cat-nav-pill">All Games <span class="cat-badge-count">(12)</span></a>
+          <a href="/category/arcade" class="cat-nav-pill ">Arcade <span class="cat-badge-count">(3)</span></a>
+          <a href="/category/action" class="cat-nav-pill active">Action <span class="cat-badge-count">(3)</span></a>
+          <a href="/category/puzzle" class="cat-nav-pill ">Puzzle <span class="cat-badge-count">(4)</span></a>
+          <a href="/category/casual" class="cat-nav-pill ">Casual <span class="cat-badge-count">(2)</span></a>
+        </div>
+      </section>
+
+      <!-- Pre-rendered Game Grid -->
+      <section class="games-section" aria-label="Action Games Catalog">
+        <div class="games-grid">
+          
+        <!-- Game Card: Brick Breaker -->
+        <article class="arcade-card" data-game-id="brick-breaker">
+          <a href="/games/brick-breaker" class="card-media-wrapper" aria-label="Play Brick Breaker">
+            <img src="/assets/games/brick-breaker.svg" alt="Brick Breaker original illustration" class="card-thumb" width="480" height="270" loading="lazy" />
+            <div class="card-badges">
+              <span class="badge-category">Action</span>
+              <span class="badge-status">New</span>
+            </div>
+            <div class="card-hover-overlay">
+              <span class="hover-play-pill">Play Now →</span>
+            </div>
+          </a>
+
+          <div class="card-body">
+            <div class="card-header-row">
+              <h3 class="card-title">Brick Breaker</h3>
+              <span class="card-session-tag">Action</span>
+            </div>
+
+            <p class="card-tagline">Shatter neon bricks. Catch power-ups. Survive 3 waves.</p>
+            <p class="card-description">A responsive retro-arcade breakout experience engineered with 100% Canvas 2D physics. Features angle-deflecting paddle rebounds, multi-ball chaos, expanding paddles, particle shatter bursts, and combo score multipliers.</p>
+
+            <div class="card-features">
+              <span class="card-feature-pill">3 Progressive Waves</span>
+            <span class="card-feature-pill">Multi-Ball & Power-Ups</span>
+            <span class="card-feature-pill">Angle Reflection Physics</span>
+            <span class="card-feature-pill">Combo Streaks & High Scores</span>
+            </div>
+
+            <div class="card-footer-row">
+              <span class="card-control-hint">Mouse Drag or Touch • Arrow keys / A & D • Space to Launch/Pause • R to Restart • M to Mute</span>
+              <a href="/games/brick-breaker" class="card-play-btn" aria-label="Play Brick Breaker now">
+                <span>Play</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Game Card: Space Dodge -->
+        <article class="arcade-card" data-game-id="space-dodge">
+          <a href="/games/space-dodge" class="card-media-wrapper" aria-label="Play Space Dodge">
+            <img src="/assets/games/space-dodge.svg" alt="Space Dodge original illustration" class="card-thumb" width="480" height="270" loading="lazy" />
+            <div class="card-badges">
+              <span class="badge-category">Action</span>
+              <span class="badge-status">New</span>
+            </div>
+            <div class="card-hover-overlay">
+              <span class="hover-play-pill">Play Now →</span>
+            </div>
+          </a>
+
+          <div class="card-body">
+            <div class="card-header-row">
+              <h3 class="card-title">Space Dodge</h3>
+              <span class="card-session-tag">Action</span>
+            </div>
+
+            <p class="card-tagline">Pilot cyber starship. Dodge asteroids. Survive deep space.</p>
+            <p class="card-description">Pilot an agile cyber starship through hazardous asteroid belts, dodging plasma comets and space mines. Squeeze past cosmic debris for near-miss bonuses, gather golden crystals, deploy kinetic energy shields, and trigger devastating EMP shockwaves across 3 progressive sectors or Endless Hyperspace.</p>
+
+            <div class="card-features">
+              <span class="card-feature-pill">3 Sector Waves & Endless</span>
+            <span class="card-feature-pill">Energy Shields & EMP Blasts</span>
+            <span class="card-feature-pill">Near-Miss Dodge Streaks</span>
+            <span class="card-feature-pill">Parallax Starfield & Crystals</span>
+            </div>
+
+            <div class="card-footer-row">
+              <span class="card-control-hint">Mouse Drag or Touch • Arrow keys / WASD to fly • Space for EMP Blast • P to Pause • R to Restart • M to Mute</span>
+              <a href="/games/space-dodge" class="card-play-btn" aria-label="Play Space Dodge now">
+                <span>Play</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Game Card: Dashverse -->
+        <article class="arcade-card" data-game-id="dashverse">
+          <a href="/games/dashverse" class="card-media-wrapper" aria-label="Play Dashverse">
+            <img src="/assets/games/dashverse.svg" alt="Dashverse original illustration" class="card-thumb" width="480" height="270" loading="lazy" />
+            <div class="card-badges">
+              <span class="badge-category">Action</span>
+              <span class="badge-status">New</span>
+            </div>
+            <div class="card-hover-overlay">
+              <span class="hover-play-pill">Play Now →</span>
+            </div>
+          </a>
+
+          <div class="card-body">
+            <div class="card-header-row">
+              <h3 class="card-title">Dashverse</h3>
+              <span class="card-session-tag">Action</span>
+            </div>
+
+            <p class="card-tagline">Vault rooftops. Slide lasers. Deliver packages.</p>
+            <p class="card-description">Embark on a high-octane parkour adventure through a neon-lit cyber metropolis. As Dash, vault chasms, double jump over roof vents, slide under overhead laser barriers, collect data shards, unlock cyber couriers, and complete mission-based deliveries.</p>
+
+            <div class="card-features">
+              <span class="card-feature-pill">Endless Rooftop Runner</span>
+            <span class="card-feature-pill">Unlockable Runners & Perks</span>
+            <span class="card-feature-pill">Missions & Daily Challenges</span>
+            <span class="card-feature-pill">Personal Best & Double Jump</span>
+            </div>
+
+            <div class="card-footer-row">
+              <span class="card-control-hint">Up / W / Space to Jump & Double Jump • Down / S to Slide • Tap / Swipe on Mobile • Dedicated On-Screen Thumb Buttons • P to Pause • R to Restart • M to Mute</span>
+              <a href="/games/dashverse" class="card-play-btn" aria-label="Play Dashverse now">
+                <span>Play</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+        </div>
+      </section>
+
+      <!-- Editorial Overview Section -->
+      
+      <section class="category-editorial-section" style="margin-top: 48px; border-top: 1px solid var(--border-subtle); padding-top: 36px;">
+        <h2 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--text-primary); margin-bottom: 12px;">Fast-Paced Reflexes & Pure Momentum</h2>
+        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;">
+          Action games test dynamic spatial awareness, reaction speed, and precision timing. Our action lineup is engineered from scratch with crisp 60 FPS physics engines that respond instantly to keyboard, mouse, and touch inputs.
+        </p>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          Take to the neon skyline in <strong>Dashverse</strong> with fluid double-jumps and laser slides, or survive deep space hazards in <strong>Space Dodge</strong> where close calls reward bonus points. Every game loads in under a second with zero friction.
+        </p>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top-row">
+        <div class="footer-brand">
+          <span class="logo-title">MINI GAME // ARCADE</span>
+          <p class="footer-tagline">Small Games. Big Replay Energy. Free in your browser.</p>
+        </div>
+        <div class="footer-links">
+          <a href="/" class="footer-link">Home</a>
+          <a href="/category/arcade" class="footer-link">Arcade</a>
+          <a href="/category/action" class="footer-link">Action</a>
+          <a href="/category/puzzle" class="footer-link">Puzzle</a>
+          <a href="/category/casual" class="footer-link">Casual</a>
+          <a href="/about" class="footer-link">About</a>
+          <a href="/contact" class="footer-link">Contact</a>
+          <a href="/privacy" class="footer-link">Privacy Policy</a>
+          <a href="/terms" class="footer-link">Terms of Service</a>
+        </div>
+      </div>
+      <div class="footer-bottom-row">
+        <p class="footer-copy">&copy; 2026 Mini Game Arcade. All games are original and playable free with zero downloads.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Online Casual Games | Mini Game Arcade</title>
+  <meta name="description" content="Relax and unwind with free casual browser games. Pop matching bubbles with angle reflections in Bubble Pop and sharpen memory with themed card matching.">
+  <link rel="canonical" href="https://mini-game-arcade-coral.vercel.app/category/casual">
+  <meta name="theme-color" content="#10120f">
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- OpenGraph -->
+  <meta property="og:site_name" content="Mini Game Arcade">
+  <meta property="og:title" content="Free Online Casual Games | Mini Game Arcade">
+  <meta property="og:description" content="Relax and unwind with free casual browser games. Pop matching bubbles with angle reflections in Bubble Pop and sharpen memory with themed card matching.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mini-game-arcade-coral.vercel.app/category/casual">
+  <meta property="og:image" content="https://mini-game-arcade-coral.vercel.app/assets/games/bubble-pop.svg">
+  <meta property="og:image:alt" content="Free Online Casual Games">
+  <meta property="og:image:width" content="640">
+  <meta property="og:image:height" content="360">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Free Online Casual Games | Mini Game Arcade">
+  <meta name="twitter:description" content="Relax and unwind with free casual browser games. Pop matching bubbles with angle reflections in Bubble Pop and sharpen memory with themed card matching.">
+  <meta name="twitter:image" content="https://mini-game-arcade-coral.vercel.app/assets/games/bubble-pop.svg">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://mini-game-arcade-coral.vercel.app/category/casual#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://mini-game-arcade-coral.vercel.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Categories",
+          "item": "https://mini-game-arcade-coral.vercel.app/#games-section"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Casual",
+          "item": "https://mini-game-arcade-coral.vercel.app/category/casual"
+        }
+      ]
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": "https://mini-game-arcade-coral.vercel.app/category/casual#webpage",
+      "name": "Free Online Casual Games | Mini Game Arcade",
+      "url": "https://mini-game-arcade-coral.vercel.app/category/casual",
+      "description": "Relax and unwind with free casual browser games. Pop matching bubbles with angle reflections in Bubble Pop and sharpen memory with themed card matching.",
+      "inLanguage": "en",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://mini-game-arcade-coral.vercel.app/#website"
+      }
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://mini-game-arcade-coral.vercel.app/category/casual#games-list",
+      "name": "Casual Games",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Memory Match",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/memory-match",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/memory-match.svg",
+            "genre": "Casual",
+            "description": "Challenge your visual recall across Easy (8 cards), Medium (16 cards), and Hard (24 cards) modes. Features 3D card-flip animations, synthesized Web Audio effects, moves counter, match timer, and star ratings."
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Bubble Pop",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/bubble-pop",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/bubble-pop.svg",
+            "genre": "Casual",
+            "description": "A classic arcade bubble shooter featuring reflective laser aiming, hexagonal grid snapping, Match-3 bursting, and falling island avalanches. Aim ricochet trick shots off side walls, swap colors, and deploy power boosters."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Google Fonts: Space Grotesk & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/arcade.css">
+  <style>
+    .category-pills-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+      margin-bottom: 32px;
+    }
+    .cat-nav-pill {
+      font-family: var(--font-heading);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .cat-nav-pill:hover {
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+    }
+    .cat-nav-pill.active {
+      color: #10120f;
+      background: var(--accent-lime);
+      border-color: var(--accent-lime);
+    }
+    .cat-badge-count {
+      margin-left: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body class="arcade-body">
+
+  <!-- Global Header Navigation -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="site-logo" aria-label="Mini Game Arcade Homepage">
+        <div class="logo-mark">
+          <span class="logo-spark">✦</span>
+        </div>
+        <div class="logo-text-group">
+          <span class="logo-title">MINI GAME</span>
+          <span class="logo-subtitle">// ARCADE</span>
+        </div>
+      </a>
+
+      <nav class="site-nav" id="main-nav" aria-label="Main Navigation">
+        <a href="/" class="nav-link">All Games</a>
+        <a href="/category/arcade" class="nav-link ">Arcade</a>
+        <a href="/category/action" class="nav-link ">Action</a>
+        <a href="/category/puzzle" class="nav-link ">Puzzle</a>
+        <a href="/category/casual" class="nav-link active">Casual</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/contact" class="nav-link">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="/games/citrus-blitz" class="nav-cta-btn">
+          <span class="cta-dot"></span>
+          <span>Play Citrus Blitz</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Category Main Stage -->
+  <main class="arcade-main">
+    <div class="main-container">
+
+      <!-- Breadcrumbs -->
+      <nav aria-label="Breadcrumbs" style="margin-bottom: 24px;">
+        <ol style="list-style: none; display: flex; gap: 8px; font-size: 0.8125rem; font-family: var(--font-mono); color: var(--text-muted); padding: 0;">
+          <li><a href="/" style="color: var(--text-secondary); text-decoration: none;">Home</a></li>
+          <li>/</li>
+          <li><a href="/#games-section" style="color: var(--text-secondary); text-decoration: none;">Categories</a></li>
+          <li>/</li>
+          <li style="color: var(--accent-lime);">Casual</li>
+        </ol>
+      </nav>
+
+      <!-- Category Hero Banner -->
+      <section class="category-hero" style="margin-bottom: 36px;">
+        <div class="hero-eyebrow">
+          <span class="hero-eyebrow-pip"></span>
+          <span class="hero-eyebrow-text">CATEGORY HUB // CASUAL</span>
+        </div>
+
+        <h1 class="hero-title" style="font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 16px;">
+          Free Online Casual Games
+        </h1>
+
+        <p class="hero-lead" style="max-width: 720px; font-size: 1.0625rem; color: var(--text-secondary); line-height: 1.6;">
+          Relaxing, approachable games for all ages. Enjoy satisfying bubble pops, card pairs, and casual gameplay sessions with no pressure and instant accessibility.
+        </p>
+
+        <!-- Category Nav Pills -->
+        <div class="category-pills-bar">
+          <a href="/" class="cat-nav-pill">All Games <span class="cat-badge-count">(12)</span></a>
+          <a href="/category/arcade" class="cat-nav-pill ">Arcade <span class="cat-badge-count">(3)</span></a>
+          <a href="/category/action" class="cat-nav-pill ">Action <span class="cat-badge-count">(3)</span></a>
+          <a href="/category/puzzle" class="cat-nav-pill ">Puzzle <span class="cat-badge-count">(4)</span></a>
+          <a href="/category/casual" class="cat-nav-pill active">Casual <span class="cat-badge-count">(2)</span></a>
+        </div>
+      </section>
+
+      <!-- Pre-rendered Game Grid -->
+      <section class="games-section" aria-label="Casual Games Catalog">
+        <div class="games-grid">
+          
+        <!-- Game Card: Memory Match -->
+        <article class="arcade-card" data-game-id="memory-match">
+          <a href="/games/memory-match" class="card-media-wrapper" aria-label="Play Memory Match">
+            <img src="/assets/games/memory-match.svg" alt="Memory Match original illustration" class="card-thumb" width="480" height="270" loading="lazy" />
+            <div class="card-badges">
+              <span class="badge-category">Casual</span>
+              <span class="badge-status">New</span>
+            </div>
+            <div class="card-hover-overlay">
+              <span class="hover-play-pill">Play Now →</span>
+            </div>
+          </a>
+
+          <div class="card-body">
+            <div class="card-header-row">
+              <h3 class="card-title">Memory Match</h3>
+              <span class="card-session-tag">Casual</span>
+            </div>
+
+            <p class="card-tagline">Flip cards. Find pairs. Beat the clock.</p>
+            <p class="card-description">Challenge your visual recall across Easy (8 cards), Medium (16 cards), and Hard (24 cards) modes. Features 3D card-flip animations, synthesized Web Audio effects, moves counter, match timer, and star ratings.</p>
+
+            <div class="card-features">
+              <span class="card-feature-pill">3 Modes: Easy, Med & Hard</span>
+            <span class="card-feature-pill">3D Card Flip Animation</span>
+            <span class="card-feature-pill">Timer & Move Counter</span>
+            <span class="card-feature-pill">Star Rating & High Scores</span>
+            </div>
+
+            <div class="card-footer-row">
+              <span class="card-control-hint">Click or Tap to flip cards • Arrow keys + Enter/Space • R to Restart • M to Mute</span>
+              <a href="/games/memory-match" class="card-play-btn" aria-label="Play Memory Match now">
+                <span>Play</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Game Card: Bubble Pop -->
+        <article class="arcade-card" data-game-id="bubble-pop">
+          <a href="/games/bubble-pop" class="card-media-wrapper" aria-label="Play Bubble Pop">
+            <img src="/assets/games/bubble-pop.svg" alt="Bubble Pop original illustration" class="card-thumb" width="480" height="270" loading="lazy" />
+            <div class="card-badges">
+              <span class="badge-category">Casual</span>
+              <span class="badge-status">New</span>
+            </div>
+            <div class="card-hover-overlay">
+              <span class="hover-play-pill">Play Now →</span>
+            </div>
+          </a>
+
+          <div class="card-body">
+            <div class="card-header-row">
+              <h3 class="card-title">Bubble Pop</h3>
+              <span class="card-session-tag">Casual</span>
+            </div>
+
+            <p class="card-tagline">Aim laser ricochets. Match 3+ bubbles. Trigger avalanches.</p>
+            <p class="card-description">A classic arcade bubble shooter featuring reflective laser aiming, hexagonal grid snapping, Match-3 bursting, and falling island avalanches. Aim ricochet trick shots off side walls, swap colors, and deploy power boosters.</p>
+
+            <div class="card-features">
+              <span class="card-feature-pill">Laser Ricochet Aiming</span>
+            <span class="card-feature-pill">Hexagonal Grid & Avalanches</span>
+            <span class="card-feature-pill">Ammo Counter & Bubble Swap</span>
+            <span class="card-feature-pill">Bomb & Power Boosters</span>
+            </div>
+
+            <div class="card-footer-row">
+              <span class="card-control-hint">Mouse Drag or Touch to aim • Click/Release to fire • Tap Next Bubble or S to Swap • P to Pause • R to Restart</span>
+              <a href="/games/bubble-pop" class="card-play-btn" aria-label="Play Bubble Pop now">
+                <span>Play</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+        </div>
+      </section>
+
+      <!-- Editorial Overview Section -->
+      
+      <section class="category-editorial-section" style="margin-top: 48px; border-top: 1px solid var(--border-subtle); padding-top: 36px;">
+        <h2 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--text-primary); margin-bottom: 12px;">Approachable Fun for Quick Mental Breaks</h2>
+        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;">
+          Casual games provide calming, satisfying gameplay loops that are easy to pick up and impossible to put down. With clean neon aesthetics and tactile audio effects, our casual games offer the perfect mental reset during a busy day.
+        </p>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          Aim bank shots to trigger island avalanches in <strong>Bubble Pop</strong>, or test your recall across Easy, Medium, and Hard difficulty decks in <strong>Memory Match</strong>. Zero installs, instant restarts, and smooth performance on every screen.
+        </p>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top-row">
+        <div class="footer-brand">
+          <span class="logo-title">MINI GAME // ARCADE</span>
+          <p class="footer-tagline">Small Games. Big Replay Energy. Free in your browser.</p>
+        </div>
+        <div class="footer-links">
+          <a href="/" class="footer-link">Home</a>
+          <a href="/category/arcade" class="footer-link">Arcade</a>
+          <a href="/category/action" class="footer-link">Action</a>
+          <a href="/category/puzzle" class="footer-link">Puzzle</a>
+          <a href="/category/casual" class="footer-link">Casual</a>
+          <a href="/about" class="footer-link">About</a>
+          <a href="/contact" class="footer-link">Contact</a>
+          <a href="/privacy" class="footer-link">Privacy Policy</a>
+          <a href="/terms" class="footer-link">Terms of Service</a>
+        </div>
+      </div>
+      <div class="footer-bottom-row">
+        <p class="footer-copy">&copy; 2026 Mini Game Arcade. All games are original and playable free with zero downloads.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

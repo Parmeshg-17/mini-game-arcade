@@ -6,3 +6,4 @@ Allow: /
 
 # Sitemap Location
 Sitemap: https://mini-game-arcade-coral.vercel.app/sitemap.xml
+

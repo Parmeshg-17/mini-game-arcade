@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Free Online Arcade Games | Mini Game Arcade</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
   <meta name="description" content="Play free online arcade games instantly at Mini Game Arcade. Slice fruit in Citrus Blitz, chase high scores, and discover fun browser games on desktop and mobile.">
   <link rel="canonical" href="https://mini-game-arcade-coral.vercel.app/">
   <meta name="theme-color" content="#10120f">
@@ -340,12 +342,14 @@
       </button>
 
       <nav class="main-nav" id="main-nav" aria-label="Main Navigation">
-        <a href="index.html" class="nav-link active">Games</a>
-        <a href="about.html" class="nav-link">About</a>
-        <a href="contact.html" class="nav-link">Contact</a>
-        <a href="privacy.html" class="nav-link">Privacy Policy</a>
-        <a href="terms.html" class="nav-link">Terms</a>
-        <a href="games/citrus-blitz/index.html" class="nav-cta">
+        <a href="/" class="nav-link active">Games</a>
+        <a href="/category/arcade" class="nav-link">Arcade</a>
+        <a href="/category/action" class="nav-link">Action</a>
+        <a href="/category/puzzle" class="nav-link">Puzzle</a>
+        <a href="/category/casual" class="nav-link">Casual</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/games/citrus-blitz" class="nav-cta">
           <span class="nav-cta-pip"></span>
           <span>Play Citrus Blitz</span>
         </a>
@@ -437,7 +441,11 @@
       <!-- Discovery Toolbar: Categories & Search -->
       <div class="discovery-toolbar">
         <div id="category-filters" class="category-tabs" aria-label="Filter games by category">
-          <!-- Rendered dynamically by js/arcade.js -->
+          <button type="button" class="filter-pill active" data-category="All">All</button>
+          <a href="/category/arcade" class="filter-pill" data-category="Arcade">Arcade</a>
+          <a href="/category/action" class="filter-pill" data-category="Action">Action</a>
+          <a href="/category/puzzle" class="filter-pill" data-category="Puzzle">Puzzle</a>
+          <a href="/category/casual" class="filter-pill" data-category="Casual">Casual</a>
         </div>
 
         <div class="search-box-wrapper">
@@ -1082,5 +1090,17 @@
   <!-- Scripts (with cache-busting version query) -->
   <script src="js/games-data.js?v=4"></script>
   <script src="js/arcade.js?v=4"></script>
+  <!-- Service Worker Registration for PWA Support -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').then(function(reg) {
+          console.log('Mini Game Arcade PWA registered:', reg.scope);
+        }).catch(function(err) {
+          console.warn('PWA registration failed:', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
