@@ -1568,7 +1568,10 @@ it('AdSense configuration and ad-unit controller exist with safe preparation mod
   assert(fs.existsSync(configPath), 'js/ads-config.js must exist');
   const configContent = fs.readFileSync(configPath, 'utf8');
   assert(configContent.includes('ca-pub-6654460587836639'), 'Must contain actual Publisher Client ID');
-  assert(configContent.includes('enabled: false'), 'Must be disabled by default (Preparation Mode)');
+  assert(configContent.includes('enabled: true'), 'Must be enabled with active ad units');
+  assert(configContent.includes('9639138053'), 'Must contain Home Top slot ID');
+  assert(configContent.includes('6863754725'), 'Must contain Home List slot ID');
+  assert(configContent.includes('2158222958'), 'Must contain Game Bottom slot ID');
 
   const adUnitPath = path.join(__dirname, 'js/ad-unit.js');
   assert(fs.existsSync(adUnitPath), 'js/ad-unit.js must exist');
