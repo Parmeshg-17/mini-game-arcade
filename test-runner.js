@@ -113,7 +113,7 @@ it('Dedicated game page (games/citrus-blitz/index.html) has all DOM elements req
   }
 
   // Verify navigation back link to arcade exists
-  assert(gameHtml.includes('href="../../index.html"'), 'Game page must link back to arcade homepage');
+  assert(gameHtml.includes('href="/"') || gameHtml.includes('href="../../index.html"'), 'Game page must link back to arcade homepage');
 });
 
 // 5. Original Vector Artwork Validation
@@ -247,7 +247,7 @@ it('Dedicated Tic Tac Toe page (games/tic-tac-toe/index.html) has all DOM elemen
   }
 
   // Verify navigation back link to arcade exists
-  assert(tttHtml.includes('href="../../index.html"'), 'Tic Tac Toe page must link back to arcade homepage');
+  assert(tttHtml.includes('href="/"') || tttHtml.includes('href="../../index.html"'), 'Tic Tac Toe page must link back to arcade homepage');
 });
 
 // 8. Tic Tac Toe AI Decision Engine & Minimax Logic
@@ -303,7 +303,7 @@ it('Dedicated Memory Match page (games/memory-match/index.html) has all DOM elem
   }
 
   // Verify navigation back link to arcade exists
-  assert(memHtml.includes('href="../../index.html"'), 'Memory Match page must link back to arcade homepage');
+  assert(memHtml.includes('href="/"') || memHtml.includes('href="../../index.html"'), 'Memory Match page must link back to arcade homepage');
 });
 
 // 10. Memory Match Deck Generator & Modes Logic
@@ -351,7 +351,7 @@ it('Dedicated Brick Breaker page (games/brick-breaker/index.html) has all DOM el
   }
 
   // Verify navigation back link to arcade exists
-  assert(bbHtml.includes('href="../../index.html"'), 'Brick Breaker page must link back to arcade homepage');
+  assert(bbHtml.includes('href="/"') || bbHtml.includes('href="../../index.html"'), 'Brick Breaker page must link back to arcade homepage');
 });
 
 // 12. Brick Breaker Levels & Paddle Physics Logic
@@ -436,7 +436,7 @@ it('Dedicated Bubble Pop page (games/bubble-pop/index.html) has all DOM elements
   }
 
   // Verify navigation back link to arcade exists
-  assert(bpHtml.includes('href="../../index.html"'), 'Bubble Pop page must link back to arcade homepage');
+  assert(bpHtml.includes('href="/"') || bpHtml.includes('href="../../index.html"'), 'Bubble Pop page must link back to arcade homepage');
 });
 
 // 15. Bubble Pop Hexagonal Physics, Trajectory & Match-3 Engine
@@ -516,7 +516,7 @@ it('Dedicated Space Dodge page (games/space-dodge/index.html) has all DOM elemen
   }
 
   // Verify navigation back link to arcade exists
-  assert(sdHtml.includes('href="../../index.html"'), 'Space Dodge page must link back to arcade homepage');
+  assert(sdHtml.includes('href="/"') || sdHtml.includes('href="../../index.html"'), 'Space Dodge page must link back to arcade homepage');
 });
 
 // 17. Space Dodge Flight Physics, Collision & Near-Miss Engine
@@ -582,7 +582,7 @@ it('Dedicated Number Puzzle page (games/number-puzzle/index.html) has all DOM el
   }
 
   // Verify navigation back link to arcade exists
-  assert(npHtml.includes('href="../../index.html"'), 'Number Puzzle page must link back to arcade homepage');
+  assert(npHtml.includes('href="/"') || npHtml.includes('href="../../index.html"'), 'Number Puzzle page must link back to arcade homepage');
 });
 
 // 19. Number Puzzle (15-Puzzle) Sliding Mechanics, Solvability & Scoring Engine
@@ -662,7 +662,7 @@ it('Dedicated Tap Challenge page (games/tap-challenge/index.html) has all DOM el
   }
 
   // Verify navigation back link to arcade exists
-  assert(tpHtml.includes('href="../../index.html"'), 'Tap Challenge page must link back to arcade homepage');
+  assert(tpHtml.includes('href="/"') || tpHtml.includes('href="../../index.html"'), 'Tap Challenge page must link back to arcade homepage');
 });
 
 // 21. Tap Challenge Engine Mechanics, Modes, CPS, Combos & Scoring
@@ -747,7 +747,7 @@ it('Dedicated Block Puzzle page (games/block-puzzle/index.html) has all DOM elem
   }
 
   // Verify navigation back link to arcade exists
-  assert(bpHtml.includes('href="../../index.html"'), 'Block Puzzle page must link back to arcade homepage');
+  assert(bpHtml.includes('href="/"') || bpHtml.includes('href="../../index.html"'), 'Block Puzzle page must link back to arcade homepage');
 });
 
 // 23. Block Puzzle (8x8 Grid) Placement Physics, Line Blasts & Game-Over Evaluation
@@ -893,7 +893,7 @@ it('Dedicated Stack Rush page (games/stack-rush/index.html) has all DOM elements
   }
 
   // Verify navigation back link to arcade exists
-  assert(gameHtml.includes('href="../../index.html"'), 'Stack Rush must link back to arcade homepage');
+  assert(gameHtml.includes('href="/"') || gameHtml.includes('href="../../index.html"'), 'Stack Rush must link back to arcade homepage');
 
   // Verify vector thumbnail exists
   const thumbPath = path.join(__dirname, 'assets/games/stack-rush.svg');
@@ -1098,7 +1098,7 @@ it('Dedicated Circuit Connect page (games/circuit-connect/index.html) has all DO
   }
 
   // Verify navigation back link to arcade exists
-  assert(gameHtml.includes('href="../../index.html"'), 'Circuit Connect must link back to arcade homepage');
+  assert(gameHtml.includes('href="/"') || gameHtml.includes('href="../../index.html"'), 'Circuit Connect must link back to arcade homepage');
 
   // Verify vector thumbnail exists
   const thumbPath = path.join(__dirname, 'assets/games/circuit-connect.svg');
@@ -1304,7 +1304,7 @@ it('Dedicated Dashverse page (games/dashverse/index.html) has all DOM elements r
   }
 
   // Verify navigation back link to arcade exists
-  assert(gameHtml.includes('href="../../index.html"'), 'Dashverse must link back to arcade homepage');
+  assert(gameHtml.includes('href="/"') || gameHtml.includes('href="../../index.html"'), 'Dashverse must link back to arcade homepage');
 
   // Verify vector thumbnail exists
   const thumbPath = path.join(__dirname, 'assets/games/dashverse.svg');

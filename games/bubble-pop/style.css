@@ -639,3 +639,194 @@ body.game-page-body {
   }
 }
 
+
+
+/* ==========================================================================
+   SEO & ENGAGEMENT: FAQ & MORE GAMES SECTION
+   ========================================================================== */
+
+.faq-container {
+  margin-top: 36px;
+  border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  padding-top: 32px;
+}
+
+.faq-title {
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: var(--text-primary, #fff);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 768px) {
+  .faq-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.faq-card {
+  background: var(--bg-card, rgba(16, 18, 15, 0.8));
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 8px;
+  padding: 20px;
+  transition: border-color 0.2s ease;
+}
+
+.faq-card:hover {
+  border-color: rgba(213, 255, 85, 0.4);
+}
+
+.faq-q {
+  font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent-lime, #d5ff55);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.faq-a {
+  font-size: 0.85rem;
+  color: var(--text-muted, #a7ada0);
+  line-height: 1.6;
+}
+
+/* Related Games Grid */
+.related-games-section {
+  margin-top: 40px;
+  border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  padding-top: 32px;
+}
+
+.related-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.related-title {
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: var(--text-primary, #fff);
+}
+
+.related-view-all {
+  font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--accent-lime, #d5ff55);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.2s;
+}
+
+.related-view-all:hover {
+  opacity: 0.8;
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.related-card {
+  background: var(--bg-card, rgba(16, 18, 15, 0.8));
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.related-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(213, 255, 85, 0.4);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+}
+
+.related-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #090a08;
+  overflow: hidden;
+}
+
+.related-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.related-card:hover .related-thumb {
+  transform: scale(1.05);
+}
+
+.related-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(16, 18, 15, 0.85);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--accent-lime, #d5ff55);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.related-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.related-name {
+  font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary, #fff);
+  margin-bottom: 4px;
+}
+
+.related-desc {
+  font-size: 0.78125rem;
+  color: var(--text-muted, #a7ada0);
+  line-height: 1.5;
+  margin-bottom: 12px;
+  flex: 1;
+}
+
+.related-play-link {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-lime, #d5ff55);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}

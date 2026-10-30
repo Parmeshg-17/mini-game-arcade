@@ -89,6 +89,44 @@
         "priceCurrency": "USD",
         "availability": "https://schema.org/InStock"
       }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/bubble-pop#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do you pop bubbles in Bubble Pop?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Aim your launcher and shoot bubbles to match 3 or more of the same color, popping them from the ceiling cluster."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is an avalanche drop?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Any bubbles that become disconnected from the ceiling anchor points automatically collapse and fall for massive avalanche bonus scores."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you bounce bubbles off the walls?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, bank shots off the left and right walls allow you to thread bubbles into hard-to-reach pockets and high clusters."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do touch controls work on mobile?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Drag your finger on screen to guide the aiming trajectory laser, then release to launch the bubble with precision."
+          }
+        }
+      ]
     }
   ]
 }
@@ -103,15 +141,15 @@
   <!-- Arcade Top Navigation Bar -->
   <nav class="arcade-nav-bar" aria-label="Game page navigation">
     <div class="nav-content-container">
-      <a href="../../index.html" class="back-link">
+      <a href="/" class="back-link">
         <span class="back-arrow">←</span>
         <span>Back to Arcade</span>
       </a>
 
       <div class="breadcrumbs">
-        <a href="../../index.html">Home</a>
+        <a href="/">Home</a>
         <span class="crumb-separator">/</span>
-        <a href="../../index.html#games-section">Games</a>
+        <a href="/#games-section">Games</a>
         <span class="crumb-separator">/</span>
         <span class="crumb-current">Bubble Pop</span>
       </div>
@@ -284,16 +322,128 @@
     </section>
 
     <!-- Quick Footer Links -->
-    <footer class="game-page-footer">
-      <p>&copy; 2026 Mini Game Arcade. All games are original and free to play.</p>
-      <div class="footer-links">
-        <a href="../../index.html">Arcade Home</a>
-        <a href="../../about.html">About</a>
-        <a href="../../contact.html">Contact</a>
-        <a href="../../privacy.html">Privacy Policy</a>
-        <a href="../../terms.html">Terms of Service</a>
+    
+      <!-- Visible FAQ Section matching Schema.org -->
+      <div class="faq-container">
+        <h3 class="faq-title">Frequently Asked Questions</h3>
+        <div class="faq-grid">
+
+          <div class="faq-card">
+            <h4 class="faq-q">How do you pop bubbles in Bubble Pop?</h4>
+            <p class="faq-a">Aim your launcher and shoot bubbles to match 3 or more of the same color, popping them from the ceiling cluster.</p>
+          </div>
+
+          <div class="faq-card">
+            <h4 class="faq-q">What is an avalanche drop?</h4>
+            <p class="faq-a">Any bubbles that become disconnected from the ceiling anchor points automatically collapse and fall for massive avalanche bonus scores.</p>
+          </div>
+
+          <div class="faq-card">
+            <h4 class="faq-q">Can you bounce bubbles off the walls?</h4>
+            <p class="faq-a">Yes, bank shots off the left and right walls allow you to thread bubbles into hard-to-reach pockets and high clusters.</p>
+          </div>
+
+          <div class="faq-card">
+            <h4 class="faq-q">How do touch controls work on mobile?</h4>
+            <p class="faq-a">Drag your finger on screen to guide the aiming trajectory laser, then release to launch the bubble with precision.</p>
+          </div>
+        </div>
       </div>
-    </footer>
+
+      <!-- Crawlable Related Games Section -->
+      <div class="related-games-section">
+        <div class="related-header">
+          <h3 class="related-title">More Free Arcade &amp; Puzzle Games</h3>
+          <a href="/#games-section" class="related-view-all">View All 12 Games →</a>
+        </div>
+        <div class="related-grid">
+
+          <a href="/games/citrus-blitz" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/citrus-blitz.svg" alt="Citrus Blitz Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Arcade</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Citrus Blitz</h4>
+              <p class="related-desc">Slice fast. Chain combos. Beat your best.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/tic-tac-toe" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/tic-tac-toe.svg" alt="Tic Tac Toe Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Puzzle</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Tic Tac Toe</h4>
+              <p class="related-desc">Claim three in a row. Me vs Bot & 2 Players.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/memory-match" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/memory-match.svg" alt="Memory Match Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Casual</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Memory Match</h4>
+              <p class="related-desc">Flip cards. Find pairs. Beat the clock.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/brick-breaker" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/brick-breaker.svg" alt="Brick Breaker Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Action</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Brick Breaker</h4>
+              <p class="related-desc">Shatter neon bricks. Catch power-ups. Survive 3 waves.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/space-dodge" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/space-dodge.svg" alt="Space Dodge Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Action</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Space Dodge</h4>
+              <p class="related-desc">Pilot cyber starship. Dodge asteroids. Survive deep space.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/number-puzzle" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/number-puzzle.svg" alt="Number Puzzle Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Puzzle</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Number Puzzle</h4>
+              <p class="related-desc">Slide tiles. Order numbers 1 to 15. Beat the clock.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+
+      <!-- Quick Arcade Links Footer -->
+      <footer class="game-page-footer" style="margin-top: 40px; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.08)); padding-top: 24px; text-align: center;">
+        <p style="color: var(--text-muted, #a7ada0); font-size: 0.8125rem; margin-bottom: 0.75rem;">&copy; 2026 Mini Game Arcade. All games are original and free to play online.</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="/" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">Arcade Home</a>
+          <a href="/about" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">About</a>
+          <a href="/contact" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">Contact</a>
+          <a href="/privacy" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">Privacy Policy</a>
+          <a href="/terms" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">Terms of Service</a>
+        </div>
+      </footer>
 
   </main>
 

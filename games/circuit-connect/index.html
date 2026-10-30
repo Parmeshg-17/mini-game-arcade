@@ -89,6 +89,44 @@
         "priceCurrency": "USD",
         "availability": "https://schema.org/InStock"
       }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/circuit-connect#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the objective of Circuit Connect?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Draw continuous electrical paths between matching colored neon terminals. Every single cell on the board must be filled without crossing wires."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are bridge overpass tiles?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Bridge overpasses are insulated conduit crossings that allow two perpendicular electrical paths to traverse the same cell without short-circuiting."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does the hint system work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "When you get stuck, click Hint to reveal the next optimal conduit segment leading toward a valid solution."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How many levels are included?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Circuit Connect features 30 progressive handcrafted levels ranging from starter 5x5 grids up to complex 8x8 master circuits with saved local progress."
+          }
+        }
+      ]
     }
   ]
 }
@@ -100,15 +138,15 @@
   <!-- Top Sticky Navigation Bar -->
   <nav class="arcade-nav-bar" aria-label="Game navigation">
     <div class="nav-content-container">
-      <a href="../../index.html" class="back-link" aria-label="Return to Mini Game Arcade Homepage">
+      <a href="/" class="back-link" aria-label="Return to Mini Game Arcade Homepage">
         <span>←</span>
         <span>Back to Arcade</span>
       </a>
 
       <div class="breadcrumbs" aria-label="Breadcrumbs">
-        <a href="../../index.html">Home</a>
+        <a href="/">Home</a>
         <span class="bc-sep">/</span>
-        <a href="../../index.html#games-section">Games</a>
+        <a href="/#games-section">Games</a>
         <span class="bc-sep">/</span>
         <span class="bc-current">Circuit Connect</span>
       </div>
@@ -304,9 +342,128 @@
       </div>
     </section>
 
-    <footer class="stage-footer">
-      <a href="../../index.html" class="footer-back-link">← Return to Mini Game Arcade Homepage</a>
-    </footer>
+    
+      <!-- Visible FAQ Section matching Schema.org -->
+      <div class="faq-container">
+        <h3 class="faq-title">Frequently Asked Questions</h3>
+        <div class="faq-grid">
+
+          <div class="faq-card">
+            <h4 class="faq-q">What is the objective of Circuit Connect?</h4>
+            <p class="faq-a">Draw continuous electrical paths between matching colored neon terminals. Every single cell on the board must be filled without crossing wires.</p>
+          </div>
+
+          <div class="faq-card">
+            <h4 class="faq-q">What are bridge overpass tiles?</h4>
+            <p class="faq-a">Bridge overpasses are insulated conduit crossings that allow two perpendicular electrical paths to traverse the same cell without short-circuiting.</p>
+          </div>
+
+          <div class="faq-card">
+            <h4 class="faq-q">How does the hint system work?</h4>
+            <p class="faq-a">When you get stuck, click Hint to reveal the next optimal conduit segment leading toward a valid solution.</p>
+          </div>
+
+          <div class="faq-card">
+            <h4 class="faq-q">How many levels are included?</h4>
+            <p class="faq-a">Circuit Connect features 30 progressive handcrafted levels ranging from starter 5x5 grids up to complex 8x8 master circuits with saved local progress.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crawlable Related Games Section -->
+      <div class="related-games-section">
+        <div class="related-header">
+          <h3 class="related-title">More Free Arcade &amp; Puzzle Games</h3>
+          <a href="/#games-section" class="related-view-all">View All 12 Games →</a>
+        </div>
+        <div class="related-grid">
+
+          <a href="/games/citrus-blitz" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/citrus-blitz.svg" alt="Citrus Blitz Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Arcade</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Citrus Blitz</h4>
+              <p class="related-desc">Slice fast. Chain combos. Beat your best.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/tic-tac-toe" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/tic-tac-toe.svg" alt="Tic Tac Toe Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Puzzle</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Tic Tac Toe</h4>
+              <p class="related-desc">Claim three in a row. Me vs Bot & 2 Players.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/memory-match" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/memory-match.svg" alt="Memory Match Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Casual</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Memory Match</h4>
+              <p class="related-desc">Flip cards. Find pairs. Beat the clock.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/brick-breaker" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/brick-breaker.svg" alt="Brick Breaker Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Action</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Brick Breaker</h4>
+              <p class="related-desc">Shatter neon bricks. Catch power-ups. Survive 3 waves.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/bubble-pop" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/bubble-pop.svg" alt="Bubble Pop Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Casual</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Bubble Pop</h4>
+              <p class="related-desc">Aim laser ricochets. Match 3+ bubbles. Trigger avalanches.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/space-dodge" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/space-dodge.svg" alt="Space Dodge Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Action</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Space Dodge</h4>
+              <p class="related-desc">Pilot cyber starship. Dodge asteroids. Survive deep space.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+
+      <!-- Quick Arcade Links Footer -->
+      <footer class="game-page-footer" style="margin-top: 40px; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.08)); padding-top: 24px; text-align: center;">
+        <p style="color: var(--text-muted, #a7ada0); font-size: 0.8125rem; margin-bottom: 0.75rem;">&copy; 2026 Mini Game Arcade. All games are original and free to play online.</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="/" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">Arcade Home</a>
+          <a href="/about" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">About</a>
+          <a href="/contact" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">Contact</a>
+          <a href="/privacy" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">Privacy Policy</a>
+          <a href="/terms" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">Terms of Service</a>
+        </div>
+      </footer>
 
   </main>
 

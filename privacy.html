@@ -74,7 +74,7 @@
   <!-- Site Header -->
   <header class="site-header">
     <div class="header-container">
-      <a href="index.html" class="brand-logo" aria-label="Mini Game Arcade Home">
+      <a href="/" class="brand-logo" aria-label="Mini Game Arcade Home">
         <svg class="brand-emblem-svg" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <rect x="2" y="2" width="24" height="24" rx="4" fill="#171A16" stroke="#F4F2E9" stroke-width="1.6"/>
           <path d="M7 14H21M14 7V21" stroke="#F4F2E9" stroke-width="1.6" stroke-linecap="round"/>
@@ -91,12 +91,14 @@
       </button>
 
       <nav class="main-nav" id="main-nav" aria-label="Main Navigation">
-        <a href="index.html" class="nav-link">Games</a>
-        <a href="about.html" class="nav-link">About</a>
-        <a href="contact.html" class="nav-link">Contact</a>
-        <a href="privacy.html" class="nav-link active">Privacy Policy</a>
-        <a href="terms.html" class="nav-link">Terms</a>
-        <a href="games/citrus-blitz/index.html" class="nav-cta">
+        <a href="/" class="nav-link">All Games</a>
+        <a href="/category/arcade" class="nav-link">Arcade</a>
+        <a href="/category/action" class="nav-link">Action</a>
+        <a href="/category/puzzle" class="nav-link">Puzzle</a>
+        <a href="/category/casual" class="nav-link">Casual</a>
+        <a href="/about" class="nav-link ">About</a>
+        <a href="/contact" class="nav-link ">Contact</a>
+        <a href="/games/citrus-blitz" class="nav-cta">
           <span class="nav-cta-pip"></span>
           <span>Play Citrus Blitz</span>
         </a>
@@ -117,56 +119,89 @@
         <article class="prose">
           <h2>1. Introduction</h2>
           <p>
-            At <strong>Mini Game Arcade</strong>, we believe privacy is fundamental. This policy outlines what information is collected, how it is used, and how your privacy is preserved while browsing our site and playing our games.
+            At <strong>Mini Game Arcade</strong>, we believe privacy and transparency are essential. This Privacy Policy explains how our website operates, what data is processed, how client-side storage is utilized, and your choices regarding privacy while browsing our arcade platform and playing our games.
           </p>
 
-          <h2>2. Personal Data We Do NOT Collect</h2>
+          <h2>2. Personal Information We Do NOT Collect</h2>
           <p>
-            We do not require user accounts, email registration, passwords, or personal profiles to play any game on Mini Game Arcade. We do not collect or request:
+            Mini Game Arcade is engineered to provide instant, friction-free browser entertainment. You do not need to register an account, sign in, or provide personal details to play any of our 12 original games. We do not collect, request, or store:
           </p>
           <ul>
-            <li>Names, residential addresses, or phone numbers</li>
-            <li>Credit card or payment billing details</li>
-            <li>Social media credentials or contact lists</li>
-            <li>Precise geographical location coordinates</li>
+            <li>Personal identifiers such as full names, home addresses, or telephone numbers</li>
+            <li>Financial account numbers, credit/debit card information, or billing data</li>
+            <li>Biometric, health, or location tracking coordinates</li>
+            <li>Social media profile data or contact directories</li>
           </ul>
 
-          <h2>3. Browser Local Storage (<code>localStorage</code>)</h2>
+          <h2>3. Browser Client-Side Storage (<code>localStorage</code>)</h2>
           <p>
-            Our games use your browser's client-side <code>localStorage</code> purely to remember your progress. This data remains on your physical device and is never sent to any database:
+            Our games use native HTML5 client-side <code>localStorage</code> strictly on your device to persist your game progression and preferences between sessions. This data is stored locally in your browser sandbox and is never transmitted to any external server or centralized database:
           </p>
           <ul>
-            <li><strong>High Scores:</strong> Remembers your highest scores across game modes (e.g. <code>citrusBlitz_high_arcade</code>, <code>citrusBlitz_high_classic</code>) so your records persist across sessions.</li>
-            <li><strong>Audio Settings:</strong> Remembers whether you chose to mute sound (e.g. <code>citrusBlitz_muted</code>).</li>
+            <li><strong>High Scores &amp; Personal Bests:</strong> Records your highest scores across game modes (e.g., <code>citrusBlitz_high_arcade</code>, <code>stackRush_high</code>, <code>dashverse_highscore</code>, <code>spaceDodge_high</code>, <code>brickBreaker_high</code>, <code>bubblePop_high</code>, <code>blockPuzzle_high</code>, <code>tapChallenge_high</code>).</li>
+            <li><strong>Level Progression &amp; Efficiency Stars:</strong> Saves unlocked levels, par times, and star ratings (e.g., <code>circuitConnect_progress</code>, <code>circuitConnect_stars</code>, <code>numberPuzzle_best</code>, <code>memoryMatch_best</code>).</li>
+            <li><strong>In-Game Rewards &amp; Unlocks:</strong> Saves non-monetary currency earned during gameplay (e.g., <code>dashverse_coins</code>, <code>dashverse_unlocked_runners</code>).</li>
+            <li><strong>Audio &amp; Input Preferences:</strong> Remembers your mute toggle state (e.g., <code>citrusBlitz_muted</code>, <code>arcade_audio_muted</code>).</li>
           </ul>
           <p>
-            You can reset this data at any time by clearing your browser cache or site storage in your browser settings.
+            You have full control over this data. You can clear your high scores and saved progress at any time by clearing your browser's site data, cache, or storage settings.
           </p>
 
-          <h2>4. Server Diagnostics & Log Files</h2>
+          <h2>4. Web Hosting &amp; Server Diagnostics</h2>
           <p>
-            Like standard web hosts (such as Vercel), server infrastructure may automatically record generic diagnostic metadata such as browser version, operating system, referring URL, and request timestamps. These logs are used solely to monitor site availability, prevent malicious DDoS attacks, and diagnose network errors.
-          </p>
-
-          <h2>5. Third-Party Advertising Standards</h2>
-          <p>
-            Mini Game Arcade may display third-party advertisements (such as Google AdSense) to support free operation and hosting costs.
-            Third-party ad vendors, including Google, use cookies or web beacons to serve ads based on previous visits to this website or other sites on the web.
+            Like virtually all websites, our hosting provider (Vercel) automatically processes standard HTTP request logs. These logs may include IP addresses (anonymized for diagnostic purposes), browser type, referring URLs, and request timestamps. This technical information is used exclusively for:
           </p>
           <ul>
-            <li>Google's use of advertising cookies enables it and its partners to serve ads based on your visit to our site and other destinations online.</li>
-            <li>You can opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style="color: var(--accent-lime); font-weight: 700;">Google Ads Settings</a>.</li>
-            <li>You can also opt out of third-party vendor cookies for personalized advertising through <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" style="color: var(--accent-lime); font-weight: 700;">aboutads.info</a>.</li>
+            <li>Monitoring server uptime and response latency</li>
+            <li>Mitigating malicious traffic, automated scrapers, and denial-of-service (DDoS) attacks</li>
+            <li>Diagnosing network routing errors and 404 page requests</li>
           </ul>
 
-          <h2>6. Children's Privacy</h2>
+          <h2>5. Contact Form Submissions</h2>
           <p>
-            Mini Game Arcade provides family-friendly, general-audience arcade mini-games. We do not knowingly collect or solicit any personal information from children under 13 years of age.
+            When you voluntarily submit a message through our Contact page, the information you provide (name, email address, topic, and message text) is processed securely via Web3Forms to deliver your communication to our review team. We use this information solely to respond to your inquiry, debug reported glitches, or review game suggestions. We never sell, rent, or distribute your email address to third parties for marketing purposes.
           </p>
 
-          <h2>7. Contact Information</h2>
+          <h2>6. Third-Party Advertising &amp; Cookies</h2>
           <p>
-            If you have questions regarding this Privacy Policy, please reach out via our <a href="contact.html" style="color: var(--accent-lime); font-weight: 700;">Contact page</a>.
+            Mini Game Arcade is a free gaming destination supported by online advertising to cover cloud hosting, CDN bandwidth, and ongoing game development costs.
+          </p>
+          <p>
+            Third-party advertising vendors, including Google (such as Google AdSense), may use cookies, web beacons, or device identifiers to serve advertisements based on your prior visits to this website or other websites on the Internet:
+          </p>
+          <ul>
+            <li>Google's use of advertising cookies enables it and its partners to serve ads to our visitors based on their visit to Mini Game Arcade and other sites across the web.</li>
+            <li>Users may opt out of personalized advertising by visiting the <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style="color: var(--accent-lime); font-weight: 700;">Google Ads Settings</a> page.</li>
+            <li>Alternatively, you can opt out of third-party vendor cookies for personalized advertising by visiting the <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" style="color: var(--accent-lime); font-weight: 700;">AboutAds.info Choices</a> portal or the Network Advertising Initiative opt-out tool.</li>
+            <li>European Economic Area (EEA) and United Kingdom visitors can manage cookie consent preferences through relevant consent banners where required by applicable regulations.</li>
+          </ul>
+
+          <h2>7. California Consumer Privacy Act (CCPA) Disclosures</h2>
+          <p>
+            Under the California Consumer Privacy Act (CCPA) / California Privacy Rights Act (CPRA), California residents are entitled to specific disclosures:
+          </p>
+          <ul>
+            <li><strong>We do not sell personal information:</strong> Mini Game Arcade does not sell, rent, or trade your personal data.</li>
+            <li><strong>Right to Know &amp; Delete:</strong> Because we do not maintain accounts or user profiles, any client-side game data resides solely in your browser's local storage and can be deleted directly by clearing site storage in your browser.</li>
+            <li><strong>Non-Discrimination:</strong> We do not discriminate against any user who exercises their statutory privacy rights.</li>
+          </ul>
+
+          <h2>8. European Privacy Rights (GDPR)</h2>
+          <p>
+            If you reside in the European Economic Area (EEA) or United Kingdom, you have rights under the General Data Protection Regulation (GDPR), including the right to access, rectify, or request erasure of personal data that you have provided (such as via direct email or our contact form). Inquiries can be submitted through our <a href="/contact" style="color: var(--accent-lime); font-weight: 700;">Contact &amp; Support form</a>.
+          </p>
+
+          <h2>9. Children's Online Privacy Protection (COPPA)</h2>
+          <p>
+            Mini Game Arcade provides general-audience, family-friendly browser games. We do not knowingly collect, store, or solicit personal data from children under 13 years of age. If you believe a child under 13 has provided personal information to us via the contact form, please notify us immediately so we can promptly delete the message.
+          </p>
+
+          <h2>10. Updates &amp; Contact Information</h2>
+          <p>
+            We may update this Privacy Policy periodically to reflect new game additions, regulatory updates, or changes in hosting configurations. The revised policy will be posted on this page with an updated revision date.
+          </p>
+          <p>
+            If you have questions or concerns regarding this policy, please reach out via our <a href="/contact" style="color: var(--accent-lime); font-weight: 700;">Contact page</a>.
           </p>
         </article>
       </div>
@@ -176,13 +211,62 @@
   <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/" class="brand-logo" aria-label="Mini Game Arcade Home">
+            <svg class="brand-emblem-svg" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="2" y="2" width="24" height="24" rx="4" fill="#171A16" stroke="#F4F2E9" stroke-width="1.6"/>
+              <path d="M7 14H21M14 7V21" stroke="#F4F2E9" stroke-width="1.6" stroke-linecap="round"/>
+              <rect x="11.5" y="11.5" width="5" height="5" fill="#D5FF55"/>
+              <circle cx="20" cy="8" r="1.5" fill="#FF784F"/>
+            </svg>
+            <span class="brand-text">MINI GAME <span class="brand-slash">//</span> <span class="brand-tag">ARCADE</span></span>
+          </a>
+          <p class="footer-desc">
+            A curated, privacy-respecting arcade platform for lightweight browser mini-games. Free to play, everywhere.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Arcade Games</h4>
+          <ul>
+            <li><a href="/games/citrus-blitz">Citrus Blitz</a></li>
+            <li><a href="/games/dashverse">Dashverse</a></li>
+            <li><a href="/games/stack-rush">Stack Rush</a></li>
+            <li><a href="/games/circuit-connect">Circuit Connect</a></li>
+            <li><a href="/games/brick-breaker">Brick Breaker</a></li>
+            <li><a href="/games/block-puzzle">Block Puzzle</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Categories</h4>
+          <ul>
+            <li><a href="/category/arcade">Arcade Games</a></li>
+            <li><a href="/category/action">Action Games</a></li>
+            <li><a href="/category/puzzle">Puzzle &amp; Logic</a></li>
+            <li><a href="/category/casual">Casual Games</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contact">Contact &amp; Support</a></li>
+            <li><a href="/privacy">Privacy Policy</a></li>
+            <li><a href="/terms">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+
       <div class="footer-bottom">
         <p class="copyright">&copy; 2026 Mini Game Arcade. All rights reserved.</p>
         <div class="footer-sublinks">
-          <a href="index.html">Games</a>
-          <a href="about.html">About</a>
-          <a href="terms.html">Terms</a>
-          <a href="contact.html">Contact</a>
+          <a href="/">Home</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="/contact">Contact</a>
         </div>
       </div>
     </div>

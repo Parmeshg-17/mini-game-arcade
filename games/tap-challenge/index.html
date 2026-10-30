@@ -89,6 +89,44 @@
         "priceCurrency": "USD",
         "availability": "https://schema.org/InStock"
       }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/tap-challenge#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What does Clicks Per Second (CPS) measure?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "CPS calculates the exact frequency of validated clicks or taps per second, measuring mechanical reaction speed and burst stamina."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What speed tiers can you unlock?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Tiers progress from Casual (under 6 CPS), Swift (6-8 CPS), Lightning (8-10 CPS), to Godlike (10+ CPS)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you play with touchscreen fingers?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, responsive multi-touch listeners allow alternating index and middle fingers for high-speed butterfly tapping."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What time trial modes are available?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Test your speed in 5-second sprint, 10-second endurance, or continuous combo sequence challenges."
+          }
+        }
+      ]
     }
   ]
 }
@@ -103,15 +141,15 @@
   <!-- Arcade Top Navigation Bar -->
   <nav class="arcade-nav-bar" aria-label="Game page navigation">
     <div class="nav-content-container">
-      <a href="../../index.html" class="back-link">
+      <a href="/" class="back-link">
         <span class="back-arrow">←</span>
         <span>Back to Arcade</span>
       </a>
 
       <div class="breadcrumbs">
-        <a href="../../index.html">Home</a>
+        <a href="/">Home</a>
         <span class="crumb-separator">/</span>
-        <a href="../../index.html#games-section">Games</a>
+        <a href="/#games-section">Games</a>
         <span class="crumb-separator">/</span>
         <span class="crumb-current">Tap Challenge</span>
       </div>
@@ -285,9 +323,128 @@
       </div>
     </section>
 
-    <footer class="stage-footer">
-      <a href="../../index.html" class="footer-back-link">← Return to Mini Game Arcade Homepage</a>
-    </footer>
+    
+      <!-- Visible FAQ Section matching Schema.org -->
+      <div class="faq-container">
+        <h3 class="faq-title">Frequently Asked Questions</h3>
+        <div class="faq-grid">
+
+          <div class="faq-card">
+            <h4 class="faq-q">What does Clicks Per Second (CPS) measure?</h4>
+            <p class="faq-a">CPS calculates the exact frequency of validated clicks or taps per second, measuring mechanical reaction speed and burst stamina.</p>
+          </div>
+
+          <div class="faq-card">
+            <h4 class="faq-q">What speed tiers can you unlock?</h4>
+            <p class="faq-a">Tiers progress from Casual (under 6 CPS), Swift (6-8 CPS), Lightning (8-10 CPS), to Godlike (10+ CPS).</p>
+          </div>
+
+          <div class="faq-card">
+            <h4 class="faq-q">Can you play with touchscreen fingers?</h4>
+            <p class="faq-a">Yes, responsive multi-touch listeners allow alternating index and middle fingers for high-speed butterfly tapping.</p>
+          </div>
+
+          <div class="faq-card">
+            <h4 class="faq-q">What time trial modes are available?</h4>
+            <p class="faq-a">Test your speed in 5-second sprint, 10-second endurance, or continuous combo sequence challenges.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crawlable Related Games Section -->
+      <div class="related-games-section">
+        <div class="related-header">
+          <h3 class="related-title">More Free Arcade &amp; Puzzle Games</h3>
+          <a href="/#games-section" class="related-view-all">View All 12 Games →</a>
+        </div>
+        <div class="related-grid">
+
+          <a href="/games/citrus-blitz" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/citrus-blitz.svg" alt="Citrus Blitz Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Arcade</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Citrus Blitz</h4>
+              <p class="related-desc">Slice fast. Chain combos. Beat your best.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/tic-tac-toe" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/tic-tac-toe.svg" alt="Tic Tac Toe Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Puzzle</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Tic Tac Toe</h4>
+              <p class="related-desc">Claim three in a row. Me vs Bot & 2 Players.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/memory-match" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/memory-match.svg" alt="Memory Match Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Casual</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Memory Match</h4>
+              <p class="related-desc">Flip cards. Find pairs. Beat the clock.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/brick-breaker" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/brick-breaker.svg" alt="Brick Breaker Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Action</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Brick Breaker</h4>
+              <p class="related-desc">Shatter neon bricks. Catch power-ups. Survive 3 waves.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/bubble-pop" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/bubble-pop.svg" alt="Bubble Pop Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Casual</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Bubble Pop</h4>
+              <p class="related-desc">Aim laser ricochets. Match 3+ bubbles. Trigger avalanches.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+
+          <a href="/games/space-dodge" class="related-card">
+            <div class="related-thumb-wrap">
+              <img src="/assets/games/space-dodge.svg" alt="Space Dodge Browser Game" class="related-thumb" width="320" height="180" loading="lazy">
+              <span class="related-badge">Action</span>
+            </div>
+            <div class="related-body">
+              <h4 class="related-name">Space Dodge</h4>
+              <p class="related-desc">Pilot cyber starship. Dodge asteroids. Survive deep space.</p>
+              <span class="related-play-link">Play Game →</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+
+      <!-- Quick Arcade Links Footer -->
+      <footer class="game-page-footer" style="margin-top: 40px; border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.08)); padding-top: 24px; text-align: center;">
+        <p style="color: var(--text-muted, #a7ada0); font-size: 0.8125rem; margin-bottom: 0.75rem;">&copy; 2026 Mini Game Arcade. All games are original and free to play online.</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="/" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">Arcade Home</a>
+          <a href="/about" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">About</a>
+          <a href="/contact" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">Contact</a>
+          <a href="/privacy" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">Privacy Policy</a>
+          <a href="/terms" style="color: var(--text-muted, #a7ada0); text-decoration: none; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">Terms of Service</a>
+        </div>
+      </footer>
 
   </main>
 
