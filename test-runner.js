@@ -1561,6 +1561,51 @@ it('Dashverse and Stack Rush have FAQ sections, related games, and FAQPage struc
   assert(stackHtml.includes('related-games-section'), 'Stack Rush must have related games section');
 });
 
+
+// 39. Google AdSense Centralized Configuration & Controller Verification
+it('AdSense configuration and ad-unit controller exist with safe preparation mode defaults', () => {
+  const configPath = path.join(__dirname, 'js/ads-config.js');
+  assert(fs.existsSync(configPath), 'js/ads-config.js must exist');
+  const configContent = fs.readFileSync(configPath, 'utf8');
+  assert(configContent.includes('ca-pub-6654460587836639'), 'Must contain actual Publisher Client ID');
+  assert(configContent.includes('enabled: false'), 'Must be disabled by default (Preparation Mode)');
+
+  const adUnitPath = path.join(__dirname, 'js/ad-unit.js');
+  assert(fs.existsSync(adUnitPath), 'js/ad-unit.js must exist');
+  const adUnitContent = fs.readFileSync(adUnitPath, 'utf8');
+  assert(adUnitContent.includes('data-adsbygoogle-status'), 'Must check for duplicate push status');
+  assert(adUnitContent.includes('window.adsbygoogle'), 'Must interact safely with AdSense queue');
+
+  const cssPath = path.join(__dirname, 'css/ads.css');
+  assert(fs.existsSync(cssPath), 'css/ads.css must exist');
+});
+
+// 40. Google AdSense Placements & Policy Compliance Verification
+it('Homepage and all 12 game pages have non-intrusive AdSense placement containers and 404 is clean', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+  assert(indexHtml.includes('data-ad-placement="homeTop"'), 'index.html must have homeTop placement');
+  assert(indexHtml.includes('data-ad-placement="homeList"'), 'index.html must have homeList placement');
+
+  const { ARCADE_GAMES } = require('./js/games-data.js');
+  for (const game of ARCADE_GAMES) {
+    const gameHtmlPath = path.join(__dirname, 'games', game.id, 'index.html');
+    assert(fs.existsSync(gameHtmlPath), `Game ${game.id} must exist`);
+    const gameHtml = fs.readFileSync(gameHtmlPath, 'utf8');
+    assert(gameHtml.includes('data-ad-placement="gameBottom"'), `Game ${game.id} must have gameBottom placement`);
+  }
+
+  // 404 policy check
+  const errHtml = fs.readFileSync(path.join(__dirname, '404.html'), 'utf8');
+  assert(!errHtml.includes('adsbygoogle.js'), '404.html must NOT contain AdSense script (Policy Rule)');
+  assert(!errHtml.includes('data-ad-placement'), '404.html must NOT contain ad placements (Policy Rule)');
+
+  // ads.txt check
+  const adsTxtPath = path.join(__dirname, 'ads.txt');
+  assert(fs.existsSync(adsTxtPath), 'ads.txt must exist at root');
+  const adsTxt = fs.readFileSync(adsTxtPath, 'utf8');
+  assert(adsTxt.includes('pub-6654460587836639'), 'ads.txt must contain publisher ID');
+});
+
 console.log(`\nQA Test Results: ${passedTests} / ${totalTests} passed.`);
 if (passedTests !== totalTests) {
   process.exit(1);

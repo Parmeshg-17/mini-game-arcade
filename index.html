@@ -320,6 +320,7 @@
   <link rel="stylesheet" href="css/arcade.css">
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6654460587836639" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/ads.css">
 </head>
 <body>
 
@@ -429,6 +430,12 @@
   <!-- Game Discovery Section (#games-section) -->
   <main id="games-section" class="games-section">
     <div class="section-container">
+
+      <!-- AdSense Placement A: Homepage Top Banner (Responsive Leaderboard) -->
+      <aside class="arcade-ad-wrapper arcade-ad-home-top" data-ad-placement="homeTop" aria-label="Advertisement Banner">
+      </aside>
+
+
 
       <!-- Section Header -->
       <div class="section-header-block">
@@ -981,6 +988,9 @@
           </div>
         </article>
       </div>
+      <!-- AdSense Placement B: Homepage Game-List Placement (Responsive Display Banner) -->
+      <aside class="arcade-ad-wrapper arcade-ad-home-list" data-ad-placement="homeList" aria-label="Sponsored Content Banner">
+      </aside>
 
       <!-- Empty State -->
       <div id="empty-state" class="empty-state" style="display: none;">
@@ -1104,5 +1114,8 @@
       });
     }
   </script>
+  <!-- Google AdSense Modular Controller & Centralized Config -->
+  <script src="/js/ads-config.js"></script>
+  <script src="/js/ad-unit.js"></script>
 </body>
 </html>

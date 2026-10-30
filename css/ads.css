@@ -1,0 +1,106 @@
+/* ==========================================================================
+   MINI GAME ARCADE — GOOGLE ADSENSE RESPONSIVE AD STYLES
+   ========================================================================== */
+
+.arcade-ad-wrapper {
+  width: 100%;
+  max-width: 970px;
+  margin: 32px auto;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  clear: both;
+}
+
+/* Specific Placements */
+.arcade-ad-home-top {
+  margin: 28px auto 36px;
+  max-width: 970px;
+}
+
+.arcade-ad-home-list {
+  margin: 40px auto 48px;
+  max-width: 970px;
+  padding: 0 16px;
+}
+
+.arcade-ad-game-bottom {
+  margin: 40px auto 32px;
+  max-width: 860px;
+  padding: 0 12px;
+}
+
+/* Discrete, Non-Misleading Accessible Label */
+.arcade-ad-label {
+  display: block;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted, #6e7568);
+  margin-bottom: 8px;
+  user-select: none;
+}
+
+/* Ins Tag Default Styling */
+.arcade-ad-wrapper ins.adsbygoogle {
+  display: block;
+  margin: 0 auto;
+  min-height: 90px;
+  background: transparent;
+}
+
+/* Local Development Debug Indicator (Only active on localhost when debug: true) */
+.arcade-ad-debug {
+  border: 1px dashed rgba(213, 255, 85, 0.35);
+  background: rgba(23, 26, 22, 0.6);
+  border-radius: 8px;
+  padding: 24px 16px;
+}
+
+.arcade-ad-debug-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.arcade-ad-debug-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-lime, #d5ff55);
+  letter-spacing: 0.05em;
+}
+
+.arcade-ad-debug-reason {
+  font-size: 0.6875rem;
+  color: var(--text-muted, #a7ada0);
+}
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+  .arcade-ad-wrapper {
+    margin: 24px auto;
+  }
+  .arcade-ad-home-top {
+    margin: 20px auto 28px;
+  }
+  .arcade-ad-home-list {
+    margin: 28px auto 36px;
+  }
+  .arcade-ad-game-bottom {
+    margin: 28px auto 24px;
+  }
+  .arcade-ad-wrapper ins.adsbygoogle {
+    min-height: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .arcade-ad-wrapper {
+    padding: 0 8px;
+  }
+}
