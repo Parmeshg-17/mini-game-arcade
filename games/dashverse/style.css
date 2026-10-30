@@ -322,24 +322,25 @@ body.game-page-body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   width: 100%;
-  margin-top: 0.25rem;
+  margin-top: 0.35rem;
 }
 
 @media (min-width: 768px) {
   .touch-action-row {
-    display: none;
+    display: none !important;
   }
 }
 
 .btn-touch-action {
   flex: 1;
+  min-height: 54px;
   padding: 0.85rem 1rem;
   border-radius: var(--radius-md);
   border: none;
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -348,12 +349,14 @@ body.game-page-body {
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
+  touch-action: manipulation;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
-  transition: transform 0.08s ease;
+  transition: transform 0.08s ease, filter 0.08s ease;
 }
 
 .btn-touch-action:active {
   transform: scale(0.96);
+  filter: brightness(1.2);
 }
 
 .touch-slide {
@@ -488,13 +491,19 @@ body.game-page-body {
   color: var(--accent-cyan);
 }
 
-/* Secondary Action Bar */
+/* Secondary Action Bar (Desktop mouse & keyboard targets) */
 .dash-action-bar {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+@media (max-width: 767px) {
+  .dash-action-bar {
+    display: none !important;
+  }
 }
 
 /* Shop Modal */
@@ -1000,4 +1009,212 @@ body.game-page-body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVE SYSTEM (DASHVERSE VIEWPORT & OVERLAY TUNING)
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .game-stage-wrapper {
+    padding: 0.75rem 0.5rem 2rem;
+    gap: 0.75rem;
+  }
+
+  .game-title {
+    font-size: 1.75rem;
+  }
+
+  .game-subheading {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+  }
+
+  .arcade-play-card {
+    padding: 0.65rem;
+    gap: 0.65rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .match-hud-bar {
+    padding: 0.4rem 0.5rem;
+    gap: 0.35rem;
+  }
+
+  .hud-group {
+    gap: 0.25rem;
+  }
+
+  .hud-pill {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.45rem;
+  }
+
+  .ctrl-btn, .audio-btn {
+    padding: 0.25rem 0.45rem;
+    font-size: 0.75rem;
+    gap: 0.2rem;
+  }
+
+  /* Stage Container & Canvas */
+  .dash-stage-container {
+    aspect-ratio: 16 / 9;
+    min-height: 200px;
+    border-radius: var(--radius-md);
+  }
+
+  /* Overlays - Keep clean, compact & scrollable if screen is very short */
+  .stage-overlay {
+    padding: 0.65rem 0.75rem;
+    gap: 0.35rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    justify-content: center;
+  }
+
+  /* Hide large 120px hero banner on mobile so Start button is immediately visible */
+  .dash-start-hero-frame {
+    display: none !important;
+  }
+
+  .overlay-title {
+    font-size: 1.25rem;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .overlay-subtitle {
+    font-size: 0.75rem;
+    line-height: 1.35;
+    max-width: 320px;
+    margin: 0;
+  }
+
+  .start-controls-hints {
+    margin: 0.15rem 0;
+    gap: 0.35rem;
+  }
+
+  .ctrl-chip {
+    font-size: 0.6875rem;
+    padding: 0.2rem 0.45rem;
+  }
+
+  .btn-arcade-action {
+    font-size: 0.875rem;
+    padding: 0.55rem 1.1rem;
+  }
+
+  .btn-secondary-arcade {
+    font-size: 0.75rem;
+    padding: 0.45rem 0.8rem;
+  }
+
+  /* Game Over Stats Grid */
+  .overlay-stats-grid {
+    gap: 0.35rem;
+    max-width: 320px;
+  }
+
+  .stat-box {
+    padding: 0.35rem 0.25rem;
+    gap: 0.15rem;
+  }
+
+  .stat-val {
+    font-size: 1rem;
+  }
+
+  .stat-label {
+    font-size: 0.6rem;
+  }
+
+  #go-missions-list {
+    max-width: 320px;
+    gap: 0.25rem;
+  }
+
+  .mission-complete-pill {
+    font-size: 0.6875rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  /* Modals (Shop & Missions) */
+  .modal-container {
+    max-height: 94%;
+    padding: 0.65rem;
+    gap: 0.5rem;
+  }
+
+  .modal-header {
+    padding-bottom: 0.5rem;
+  }
+
+  .modal-header .overlay-title {
+    font-size: 1.05rem !important;
+  }
+
+  .shop-grid {
+    gap: 0.5rem;
+  }
+
+  .shop-char-card {
+    padding: 0.45rem 0.65rem;
+    gap: 0.5rem;
+  }
+
+  .char-portrait {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+  }
+
+  .char-name {
+    font-size: 0.875rem;
+  }
+
+  .char-desc {
+    font-size: 0.6875rem;
+    line-height: 1.3;
+  }
+
+  .char-perk-badge {
+    font-size: 0.625rem;
+  }
+
+  .btn-buy, .btn-equip, .btn-equipped {
+    font-size: 0.72rem;
+    padding: 0.3rem 0.55rem;
+  }
+
+  .mission-item-card {
+    padding: 0.5rem 0.65rem;
+    gap: 0.35rem;
+  }
+
+  .mission-item-header {
+    font-size: 0.78125rem;
+  }
+
+  .mission-reward {
+    font-size: 0.72rem;
+  }
+
+  .mission-status-row {
+    font-size: 0.6875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ctrl-btn span:last-child {
+    display: none; /* Icon-only missions/shop buttons to prevent HUD line-breaks */
+  }
+
+  #runner-badge {
+    display: none; /* Save horizontal space in HUD on ultra-narrow phones */
+  }
+
+  .arcade-nav-bar .nav-guide-link {
+    display: none; /* Keep nav bar super compact */
+  }
 }

@@ -199,23 +199,24 @@
     }
   }
 
+  // Virtual Canvas Dimension Anchor (Engine standard 16:9)
+  const VIRTUAL_WIDTH = 800;
+  const VIRTUAL_HEIGHT = 450;
+
   /**
    * Canvas Responsive Scaling
    */
   function resizeCanvas() {
     if (!canvas || !canvas.parentElement) return;
     const rect = canvas.parentElement.getBoundingClientRect();
-    const w = rect.width;
-    const h = rect.height;
+    const w = Math.floor(rect.width);
+    const h = Math.floor(rect.height);
     const dpr = window.devicePixelRatio || 1;
 
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
     canvas.style.width = `${w}px`;
     canvas.style.height = `${h}px`;
-
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.scale(dpr, dpr);
   }
 
   window.addEventListener('resize', resizeCanvas);
@@ -276,25 +277,37 @@
   }
 
   /**
-   * Stage Rendering
+   * Stage Rendering — Responsive Proportional Viewport Scaling
    */
   function renderStage() {
     const rect = canvas.getBoundingClientRect();
     const w = rect.width;
     const h = rect.height;
+    const dpr = window.devicePixelRatio || 1;
 
-    ctx.clearRect(0, 0, w, h);
+    // Reset transform to identity in device pixels
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Dynamic Cyber Sky Gradient
-    const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
+    // Dynamic Cyber Sky Gradient across full canvas viewport
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
     skyGrad.addColorStop(0, '#0a0d16');
     skyGrad.addColorStop(0.65, '#121829');
     skyGrad.addColorStop(1, '#1b1429');
     ctx.fillStyle = skyGrad;
-    ctx.fillRect(0, 0, w, h);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate uniform scale & centering offsets to map 800x450 coordinate world
+    const scale = Math.min((w * dpr) / VIRTUAL_WIDTH, (h * dpr) / VIRTUAL_HEIGHT);
+    const offsetX = ((w * dpr) - VIRTUAL_WIDTH * scale) / 2;
+    const offsetY = ((h * dpr) - VIRTUAL_HEIGHT * scale) / 2;
+
+    ctx.save();
+    ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
 
     if (!gameState) {
-      renderParallaxSkyline(w, h, 0);
+      renderParallaxSkyline(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, 0);
+      ctx.restore();
       return;
     }
 
@@ -302,10 +315,10 @@
     const speed = gameState.speed;
 
     // 1. Far Parallax Megacity Skyline
-    renderParallaxSkyline(w, h, gameState.distance);
+    renderParallaxSkyline(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, gameState.distance);
 
     // 2. Midground Neon Billboards
-    renderBillboards(w, h, gameState.distance);
+    renderBillboards(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, gameState.distance);
 
     // 3. Foreground Rooftops
     renderRooftops();
@@ -323,7 +336,9 @@
     renderRunner(runner);
 
     // 8. Overhead Speed Streaks
-    renderSpeedStreaks(w, h, speed);
+    renderSpeedStreaks(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, speed);
+
+    ctx.restore();
   }
 
   function renderParallaxSkyline(w, h, dist) {
@@ -1050,19 +1065,61 @@
   }
 
   /**
-   * Touch & Button Bindings
+   * Touch & Button Bindings (Debounced & Safe across touch & click)
    */
-  if (btnTouchJump) {
-    btnTouchJump.addEventListener('pointerdown', (e) => {
+  let lastJumpTime = 0;
+  function triggerJumpSafe(e) {
+    if (e && e.cancelable && e.type !== 'touchstart') {
       e.preventDefault();
-      handleJumpInput();
-    });
+    }
+    const now = Date.now();
+    if (now - lastJumpTime < 80) return;
+    lastJumpTime = now;
+
+    if (overlayStart && overlayStart.classList.contains('show')) {
+      startRun(false);
+      return;
+    }
+    if (overlayGameover && overlayGameover.classList.contains('show')) {
+      startRun(false);
+      return;
+    }
+    handleJumpInput();
+  }
+
+  let lastSlideTime = 0;
+  function triggerSlideSafe(e) {
+    if (e && e.cancelable && e.type !== 'touchstart') {
+      e.preventDefault();
+    }
+    const now = Date.now();
+    if (now - lastSlideTime < 80) return;
+    lastSlideTime = now;
+    handleSlideInput();
+  }
+
+  if (btnTouchJump) {
+    btnTouchJump.addEventListener('pointerdown', triggerJumpSafe);
+    btnTouchJump.addEventListener('click', triggerJumpSafe);
   }
 
   if (btnTouchSlide) {
-    btnTouchSlide.addEventListener('pointerdown', (e) => {
-      e.preventDefault();
-      handleSlideInput();
+    btnTouchSlide.addEventListener('pointerdown', triggerSlideSafe);
+    btnTouchSlide.addEventListener('click', triggerSlideSafe);
+  }
+
+  // Tap on Ready / Game Over Screen to launch immediately
+  if (overlayStart) {
+    overlayStart.addEventListener('click', (e) => {
+      if (e.target.closest('#start-shop-btn') || e.target.closest('.ctrl-btn')) return;
+      startRun(false);
+    });
+  }
+
+  if (overlayGameover) {
+    overlayGameover.addEventListener('click', (e) => {
+      if (e.target.closest('#go-shop-btn') || e.target.closest('.ctrl-btn')) return;
+      startRun(false);
     });
   }
 
