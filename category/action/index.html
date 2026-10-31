@@ -163,41 +163,44 @@
 </head>
 <body class="arcade-body">
 
-  <!-- Global Header Navigation -->
+  <!-- Site Header & Navigation -->
   <header class="site-header">
-    <div class="header-inner">
-      <a href="/" class="site-logo" aria-label="Mini Game Arcade Homepage">
-        <div class="logo-mark">
-          <span class="logo-spark">✦</span>
-        </div>
-        <div class="logo-text-group">
-          <span class="logo-title">MINI GAME</span>
-          <span class="logo-subtitle">// ARCADE</span>
-        </div>
+    <div class="header-container">
+      <a href="/" class="brand-logo" aria-label="Mini Game Arcade Home">
+        <svg class="brand-emblem-svg" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="2" y="2" width="24" height="24" rx="4" fill="#171A16" stroke="#F4F2E9" stroke-width="1.6"/>
+          <path d="M7 14H21M14 7V21" stroke="#F4F2E9" stroke-width="1.6" stroke-linecap="round"/>
+          <rect x="11.5" y="11.5" width="5" height="5" fill="#D5FF55"/>
+          <circle cx="20" cy="8" r="1.5" fill="#FF784F"/>
+        </svg>
+        <span class="brand-text">MINI GAME <span class="brand-slash">//</span> <span class="brand-tag">ARCADE</span></span>
       </a>
 
-      <nav class="site-nav" id="main-nav" aria-label="Main Navigation">
+      <button class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M3 5h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+
+      <nav class="main-nav" id="main-nav" aria-label="Main Navigation">
         <a href="/" class="nav-link">All Games</a>
-        <a href="/category/arcade" class="nav-link ">Arcade</a>
+        <a href="/category/arcade" class="nav-link">Arcade</a>
         <a href="/category/action" class="nav-link active">Action</a>
-        <a href="/category/puzzle" class="nav-link ">Puzzle</a>
-        <a href="/category/casual" class="nav-link ">Casual</a>
+        <a href="/category/puzzle" class="nav-link">Puzzle</a>
+        <a href="/category/casual" class="nav-link">Casual</a>
         <a href="/about" class="nav-link">About</a>
         <a href="/contact" class="nav-link">Contact</a>
-      </nav>
-
-      <div class="header-actions">
-        <a href="/games/citrus-blitz" class="nav-cta-btn">
-          <span class="cta-dot"></span>
+        <a href="/games/citrus-blitz" class="nav-cta">
+          <span class="nav-cta-pip"></span>
           <span>Play Citrus Blitz</span>
         </a>
-      </div>
+      </nav>
     </div>
   </header>
 
   <!-- Category Main Stage -->
-  <main class="arcade-main">
-    <div class="main-container">
+  <main class="games-section" style="padding-top: 36px;">
+    <div class="section-container">
 
       <!-- Breadcrumbs -->
       <nav aria-label="Breadcrumbs" style="margin-bottom: 24px;">
@@ -384,32 +387,71 @@
     </div>
   </main>
 
-  <!-- Global Footer -->
+  <!-- Footer -->
   <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-top-row">
+    <div class="footer-container">
+      <div class="footer-top">
         <div class="footer-brand">
-          <span class="logo-title">MINI GAME // ARCADE</span>
-          <p class="footer-tagline">Small Games. Big Replay Energy. Free in your browser.</p>
+          <a href="/" class="brand-logo" aria-label="Mini Game Arcade Home">
+            <svg class="brand-emblem-svg" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="2" y="2" width="24" height="24" rx="4" fill="#171A16" stroke="#F4F2E9" stroke-width="1.6"/>
+              <path d="M7 14H21M14 7V21" stroke="#F4F2E9" stroke-width="1.6" stroke-linecap="round"/>
+              <rect x="11.5" y="11.5" width="5" height="5" fill="#D5FF55"/>
+              <circle cx="20" cy="8" r="1.5" fill="#FF784F"/>
+            </svg>
+            <span class="brand-text">MINI GAME <span class="brand-slash">//</span> <span class="brand-tag">ARCADE</span></span>
+          </a>
+          <p class="footer-desc">
+            A curated, privacy-respecting arcade platform for lightweight browser mini-games. Free to play, everywhere.
+          </p>
         </div>
-        <div class="footer-links">
-          <a href="/" class="footer-link">Home</a>
-          <a href="/category/arcade" class="footer-link">Arcade</a>
-          <a href="/category/action" class="footer-link">Action</a>
-          <a href="/category/puzzle" class="footer-link">Puzzle</a>
-          <a href="/category/casual" class="footer-link">Casual</a>
-          <a href="/about" class="footer-link">About</a>
-          <a href="/contact" class="footer-link">Contact</a>
-          <a href="/privacy" class="footer-link">Privacy Policy</a>
-          <a href="/terms" class="footer-link">Terms of Service</a>
+
+        <div class="footer-col">
+          <h4>Arcade Games</h4>
+          <ul>
+            <li><a href="/games/citrus-blitz">Citrus Blitz</a></li>
+            <li><a href="/games/dashverse">Dashverse</a></li>
+            <li><a href="/games/stack-rush">Stack Rush</a></li>
+            <li><a href="/games/circuit-connect">Circuit Connect</a></li>
+            <li><a href="/games/brick-breaker">Brick Breaker</a></li>
+            <li><a href="/games/block-puzzle">Block Puzzle</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Categories</h4>
+          <ul>
+            <li><a href="/category/arcade">Arcade Games</a></li>
+            <li><a href="/category/action">Action Games</a></li>
+            <li><a href="/category/puzzle">Puzzle &amp; Logic</a></li>
+            <li><a href="/category/casual">Casual Games</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contact">Contact &amp; Support</a></li>
+            <li><a href="/privacy">Privacy Policy</a></li>
+            <li><a href="/terms">Terms of Service</a></li>
+          </ul>
         </div>
       </div>
-      <div class="footer-bottom-row">
-        <p class="footer-copy">&copy; 2026 Mini Game Arcade. All games are original and playable free with zero downloads.</p>
+
+      <div class="footer-bottom">
+        <p class="copyright">&copy; 2026 Mini Game Arcade. All rights reserved.</p>
+        <div class="footer-sublinks">
+          <a href="/">Home</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="/contact">Contact</a>
+        </div>
       </div>
     </div>
   </footer>
 
+  <script src="/js/arcade.js"></script>
   <!-- Google AdSense Modular Controller & Centralized Config -->
   <script src="/js/ads-config.js"></script>
   <script src="/js/ad-unit.js"></script>
