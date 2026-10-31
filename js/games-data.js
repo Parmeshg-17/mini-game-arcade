@@ -172,6 +172,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/dashverse.svg',
     controlsSummary: 'Up / W / Space to Jump & Double Jump • Down / S to Slide • Tap / Swipe on Mobile • Dedicated On-Screen Thumb Buttons • P to Pause • R to Restart • M to Mute',
     features: ['Endless Rooftop Runner', 'Unlockable Runners & Perks', 'Missions & Daily Challenges', 'Personal Best & Double Jump']
+  },
+  {
+    id: 'hidden-hunt',
+    title: 'Hidden Hunt',
+    category: 'Puzzle',
+    tags: ['puzzle', 'observation', 'hidden', 'hunt', 'detective', 'adventure', 'casual', 'search', 'objects'],
+    badge: 'New',
+    tagline: 'Look closer. Find everything.',
+    description: 'Explore 15 hand-illustrated scenes across The Old Library, Mystery Forest, and Pirate\'s Treasure. Find hidden curiosities, zoom and pan, use smart hints, and conquer daily observation challenges.',
+    route: 'games/hidden-hunt/index.html',
+    thumbnail: 'assets/games/hidden-hunt.svg',
+    controlsSummary: 'Click / Tap to Find • Zoom & Pan Controls • 💡 Smart Hint • 🔊 Mute • 3 Worlds',
+    features: ['15 Illustrated Scenes', '3 Themed Worlds', 'Zoom & Pan Viewport', 'Daily Hunt Challenge']
   }
 ];
 

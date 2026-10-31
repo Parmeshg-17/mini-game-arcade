@@ -158,14 +158,15 @@ it('Search and category filter logic filters games correctly', () => {
   assert(res3.some(g => g.id === 'tap-challenge'));
   assert(res3.some(g => g.id === 'stack-rush'));
 
-  // Puzzle category filter matches Tic Tac Toe, Number Puzzle, Block Puzzle, Circuit Connect, and Merge Grid
+  // Puzzle category filter matches Tic Tac Toe, Number Puzzle, Block Puzzle, Circuit Connect, Merge Grid, and Hidden Hunt
   const res4 = filterGames('', 'Puzzle');
-  assert.strictEqual(res4.length, 5);
+  assert.strictEqual(res4.length, 6);
   assert(res4.some(g => g.id === 'tic-tac-toe'));
   assert(res4.some(g => g.id === 'number-puzzle'));
   assert(res4.some(g => g.id === 'block-puzzle'));
   assert(res4.some(g => g.id === 'circuit-connect'));
   assert(res4.some(g => g.id === 'merge-grid'));
+  assert(res4.some(g => g.id === 'hidden-hunt'));
 
   // Casual category filter matches Memory Match and Bubble Pop
   const res5 = filterGames('', 'Casual');
@@ -1526,6 +1527,151 @@ it('Merge Grid engine computes valid slides, merges, score tallying, undo, and g
   assert.strictEqual(hasMovesLeft(fullBoardWithMove), true, 'Full board with equal neighbors has available moves');
 });
 
+// 30d. Dedicated Hidden Hunt Playable Page DOM & Asset Integrity
+it('Dedicated Hidden Hunt page (games/hidden-hunt/index.html) has all DOM elements required by game.js', () => {
+  const gameHtmlPath = path.join(__dirname, 'games/hidden-hunt/index.html');
+  assert(fs.existsSync(gameHtmlPath), 'games/hidden-hunt/index.html must exist');
+  const gameHtml = fs.readFileSync(gameHtmlPath, 'utf8');
+
+  const requiredIds = [
+    'view-main-menu',
+    'view-world-select',
+    'view-level-select',
+    'view-gameplay',
+    'hh-viewport',
+    'hh-scene-wrap',
+    'hh-targets-list',
+    'hh-hud-world-name',
+    'hh-hud-level-name',
+    'hh-hud-timer-val',
+    'hh-hud-found-val',
+    'hh-hud-score-val',
+    'hh-btn-hint',
+    'hh-btn-mute',
+    'hh-btn-zoom-in',
+    'hh-btn-zoom-out',
+    'hh-btn-zoom-reset',
+    'modal-complete',
+    'modal-gameover',
+    'modal-howto',
+    'modal-achievements'
+  ];
+
+  for (const id of requiredIds) {
+    assert(gameHtml.includes(`id="${id}"`), `Missing required ID="${id}" in games/hidden-hunt/index.html`);
+  }
+});
+
+// 30e. Hidden Hunt Data Model, Scene Coordinates, Hit Detection, Scoring, Daily Challenge, and Progression
+it('Hidden Hunt engine computes distance, hit detection, scores, stars, daily challenges, and achievements correctly', () => {
+  const { WORLDS, ACHIEVEMENTS } = require('./games/hidden-hunt/js/data.js');
+  const engine = require('./games/hidden-hunt/js/engine.js');
+  const {
+    createDefaultProgress,
+    createSessionState,
+    calculateDistance,
+    checkHit,
+    registerHit,
+    registerMiss,
+    pickHintObject,
+    evaluateStars,
+    commitLevelResult,
+    getDailyChallenge,
+    checkAchievements
+  } = engine;
+
+  // 1. Data model integrity: 3 worlds, 5 levels each (15 total), all with valid coordinates
+  assert.strictEqual(WORLDS.length, 3, 'Must feature exactly 3 themed worlds');
+  assert.strictEqual(ACHIEVEMENTS.length, 8, 'Must feature 8 observer badges');
+  
+  let totalLevels = 0;
+  for (const world of WORLDS) {
+    assert(world.id && world.name && world.description, 'World must have id, name, and description');
+    assert.strictEqual(world.levels.length, 5, `World ${world.id} must have 5 levels`);
+    for (const lvl of world.levels) {
+      totalLevels++;
+      assert(lvl.objects.length >= 4, `Level ${lvl.id} must have at least 4 target objects`);
+      for (const obj of lvl.objects) {
+        assert(obj.x >= 0 && obj.x <= 1, `Object ${obj.id} X coord must be normalized between 0 and 1`);
+        assert(obj.y >= 0 && obj.y <= 1, `Object ${obj.id} Y coord must be normalized between 0 and 1`);
+        assert(obj.radius > 0 && obj.radius < 0.2, `Object ${obj.id} radius must be a valid hitbox`);
+        assert(obj.name && obj.icon, `Object ${obj.id} must have display name and icon`);
+      }
+    }
+  }
+  assert.strictEqual(totalLevels, 15, 'Must contain exactly 15 playable levels across 3 worlds');
+
+  // 2. Hit detection logic
+  const sampleTargets = [
+    { id: 'key', name: 'Key', x: 0.30, y: 0.50, radius: 0.05 },
+    { id: 'coin', name: 'Coin', x: 0.80, y: 0.80, radius: 0.04 }
+  ];
+
+  // Exact hit
+  const hitRes = checkHit(0.30, 0.50, sampleTargets, []);
+  assert.strictEqual(hitRes.hit, true);
+  assert.strictEqual(hitRes.object.id, 'key');
+
+  // Near hit within radius (dx=0.02, dy=0.01 -> dist ~0.022 <= 0.05)
+  const nearHitRes = checkHit(0.32, 0.51, sampleTargets, []);
+  assert.strictEqual(nearHitRes.hit, true);
+  assert.strictEqual(nearHitRes.object.id, 'key');
+
+  // Miss
+  const missRes = checkHit(0.50, 0.50, sampleTargets, []);
+  assert.strictEqual(missRes.hit, false);
+
+  // Already found object is ignored
+  const alreadyFoundRes = checkHit(0.30, 0.50, sampleTargets, ['key']);
+  assert.strictEqual(alreadyFoundRes.hit, false, 'Already discovered objects must not register duplicate hits');
+
+  // 3. Session scoring & combos
+  const testWorld = WORLDS[0];
+  const testLevel = testWorld.levels[0];
+  const session = createSessionState(testWorld, testLevel, 'story');
+  assert.strictEqual(session.score, 0);
+
+  const reg1 = registerHit(session, testLevel.objects[0]);
+  assert.strictEqual(reg1.scoreAdded, 100);
+  assert.strictEqual(session.score, 100);
+  assert.strictEqual(session.consecutiveFinds, 1);
+
+  // Second consecutive find adds combo bonus (+25)
+  const reg2 = registerHit(session, testLevel.objects[1]);
+  assert.strictEqual(reg2.scoreAdded, 125);
+  assert.strictEqual(session.score, 225);
+  assert.strictEqual(session.consecutiveFinds, 2);
+
+  // Miss resets combo streak
+  registerMiss(session);
+  assert.strictEqual(session.consecutiveFinds, 0);
+
+  // 4. Star rating evaluation
+  session.isCompleted = true;
+  session.totalClicks = testLevel.objects.length;
+  session.correctClicks = testLevel.objects.length;
+  session.hintsUsed = 0;
+  session.timeElapsed = 45;
+  const stars = evaluateStars(session, testLevel.parTime);
+  assert.strictEqual(stars, 3, 'Flawless fast completion must award 3 stars');
+
+  // 5. Daily challenge determinism
+  const d1 = getDailyChallenge('2026-10-31', WORLDS);
+  const d2 = getDailyChallenge('2026-10-31', WORLDS);
+  assert.strictEqual(d1.levelId, d2.levelId, 'Same date must generate identical daily challenge');
+  assert(d1.levelTitle && d1.worldName, 'Daily challenge must provide human-readable titles');
+
+  // 6. World progression and unlocking
+  const progress = createDefaultProgress();
+  assert.deepStrictEqual(progress.unlockedWorlds, ['library']);
+  
+  // Completing all 5 library levels unlocks Mystery Forest
+  ['lib_1', 'lib_2', 'lib_3', 'lib_4', 'lib_5'].forEach(lid => {
+    commitLevelResult(progress, 'library', lid, session, 3);
+  });
+  assert(progress.unlockedWorlds.includes('forest'), 'Completing 5 library levels must unlock Mystery Forest');
+});
+
 // 31. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
@@ -1567,11 +1713,12 @@ it('sitemap.xml exists, is valid XML, and contains all 17 canonical pages', () =
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/citrus-blitz'), 'sitemap.xml must include citrus-blitz');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/dashverse'), 'sitemap.xml must include dashverse');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/merge-grid'), 'sitemap.xml must include merge-grid');
+  assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/hidden-hunt'), 'sitemap.xml must include hidden-hunt');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/about'), 'sitemap.xml must include about page');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/contact'), 'sitemap.xml must include contact page');
   
   const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
-  assert(urls.length >= 22, 'sitemap.xml must contain all canonical URLs including category hubs');
+  assert(urls.length >= 23, 'sitemap.xml must contain all canonical URLs including category hubs');
 });
 
 // 33. Technical SEO: 404 page error handling
@@ -1603,7 +1750,8 @@ it('All HTML pages have verified canonical tags and valid Schema.org JSON-LD', (
     'games/tap-challenge/index.html',
     'games/memory-match/index.html',
     'games/tic-tac-toe/index.html',
-    'games/merge-grid/index.html'
+    'games/merge-grid/index.html',
+    'games/hidden-hunt/index.html'
   ];
 
   for (const page of pages) {
@@ -1699,7 +1847,7 @@ it('AdSense configuration and ad-unit controller exist with safe preparation mod
 });
 
 // 40. Google AdSense Placements & Policy Compliance Verification
-it('Homepage and all 13 game pages have non-intrusive AdSense placement containers and 404 is clean', () => {
+it('Homepage and all 14 game pages have non-intrusive AdSense placement containers and 404 is clean', () => {
   const indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
   assert(indexHtml.includes('data-ad-placement="homeTop"'), 'index.html must have homeTop placement');
   assert(indexHtml.includes('data-ad-placement="homeList"'), 'index.html must have homeList placement');

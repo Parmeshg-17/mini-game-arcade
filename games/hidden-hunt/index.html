@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Hidden Hunt – Free Online Hidden Object Puzzle Game | Mini Game Arcade</title>
+  <link rel="canonical" href="https://mini-game-arcade-coral.vercel.app/games/hidden-hunt">
+  <meta name="description" content="Play Hidden Hunt free online in your browser. Explore 15 illustrated scenes across The Old Library, Mystery Forest, and Pirate's Treasure. Find hidden curiosities with zoom, pan, and hints.">
+  <meta name="theme-color" content="#10120f">
+
+  <!-- OpenGraph -->
+  <meta property="og:site_name" content="Mini Game Arcade">
+  <meta property="og:title" content="Hidden Hunt – Free Online Hidden Object Puzzle Game | Mini Game Arcade">
+  <meta property="og:description" content="Look closer. Find everything. Explore 15 detailed illustrated environments across 3 mysterious worlds in this relaxing, responsive browser hidden-object adventure.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mini-game-arcade-coral.vercel.app/games/hidden-hunt">
+  <meta property="og:image" content="https://mini-game-arcade-coral.vercel.app/assets/games/hidden-hunt.svg">
+  <meta property="og:image:alt" content="Hidden Hunt Hidden Object Adventure Game">
+  <meta property="og:image:width" content="480">
+  <meta property="og:image:height" content="270">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Hidden Hunt – Free Online Hidden Object Puzzle Game | Mini Game Arcade">
+  <meta name="twitter:description" content="Look closer. Find everything. Explore 15 hand-illustrated scenes across 3 worlds with zoom, pan, and hints.">
+  <meta name="twitter:image" content="https://mini-game-arcade-coral.vercel.app/assets/games/hidden-hunt.svg">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/hidden-hunt#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://mini-game-arcade-coral.vercel.app/" },
+        { "@type": "ListItem", "position": 2, "name": "Games", "item": "https://mini-game-arcade-coral.vercel.app/#games-section" },
+        { "@type": "ListItem", "position": 3, "name": "Hidden Hunt", "item": "https://mini-game-arcade-coral.vercel.app/games/hidden-hunt" }
+      ]
+    },
+    {
+      "@type": "VideoGame",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/hidden-hunt#game",
+      "name": "Hidden Hunt",
+      "url": "https://mini-game-arcade-coral.vercel.app/games/hidden-hunt",
+      "image": "https://mini-game-arcade-coral.vercel.app/assets/games/hidden-hunt.svg",
+      "description": "A premium browser-based hidden object observation game featuring 15 illustrated scenes across The Old Library, Mystery Forest, and Pirate's Treasure. Includes touch zoom and pan, smart hints, and daily challenges.",
+      "genre": ["Hidden Object", "Observation", "Puzzle", "Casual", "Adventure"],
+      "gamePlatform": "Web Browser",
+      "operatingSystem": "Any",
+      "applicationCategory": "Game",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/hidden-hunt#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is Hidden Hunt and how do you play?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Hidden Hunt is an observation puzzle game where players inspect detailed illustrated environments to locate specific target objects shown on the bottom shelf. Click or tap directly on the object once discovered to claim it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How many worlds and levels are available in Hidden Hunt?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Hidden Hunt features 3 initial worlds: The Old Library, Mystery Forest, and Pirate's Treasure. Each world contains 5 distinct hand-crafted scenes, offering 15 complete playable levels plus daily challenges."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I zoom and pan on mobile devices?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Hidden Hunt supports full multi-level zoom (up to 2.5x) and fluid drag or touch panning so you can comfortably inspect intricate details on smartphones, tablets, and desktop computers."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do hints work in Hidden Hunt?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pressing the Hint button selects an undiscovered target object and highlights its actual coordinate position in the scene with a pulsating glow pin for 3.5 seconds. You start with 3 hints per level."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is Daily Hunt?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Daily Hunt presents a unique, date-synchronized challenge each calendar day. Every player worldwide gets the exact same mystery scene on that day, allowing you to test observation speed and track daily streaks."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Hidden Hunt free to play with zero downloads?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Hidden Hunt runs 100% in modern web browsers without installation, accounts, or payments. Your level progress and stars are securely saved in your browser's local storage."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Root-relative stylesheet link with file:// fallback -->
+  <link rel="stylesheet" href="/games/hidden-hunt/style.css" id="game-stylesheet">
+  <script>
+    if (window.location.protocol === 'file:') {
+      const link = document.getElementById('game-stylesheet');
+      if (link) link.href = 'style.css';
+    }
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6654460587836639" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/ads.css">
+</head>
+<body class="game-page-body">
+
+  <!-- Navigation -->
+  <nav class="arcade-nav-bar" aria-label="Game page navigation">
+    <div class="nav-content-container">
+      <a href="/" class="back-link" aria-label="Back to Mini Game Arcade">
+        <span>←</span>
+        <span>Back to Arcade</span>
+      </a>
+
+      <div class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="crumb-separator">/</span>
+        <a href="/#games-section">Games</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-current">Hidden Hunt</span>
+      </div>
+
+      <a href="#controls-guide" class="nav-guide-link">Controls &amp; Rules</a>
+    </div>
+  </nav>
+
+  <!-- Page Stage -->
+  <div class="game-page-wrapper">
+
+    <!-- Editorial Header -->
+    <header class="game-editorial-header">
+      <div class="game-eyebrow">
+        <span class="game-eyebrow-pip"></span>
+        <span>PUZZLE // OBSERVATION</span>
+      </div>
+      <h1 class="game-h1">Hidden Hunt</h1>
+      <p class="game-tagline">Look closer. Find everything. Explore 15 illustrated mystery scenes.</p>
+    </header>
+
+    <!-- Interactive Game Shell -->
+    <section class="hh-game-shell" aria-label="Hidden Hunt Game Container">
+
+      <!-- SCREEN 1: MAIN MENU -->
+      <div id="view-main-menu" class="hh-screen hh-menu-view active">
+        <div class="hh-menu-hero">
+          <div class="game-eyebrow" style="justify-content: center;">
+            <span class="game-eyebrow-pip"></span>
+            <span>HIDDEN OBJECT ADVENTURE</span>
+          </div>
+          <h2 class="hh-logo-title">HIDDEN <span class="hh-logo-highlight">HUNT</span></h2>
+          <p class="hh-menu-desc">Look closer. Find everything across 3 themed worlds.</p>
+        </div>
+
+        <div class="hh-stats-pill-bar">
+          <div class="hh-stat-pill">
+            <span>Levels Cleared:</span>
+            <strong id="menu-stat-levels">0 / 15</strong>
+          </div>
+          <div class="hh-stat-pill">
+            <span>Stars Collected:</span>
+            <strong id="menu-stat-stars">0 / 45 ⭐</strong>
+          </div>
+        </div>
+
+        <div class="hh-menu-actions">
+          <button id="menu-btn-continue" class="hh-btn hh-btn-primary">
+            <span>▶ Continue Adventure</span>
+          </button>
+          <button id="menu-btn-explore" class="hh-btn hh-btn-secondary">
+            <span>🗺️ Explore Worlds</span>
+          </button>
+          <button id="menu-btn-daily" class="hh-btn hh-btn-secondary">
+            <span>📅 Daily Hunt</span>
+          </button>
+          <div style="display: flex; gap: 10px; width: 100%;">
+            <button id="menu-btn-howto" class="hh-btn hh-btn-outline" style="flex: 1;">
+              <span>❓ Rules</span>
+            </button>
+            <button id="menu-btn-achievements" class="hh-btn hh-btn-outline" style="flex: 1;">
+              <span>🏆 Badges</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN 2: WORLD SELECTION -->
+      <div id="view-world-select" class="hh-screen hh-world-view">
+        <div class="hh-view-nav-header">
+          <button id="hh-btn-back-worlds" class="hh-hud-btn">← Back to Menu</button>
+          <h2 class="hh-view-title">Select a World</h2>
+          <div style="width: 100px;"></div>
+        </div>
+        <div id="hh-worlds-grid" class="hh-worlds-grid"></div>
+      </div>
+
+      <!-- SCREEN 3: LEVEL SELECTION -->
+      <div id="view-level-select" class="hh-screen hh-levels-view">
+        <div class="hh-view-nav-header">
+          <button id="hh-btn-back-levels" class="hh-hud-btn">← Back to Worlds</button>
+          <h2 id="hh-levels-world-title" class="hh-view-title">World Levels</h2>
+          <div style="width: 100px;"></div>
+        </div>
+        <div id="hh-levels-grid" class="hh-levels-grid"></div>
+      </div>
+
+      <!-- SCREEN 4: CORE GAMEPLAY VIEW -->
+      <div id="view-gameplay" class="hh-screen hh-gameplay-view">
+        <!-- Top HUD Bar -->
+        <header class="hh-hud-bar">
+          <div class="hh-hud-left">
+            <button id="hh-btn-back-to-level-list" class="hh-hud-btn" onclick="document.getElementById('hh-btn-back-levels').click()">← Exit</button>
+            <div class="hh-hud-title-box">
+              <span id="hh-hud-world-name" class="hh-hud-world-name">The Old Library</span>
+              <span id="hh-hud-level-name" class="hh-hud-level-name">The Reading Room</span>
+            </div>
+          </div>
+
+          <div class="hh-hud-center">
+            <div class="hh-timer-box">
+              <span class="hh-hud-label">Time</span>
+              <span id="hh-hud-timer-val" class="hh-hud-val">0:00</span>
+            </div>
+            <div class="hh-counter-box">
+              <span class="hh-hud-label">Found</span>
+              <span id="hh-hud-found-val" class="hh-hud-val">0 / 5</span>
+            </div>
+            <div class="hh-counter-box">
+              <span class="hh-hud-label">Score</span>
+              <span id="hh-hud-score-val" class="hh-hud-val">0</span>
+            </div>
+          </div>
+
+          <div class="hh-hud-right">
+            <button id="hh-btn-hint" class="hh-hud-btn hh-hint-btn">💡 Hint (3)</button>
+            <button id="hh-btn-mute" class="hh-hud-btn" aria-label="Toggle Sound">🔊</button>
+          </div>
+        </header>
+
+        <!-- Viewport Stage -->
+        <div id="hh-viewport" class="hh-viewport-stage">
+          <!-- Zoom Controls Floating Bar -->
+          <div class="hh-zoom-controls">
+            <button id="hh-btn-zoom-in" class="hh-zoom-btn" title="Zoom In">+</button>
+            <button id="hh-btn-zoom-out" class="hh-zoom-btn" title="Zoom Out">−</button>
+            <button id="hh-btn-zoom-reset" class="hh-zoom-btn" title="Reset Zoom">⟲</button>
+          </div>
+
+          <!-- Scalable SVG Scene Wrap -->
+          <div id="hh-scene-wrap" class="hh-scene-canvas-wrap"></div>
+        </div>
+
+        <!-- Target Objects Shelf Ribbon -->
+        <div class="hh-targets-bar">
+          <div class="hh-targets-bar-header">
+            <span>TARGET OBJECTS TO FIND</span>
+            <span style="color: var(--accent-gold);">Tap on Scene to Find</span>
+          </div>
+          <div id="hh-targets-list" class="hh-targets-list"></div>
+        </div>
+      </div>
+
+      <!-- MODAL: VICTORY / LEVEL COMPLETE -->
+      <div id="modal-complete" class="hh-modal-overlay hidden" role="dialog" aria-modal="true">
+        <div class="hh-modal-card">
+          <div class="hh-modal-title">🎉 Level Cleared!</div>
+          <p class="hh-modal-subtitle">Superb eye for detail! You found all hidden curiosities.</p>
+
+          <div id="modal-stars-row" class="hh-stars-row">
+            <span>★</span><span>★</span><span>★</span>
+          </div>
+
+          <div class="hh-stats-grid">
+            <div class="hh-stat-col">
+              <span class="stat-lbl">Final Score</span>
+              <span id="modal-score-val" class="stat-val">0</span>
+            </div>
+            <div class="hh-stat-col">
+              <span class="stat-lbl">Accuracy</span>
+              <span id="modal-accuracy-val" class="stat-val">100%</span>
+            </div>
+            <div class="hh-stat-col">
+              <span class="stat-lbl">Time</span>
+              <span id="modal-time-val" class="stat-val">1m 12s</span>
+            </div>
+          </div>
+
+          <div class="hh-modal-actions">
+            <button id="modal-btn-next" class="hh-btn hh-btn-primary">Next Level →</button>
+            <button id="modal-btn-replay" class="hh-btn hh-btn-secondary">↺ Replay Level</button>
+            <button id="modal-btn-map" class="hh-btn hh-btn-outline">🗺️ Level Map</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL: TIME OVER (TIMED MODE) -->
+      <div id="modal-gameover" class="hh-modal-overlay hidden" role="dialog" aria-modal="true">
+        <div class="hh-modal-card">
+          <div class="hh-modal-title" style="color: var(--accent-orange);">⏳ Time's Up!</div>
+          <p class="hh-modal-subtitle">The clock expired before all objects were recovered. Don't worry, try again!</p>
+          <div class="hh-modal-actions">
+            <button id="modal-go-btn-replay" class="hh-btn hh-btn-primary">Try Again ↺</button>
+            <button class="hh-btn hh-btn-outline hh-modal-close-btn" onclick="document.getElementById('hh-btn-back-levels').click()">Back to Levels</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL: HOW TO PLAY -->
+      <div id="modal-howto" class="hh-modal-overlay hidden" role="dialog" aria-modal="true">
+        <div class="hh-modal-card" style="max-width: 500px; text-align: left;">
+          <div class="hh-modal-title" style="text-align: center;">How to Play</div>
+          <p class="hh-modal-subtitle" style="text-align: center;">Master the art of observation.</p>
+          <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
+            <p style="margin-bottom: 10px;"><strong>1. Inspect the Scene:</strong> Look at the target item icons and names listed on the bottom shelf.</p>
+            <p style="margin-bottom: 10px;"><strong>2. Tap to Claim:</strong> When you spot a target item in the illustration, tap directly on it to collect it.</p>
+            <p style="margin-bottom: 10px;"><strong>3. Zoom &amp; Pan:</strong> Use the <code>+</code> / <code>−</code> buttons or touch drag to inspect tiny corners.</p>
+            <p style="margin-bottom: 10px;"><strong>4. Need Help?</strong> Tap the <code>💡 Hint</code> button to highlight one remaining item's exact spot.</p>
+          </div>
+          <button class="hh-btn hh-btn-primary hh-modal-close-btn">Got It!</button>
+        </div>
+      </div>
+
+      <!-- MODAL: ACHIEVEMENTS -->
+      <div id="modal-achievements" class="hh-modal-overlay hidden" role="dialog" aria-modal="true">
+        <div class="hh-modal-card" style="max-width: 520px;">
+          <div class="hh-modal-title">🏆 Observer Badges</div>
+          <p class="hh-modal-subtitle">Track your discoveries and accomplishments.</p>
+          <div id="modal-achievements-list" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;"></div>
+          <button class="hh-btn hh-btn-primary hh-modal-close-btn">Close</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Controls & Rules Section -->
+    <section class="controls-guide-section" id="controls-guide" aria-label="Controls and rules">
+      <div class="section-eyebrow">CONTROLS &amp; RULES</div>
+      <h2 class="section-title">Hidden Hunt Observation Guide</h2>
+      <div class="controls-grid">
+        <div class="control-item">
+          <span class="control-icon">🖱️</span>
+          <div>
+            <div class="control-name">Mouse Click / Touch</div>
+            <div class="control-desc">Click or tap directly on any target object to find it.</div>
+          </div>
+        </div>
+        <div class="control-item">
+          <span class="control-icon">🔍</span>
+          <div>
+            <div class="control-name">Zoom &amp; Pan</div>
+            <div class="control-desc">Zoom up to 2.5x and drag the viewport across hidden corners.</div>
+          </div>
+        </div>
+        <div class="control-item">
+          <span class="control-icon">💡</span>
+          <div>
+            <div class="control-name">Smart Hint</div>
+            <div class="control-desc">Highlights a remaining object's exact location for 3.5 seconds.</div>
+          </div>
+        </div>
+        <div class="control-item">
+          <span class="control-icon">⭐</span>
+          <div>
+            <div class="control-name">3-Star Rating</div>
+            <div class="control-desc">Earn 3 stars per level by finding items with high accuracy and speed.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" aria-label="Frequently Asked Questions">
+      <div class="section-eyebrow">FAQ</div>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <div class="faq-list">
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            What is Hidden Hunt and how do you play?
+            <span class="faq-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-answer">
+            Hidden Hunt is an observation puzzle game where players inspect detailed illustrated environments to locate specific target objects shown on the bottom shelf. Click or tap directly on the object once discovered to claim it.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            How many worlds and levels are available in Hidden Hunt?
+            <span class="faq-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-answer">
+            Hidden Hunt features 3 initial worlds: The Old Library, Mystery Forest, and Pirate's Treasure. Each world contains 5 distinct hand-crafted scenes, offering 15 complete playable levels plus daily challenges.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Can I zoom and pan on mobile devices?
+            <span class="faq-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-answer">
+            Yes. Hidden Hunt supports full multi-level zoom (up to 2.5x) and fluid drag or touch panning so you can comfortably inspect intricate details on smartphones, tablets, and desktop computers.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            How do hints work in Hidden Hunt?
+            <span class="faq-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-answer">
+            Pressing the Hint button selects an undiscovered target object and highlights its actual coordinate position in the scene with a pulsating glow pin for 3.5 seconds. You start with 3 hints per level.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            What is Daily Hunt?
+            <span class="faq-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-answer">
+            Daily Hunt presents a unique, date-synchronized challenge each calendar day. Every player worldwide gets the exact same mystery scene on that day, allowing you to test observation speed and track daily streaks.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Is Hidden Hunt free to play with zero downloads?
+            <span class="faq-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-answer">
+            Yes. Hidden Hunt runs 100% in modern web browsers without installation, accounts, or payments. Your level progress and stars are securely saved in your browser's local storage.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- AdSense: Game Page Bottom Unit -->
+    <div class="ad-placement-wrap" data-ad-placement="gameBottom">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-6654460587836639"
+           data-ad-slot="2158222958"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+    </div>
+
+    <!-- Related games -->
+    <section class="related-games-section" aria-label="More puzzle games">
+      <div class="section-eyebrow">MORE GAMES</div>
+      <h2 class="section-title">More Puzzle &amp; Logic Games</h2>
+      <div class="related-grid">
+        <a href="/games/merge-grid" class="related-card" aria-label="Play Merge Grid">
+          <img src="/assets/games/merge-grid.svg" alt="Merge Grid" class="related-thumb" width="320" height="180" loading="lazy">
+          <div class="related-card-body">
+            <div class="related-card-title">Merge Grid</div>
+            <div class="related-card-cat">Puzzle · 2048 Tile Merger</div>
+          </div>
+        </a>
+        <a href="/games/circuit-connect" class="related-card" aria-label="Play Circuit Connect">
+          <img src="/assets/games/circuit-connect.svg" alt="Circuit Connect" class="related-thumb" width="320" height="180" loading="lazy">
+          <div class="related-card-body">
+            <div class="related-card-title">Circuit Connect</div>
+            <div class="related-card-cat">Puzzle · Circuit Logic</div>
+          </div>
+        </a>
+        <a href="/games/memory-match" class="related-card" aria-label="Play Memory Match">
+          <img src="/assets/games/memory-match.svg" alt="Memory Match" class="related-thumb" width="320" height="180" loading="lazy">
+          <div class="related-card-body">
+            <div class="related-card-title">Memory Match</div>
+            <div class="related-card-cat">Casual · Memory Recall</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="game-page-footer" role="contentinfo">
+      <p>
+        <a href="/">← All Games</a> &nbsp;·&nbsp;
+        <a href="/about">About</a> &nbsp;·&nbsp;
+        <a href="/privacy">Privacy</a> &nbsp;·&nbsp;
+        <a href="/terms">Terms</a>
+      </p>
+    </footer>
+
+  </div><!-- /.game-page-wrapper -->
+
+  <!-- Game Scripts -->
+  <script src="/games/hidden-hunt/js/data.js"></script>
+  <script src="/games/hidden-hunt/js/engine.js"></script>
+  <script src="/games/hidden-hunt/js/audio.js"></script>
+  <script src="/games/hidden-hunt/js/scenes.js"></script>
+  <script src="/games/hidden-hunt/js/game.js"></script>
+  <script src="/js/ads-config.js"></script>
+  <script src="/js/ad-unit.js"></script>
+
+  <!-- FAQ Accordion -->
+  <script>
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.toggle('open');
+        btn.setAttribute('aria-expanded', isOpen);
+      });
+    });
+  </script>
+
+</body>
+</html>

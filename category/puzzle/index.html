@@ -131,6 +131,18 @@
             "genre": "Puzzle",
             "description": "Slide numbered tiles around a 4x4 grid to merge matching values and reach 2048! Features strategic, replayable gameplay with undo support, best-score tracking, and full keyboard and swipe controls."
           }
+        },
+        {
+          "@type": "ListItem",
+          "position": 6,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Hidden Hunt",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/hidden-hunt",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/hidden-hunt.svg",
+            "genre": "Puzzle",
+            "description": "Explore 15 hand-illustrated scenes across The Old Library, Mystery Forest, and Pirate's Treasure. Find hidden curiosities, zoom and pan, use smart hints, and conquer daily observation challenges."
+          }
         }
       ]
     }
@@ -254,10 +266,10 @@
 
         <!-- Category Nav Pills -->
         <div class="category-pills-bar">
-          <a href="/" class="cat-nav-pill">All Games <span class="cat-badge-count">(13)</span></a>
+          <a href="/" class="cat-nav-pill">All Games <span class="cat-badge-count">(14)</span></a>
           <a href="/category/arcade" class="cat-nav-pill ">Arcade <span class="cat-badge-count">(3)</span></a>
           <a href="/category/action" class="cat-nav-pill ">Action <span class="cat-badge-count">(3)</span></a>
-          <a href="/category/puzzle" class="cat-nav-pill active">Puzzle <span class="cat-badge-count">(5)</span></a>
+          <a href="/category/puzzle" class="cat-nav-pill active">Puzzle <span class="cat-badge-count">(6)</span></a>
           <a href="/category/casual" class="cat-nav-pill ">Casual <span class="cat-badge-count">(2)</span></a>
         </div>
       </section>
@@ -454,6 +466,45 @@
             <div class="card-footer-row">
               <span class="card-control-hint">Arrow Keys / WASD to Slide • Swipe on Mobile • ↩ Undo • ↺ Restart • 🔊 Mute</span>
               <a href="/games/merge-grid" class="card-play-btn" aria-label="Play Merge Grid now">
+                <span>Play</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Game Card: Hidden Hunt -->
+        <article class="arcade-card" data-game-id="hidden-hunt">
+          <a href="/games/hidden-hunt" class="card-media-wrapper" aria-label="Play Hidden Hunt">
+            <img src="/assets/games/hidden-hunt.svg" alt="Hidden Hunt original illustration" class="card-thumb" width="480" height="270" loading="lazy" />
+            <div class="card-badges">
+              <span class="badge-category">Puzzle</span>
+              <span class="badge-status">New</span>
+            </div>
+            <div class="card-hover-overlay">
+              <span class="hover-play-pill">Play Now →</span>
+            </div>
+          </a>
+
+          <div class="card-body">
+            <div class="card-header-row">
+              <h3 class="card-title">Hidden Hunt</h3>
+              <span class="card-session-tag">Puzzle</span>
+            </div>
+
+            <p class="card-tagline">Look closer. Find everything.</p>
+            <p class="card-description">Explore 15 hand-illustrated scenes across The Old Library, Mystery Forest, and Pirate's Treasure. Find hidden curiosities, zoom and pan, use smart hints, and conquer daily observation challenges.</p>
+
+            <div class="card-features">
+              <span class="card-feature-pill">15 Illustrated Scenes</span>
+              <span class="card-feature-pill">3 Themed Worlds</span>
+              <span class="card-feature-pill">Zoom & Pan Viewport</span>
+              <span class="card-feature-pill">Daily Hunt Challenge</span>
+            </div>
+
+            <div class="card-footer-row">
+              <span class="card-control-hint">Click / Tap to Find • Zoom & Pan Controls • 💡 Smart Hint • 🔊 Mute • 3 Worlds</span>
+              <a href="/games/hidden-hunt" class="card-play-btn" aria-label="Play Hidden Hunt now">
                 <span>Play</span>
                 <span>→</span>
               </a>
