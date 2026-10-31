@@ -148,6 +148,19 @@ const ARCADE_GAMES = [
     features: ['30 Progressive Levels', '100% Board Fill Constraint', 'Smart Hint Solver', 'Progress Saved Locally']
   },
   {
+    id: 'merge-grid',
+    title: 'Merge Grid',
+    category: 'Puzzle',
+    tags: ['puzzle', 'strategy', 'numbers', 'merge', '2048', 'sliding', 'tiles', 'brain'],
+    badge: 'New',
+    tagline: 'Slide tiles. Merge pairs. Build your way to 2048.',
+    description: 'Slide numbered tiles around a 4×4 grid to merge matching values and reach 2048! Features strategic, replayable gameplay with undo support, best-score tracking, and full keyboard and swipe controls.',
+    route: 'games/merge-grid/index.html',
+    thumbnail: 'assets/games/merge-grid.svg',
+    controlsSummary: 'Arrow Keys / WASD to Slide · Swipe on Mobile · ↩ Undo · ↺ Restart · 🔊 Mute',
+    features: ['4×4 Sliding Tile Grid', 'Undo Last Move', 'Best Score Saved Locally', 'Keyboard & Swipe Controls']
+  },
+  {
     id: 'dashverse',
     title: 'Dashverse',
     category: 'Action',

@@ -119,6 +119,18 @@
             "genre": "Puzzle",
             "description": "Draw continuous glowing paths between matching colored neon dots across the grid. Every single cell on the board must be filled without crossing wires to complete the puzzle! Features 30 progressive handcrafted levels (5x5 to 8x8), smart hint solver, 3-star efficiency ratings, and local progression."
           }
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "item": {
+            "@type": "VideoGame",
+            "name": "Merge Grid",
+            "url": "https://mini-game-arcade-coral.vercel.app/games/merge-grid",
+            "image": "https://mini-game-arcade-coral.vercel.app/assets/games/merge-grid.svg",
+            "genre": "Puzzle",
+            "description": "Slide numbered tiles around a 4x4 grid to merge matching values and reach 2048! Features strategic, replayable gameplay with undo support, best-score tracking, and full keyboard and swipe controls."
+          }
         }
       ]
     }
@@ -242,10 +254,10 @@
 
         <!-- Category Nav Pills -->
         <div class="category-pills-bar">
-          <a href="/" class="cat-nav-pill">All Games <span class="cat-badge-count">(12)</span></a>
+          <a href="/" class="cat-nav-pill">All Games <span class="cat-badge-count">(13)</span></a>
           <a href="/category/arcade" class="cat-nav-pill ">Arcade <span class="cat-badge-count">(3)</span></a>
           <a href="/category/action" class="cat-nav-pill ">Action <span class="cat-badge-count">(3)</span></a>
-          <a href="/category/puzzle" class="cat-nav-pill active">Puzzle <span class="cat-badge-count">(4)</span></a>
+          <a href="/category/puzzle" class="cat-nav-pill active">Puzzle <span class="cat-badge-count">(5)</span></a>
           <a href="/category/casual" class="cat-nav-pill ">Casual <span class="cat-badge-count">(2)</span></a>
         </div>
       </section>
@@ -403,6 +415,45 @@
             <div class="card-footer-row">
               <span class="card-control-hint">Click & Drag / Touch Swipe to Draw Path • Dragging Backward Backtracks • Arrow Keys / WASD + Spacebar to Navigate • H for Hint • U to Undo • R to Restart</span>
               <a href="/games/circuit-connect" class="card-play-btn" aria-label="Play Circuit Connect now">
+                <span>Play</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Game Card: Merge Grid -->
+        <article class="arcade-card" data-game-id="merge-grid">
+          <a href="/games/merge-grid" class="card-media-wrapper" aria-label="Play Merge Grid">
+            <img src="/assets/games/merge-grid.svg" alt="Merge Grid original illustration" class="card-thumb" width="480" height="270" loading="lazy" />
+            <div class="card-badges">
+              <span class="badge-category">Puzzle</span>
+              <span class="badge-status">New</span>
+            </div>
+            <div class="card-hover-overlay">
+              <span class="hover-play-pill">Play Now →</span>
+            </div>
+          </a>
+
+          <div class="card-body">
+            <div class="card-header-row">
+              <h3 class="card-title">Merge Grid</h3>
+              <span class="card-session-tag">Puzzle</span>
+            </div>
+
+            <p class="card-tagline">Slide tiles. Merge pairs. Build your way to 2048.</p>
+            <p class="card-description">Slide numbered tiles around a 4×4 grid to merge matching values and reach 2048! Features strategic, replayable gameplay with undo support, best-score tracking, and full keyboard and swipe controls.</p>
+
+            <div class="card-features">
+              <span class="card-feature-pill">4×4 Sliding Tile Grid</span>
+              <span class="card-feature-pill">Undo Last Move</span>
+              <span class="card-feature-pill">Best Score Saved Locally</span>
+              <span class="card-feature-pill">Keyboard & Swipe Controls</span>
+            </div>
+
+            <div class="card-footer-row">
+              <span class="card-control-hint">Arrow Keys / WASD to Slide • Swipe on Mobile • ↩ Undo • ↺ Restart • 🔊 Mute</span>
+              <a href="/games/merge-grid" class="card-play-btn" aria-label="Play Merge Grid now">
                 <span>Play</span>
                 <span>→</span>
               </a>

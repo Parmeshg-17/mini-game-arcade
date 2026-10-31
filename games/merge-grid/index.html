@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Merge Grid – Free Online 2048 Tile Puzzle Game | Mini Game Arcade</title>
+  <link rel="canonical" href="https://mini-game-arcade-coral.vercel.app/games/merge-grid">
+  <meta name="description" content="Play Merge Grid free online in your browser. Slide numbered tiles to merge matching values and build your way to 2048. No download needed — keyboard, swipe, and undo support.">
+  <meta name="theme-color" content="#10120f">
+
+  <!-- OpenGraph -->
+  <meta property="og:site_name" content="Mini Game Arcade">
+  <meta property="og:title" content="Merge Grid – Free Online 2048 Tile Puzzle | Mini Game Arcade">
+  <meta property="og:description" content="Slide numbered tiles to merge matching values and reach 2048. Strategic, replayable gameplay with undo, best-score tracking, and full keyboard and swipe controls.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mini-game-arcade-coral.vercel.app/games/merge-grid">
+  <meta property="og:image" content="https://mini-game-arcade-coral.vercel.app/assets/games/merge-grid.svg">
+  <meta property="og:image:alt" content="Merge Grid Tile Puzzle Game">
+  <meta property="og:image:width" content="480">
+  <meta property="og:image:height" content="270">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Merge Grid – Free Online 2048 Tile Puzzle | Mini Game Arcade">
+  <meta name="twitter:description" content="Slide numbered tiles to merge matching values and reach 2048. Undo, best-score, keyboard and swipe controls.">
+  <meta name="twitter:image" content="https://mini-game-arcade-coral.vercel.app/assets/games/merge-grid.svg">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/merge-grid#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://mini-game-arcade-coral.vercel.app/" },
+        { "@type": "ListItem", "position": 2, "name": "Games", "item": "https://mini-game-arcade-coral.vercel.app/#games-section" },
+        { "@type": "ListItem", "position": 3, "name": "Merge Grid", "item": "https://mini-game-arcade-coral.vercel.app/games/merge-grid" }
+      ]
+    },
+    {
+      "@type": "VideoGame",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/merge-grid#game",
+      "name": "Merge Grid",
+      "url": "https://mini-game-arcade-coral.vercel.app/games/merge-grid",
+      "image": "https://mini-game-arcade-coral.vercel.app/assets/games/merge-grid.svg",
+      "description": "Slide numbered tiles around a 4x4 grid to merge matching values and reach 2048. Strategic, replayable browser puzzle game with undo support, best-score tracking, and keyboard and swipe controls.",
+      "genre": ["Puzzle", "Strategy", "Merge Puzzle"],
+      "gamePlatform": "Web Browser",
+      "operatingSystem": "Any",
+      "applicationCategory": "Game",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/merge-grid#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is Merge Grid and how do you play?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Merge Grid is a 4x4 sliding tile puzzle game. Use arrow keys, WASD, or swipe gestures to slide all tiles in one direction. When two tiles with the same number collide they merge into a single tile worth double the value. The goal is to create a tile worth 2048."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do you reach 2048 in Merge Grid?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Plan your moves to keep your highest tile in a corner. Slide in a repeating L-shaped pattern to build a chain of doubling values: 2→4→8→16→32→64→128→256→512→1024→2048. Avoid filling the board with small tiles that cannot be merged."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I undo a move in Merge Grid?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Merge Grid includes a one-move undo. Click or tap the Undo button in the HUD bar to revert your last slide and restore the previous board state and score."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How is the score calculated in Merge Grid?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Every time two tiles merge your score increases by the value of the new tile. Merging two 64 tiles adds 128 to your score. Chaining multiple merges in a single slide accumulates all values. Your best score is saved locally in your browser."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Merge Grid free to play without downloading?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Merge Grid is 100% free to play directly in your web browser with no downloads, accounts, or payments required. It works on desktop and mobile devices."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens after reaching 2048?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "When you create a 2048 tile a win overlay appears congratulating you. You can choose to continue playing to achieve higher tiles like 4096 or beyond, or start a fresh game to chase a higher score."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Root-relative stylesheet link with file:// fallback -->
+  <link rel="stylesheet" href="/games/merge-grid/style.css" id="game-stylesheet">
+  <script>
+    if (window.location.protocol === 'file:') {
+      const link = document.getElementById('game-stylesheet');
+      if (link) link.href = 'style.css';
+    }
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6654460587836639" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/ads.css">
+</head>
+<body class="game-page-body">
+
+  <!-- Navigation -->
+  <nav class="arcade-nav-bar" aria-label="Game page navigation">
+    <div class="nav-content-container">
+      <a href="/" class="back-link" aria-label="Back to Mini Game Arcade">
+        <span class="back-arrow">←</span>
+        <span>Back to Arcade</span>
+      </a>
+
+      <div class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="crumb-separator">/</span>
+        <a href="/#games-section">Games</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-current">Merge Grid</span>
+      </div>
+
+      <a href="#controls-guide" class="nav-guide-link">Controls &amp; Rules</a>
+    </div>
+  </nav>
+
+  <!-- Main page content -->
+  <div class="game-page-wrapper">
+
+    <!-- Editorial header -->
+    <header class="game-editorial-header">
+      <div class="game-eyebrow">
+        <span class="game-eyebrow-pip"></span>
+        <span>PUZZLE // STRATEGY</span>
+      </div>
+      <h1 class="game-h1">Merge Grid</h1>
+      <p class="game-tagline">Slide tiles. Merge pairs. Build your way to 2048.</p>
+    </header>
+
+    <!-- Play card -->
+    <section class="arcade-play-card" aria-label="Game area">
+
+      <!-- HUD bar -->
+      <div class="game-hud-bar">
+        <div class="hud-scores">
+          <div class="hud-score-box" aria-live="polite">
+            <span class="hud-label">Score</span>
+            <span id="merge-score" class="hud-value">0</span>
+          </div>
+          <div class="hud-score-box">
+            <span class="hud-label">Best</span>
+            <span id="merge-best" class="hud-value best-val">0</span>
+          </div>
+        </div>
+        <div class="hud-controls">
+          <button id="merge-undo-btn" class="hud-btn undo-btn" aria-label="Undo last move">↩ Undo</button>
+          <button id="merge-restart-btn" class="hud-btn restart-btn" aria-label="Restart game">↺ New</button>
+          <button id="merge-mute-btn" class="hud-btn" aria-label="Mute sound">🔊</button>
+        </div>
+      </div>
+
+      <!-- Board stage (relative for overlay positioning) -->
+      <div class="board-stage">
+
+        <!-- Game board -->
+        <div id="merge-grid-board" role="grid" aria-label="Merge Grid game board" tabindex="0"></div>
+
+        <!-- Win overlay -->
+        <div id="overlay-win" class="overlay hidden" role="dialog" aria-modal="true" aria-label="You reached 2048!">
+          <div class="overlay-card">
+            <div class="overlay-title">🎉 You reached 2048!</div>
+            <p class="overlay-subtitle">Amazing! Keep going to beat your best score, or start fresh.</p>
+            <div class="overlay-btns">
+              <button id="merge-continue-btn" class="overlay-btn primary">Keep Going</button>
+              <button id="merge-win-restart-btn" class="overlay-btn secondary">New Game</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game over overlay -->
+        <div id="overlay-gameover" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Game Over">
+          <div class="overlay-card">
+            <div class="overlay-title">Game Over</div>
+            <p class="overlay-subtitle">No moves left. Try again — you've got this!</p>
+            <div class="overlay-btns">
+              <button id="merge-go-restart-btn" class="overlay-btn primary">Play Again</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hidden new-game button for test assertions -->
+      <button id="merge-new-game-btn" style="display:none" aria-hidden="true"></button>
+    </section>
+
+    <!-- Controls guide -->
+    <section class="controls-guide-section" id="controls-guide" aria-label="Controls and rules">
+      <div class="section-eyebrow">CONTROLS &amp; RULES</div>
+      <h2 class="section-title">How to Play Merge Grid</h2>
+      <div class="controls-grid">
+        <div class="control-item">
+          <span class="control-icon">⌨️</span>
+          <div>
+            <div class="control-name">Arrow Keys / WASD</div>
+            <div class="control-desc">Slide all tiles Left, Right, Up, or Down.</div>
+          </div>
+        </div>
+        <div class="control-item">
+          <span class="control-icon">👆</span>
+          <div>
+            <div class="control-name">Swipe</div>
+            <div class="control-desc">Touch-swipe in any direction on mobile or tablet.</div>
+          </div>
+        </div>
+        <div class="control-item">
+          <span class="control-icon">↩</span>
+          <div>
+            <div class="control-name">Undo</div>
+            <div class="control-desc">Revert your last move once per turn.</div>
+          </div>
+        </div>
+        <div class="control-item">
+          <span class="control-icon">🏆</span>
+          <div>
+            <div class="control-name">Goal</div>
+            <div class="control-desc">Create a tile with the value 2048 to win!</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ section -->
+    <section class="faq-section" aria-label="Frequently Asked Questions">
+      <div class="section-eyebrow">FAQ</div>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <div class="faq-list">
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            What is Merge Grid and how do you play?
+            <span class="faq-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-answer">
+            Merge Grid is a 4×4 sliding tile puzzle game. Use arrow keys, WASD, or swipe gestures to slide all tiles in one direction. When two tiles with the same number collide they merge into a tile worth double the value. The goal is to create a tile worth 2048.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            How do you reach 2048 in Merge Grid?
+            <span class="faq-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-answer">
+            Keep your highest-value tile anchored in a corner. Slide in a repeating L-shaped pattern to build a chain of doubling values: 2 → 4 → 8 → 16 → 32 → 64 → 128 → 256 → 512 → 1024 → 2048. Avoid filling the board with small tiles that cannot be merged.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Can I undo a move in Merge Grid?
+            <span class="faq-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-answer">
+            Yes. Merge Grid includes a one-move undo. Click or tap the Undo button in the HUD bar to revert your last slide and restore the previous board state and score. Use it wisely — only one undo is available at a time.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            How is the score calculated in Merge Grid?
+            <span class="faq-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-answer">
+            Every time two tiles merge your score increases by the value of the new tile. Merging two 64 tiles adds 128 to your score. Multiple merges in a single slide all count. Your personal best score is saved automatically in your browser's local storage.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            Is Merge Grid free to play without downloading?
+            <span class="faq-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-answer">
+            Yes. Merge Grid is 100% free to play directly in your web browser with no downloads, accounts, or payments required. It runs on desktop and mobile devices and works across Chrome, Firefox, Safari, and Edge.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            What happens after reaching 2048?
+            <span class="faq-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-answer">
+            When you create a 2048 tile a win overlay appears. You can choose to keep playing to reach even higher tiles like 4096 or 8192, or start a fresh game to chase a higher total score. The board and score are preserved when you continue.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- AdSense: Game Page Bottom Unit -->
+    <div class="ad-placement-wrap" data-ad-placement="gameBottom">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-6654460587836639"
+           data-ad-slot="2158222958"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+    </div>
+
+    <!-- Related games -->
+    <section class="related-games-section" aria-label="More puzzle games">
+      <div class="section-eyebrow">MORE GAMES</div>
+      <h2 class="section-title">More Puzzle Games You'll Love</h2>
+      <div class="related-grid">
+        <a href="/games/number-puzzle" class="related-card" aria-label="Play Number Puzzle">
+          <img src="/assets/games/number-puzzle.svg" alt="Number Puzzle" class="related-thumb" width="320" height="180" loading="lazy">
+          <div class="related-card-body">
+            <div class="related-card-title">Number Puzzle</div>
+            <div class="related-card-cat">Puzzle · Sliding tiles</div>
+          </div>
+        </a>
+        <a href="/games/block-puzzle" class="related-card" aria-label="Play Block Puzzle">
+          <img src="/assets/games/block-puzzle.svg" alt="Block Puzzle" class="related-thumb" width="320" height="180" loading="lazy">
+          <div class="related-card-body">
+            <div class="related-card-title">Block Puzzle</div>
+            <div class="related-card-cat">Puzzle · Polyomino</div>
+          </div>
+        </a>
+        <a href="/games/circuit-connect" class="related-card" aria-label="Play Circuit Connect">
+          <img src="/assets/games/circuit-connect.svg" alt="Circuit Connect" class="related-thumb" width="320" height="180" loading="lazy">
+          <div class="related-card-body">
+            <div class="related-card-title">Circuit Connect</div>
+            <div class="related-card-cat">Puzzle · Logic</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="game-page-footer" role="contentinfo">
+      <p>
+        <a href="/">← All Games</a> &nbsp;·&nbsp;
+        <a href="/about">About</a> &nbsp;·&nbsp;
+        <a href="/privacy">Privacy</a> &nbsp;·&nbsp;
+        <a href="/terms">Terms</a>
+      </p>
+    </footer>
+
+  </div><!-- /.game-page-wrapper -->
+
+  <!-- Game scripts -->
+  <script src="/games/merge-grid/js/engine.js"></script>
+  <script src="/games/merge-grid/js/game.js"></script>
+  <script src="/js/ads-config.js"></script>
+  <script src="/js/ad-unit.js"></script>
+
+  <!-- FAQ accordion -->
+  <script>
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.toggle('open');
+        btn.setAttribute('aria-expanded', isOpen);
+      });
+    });
+  </script>
+
+</body>
+</html>
+

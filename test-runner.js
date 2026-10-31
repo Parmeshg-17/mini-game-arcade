@@ -158,13 +158,14 @@ it('Search and category filter logic filters games correctly', () => {
   assert(res3.some(g => g.id === 'tap-challenge'));
   assert(res3.some(g => g.id === 'stack-rush'));
 
-  // Puzzle category filter matches Tic Tac Toe, Number Puzzle, Block Puzzle, and Circuit Connect
+  // Puzzle category filter matches Tic Tac Toe, Number Puzzle, Block Puzzle, Circuit Connect, and Merge Grid
   const res4 = filterGames('', 'Puzzle');
-  assert.strictEqual(res4.length, 4);
+  assert.strictEqual(res4.length, 5);
   assert(res4.some(g => g.id === 'tic-tac-toe'));
   assert(res4.some(g => g.id === 'number-puzzle'));
   assert(res4.some(g => g.id === 'block-puzzle'));
   assert(res4.some(g => g.id === 'circuit-connect'));
+  assert(res4.some(g => g.id === 'merge-grid'));
 
   // Casual category filter matches Memory Match and Bubble Pop
   const res5 = filterGames('', 'Casual');
@@ -196,9 +197,10 @@ it('Search and category filter logic filters games correctly', () => {
 
   // Tag search for number
   const resNumber = filterGames('number', 'All');
-  assert.strictEqual(resNumber.length, 2);
+  assert.strictEqual(resNumber.length, 3);
   assert(resNumber.some(g => g.id === 'number-puzzle'));
   assert(resNumber.some(g => g.id === 'tap-challenge'));
+  assert(resNumber.some(g => g.id === 'merge-grid'));
 
   // Tag search for tap (matches tap-challenge and stack-rush)
   const resTap = filterGames('tap', 'All');
@@ -1413,6 +1415,117 @@ it('Dashverse engine executes parkour jumps, double-jumps, dynamic sliding hitbo
   assert(/^\d{4}-\d{2}-\d{2}$/.test(seed), 'Daily seed must be valid YYYY-MM-DD date string');
 });
 
+// 30b. Dedicated Merge Grid Playable Page DOM & Asset Integrity
+it('Dedicated Merge Grid page (games/merge-grid/index.html) has all DOM elements required by game.js', () => {
+  const gameHtmlPath = path.join(__dirname, 'games/merge-grid/index.html');
+  assert(fs.existsSync(gameHtmlPath), 'games/merge-grid/index.html must exist');
+  const gameHtml = fs.readFileSync(gameHtmlPath, 'utf8');
+
+  const requiredIds = [
+    'merge-grid-board',
+    'merge-score',
+    'merge-best',
+    'merge-restart-btn',
+    'merge-undo-btn',
+    'merge-new-game-btn',
+    'overlay-win',
+    'overlay-gameover',
+    'merge-continue-btn',
+    'merge-go-restart-btn',
+    'merge-win-restart-btn',
+    'merge-mute-btn'
+  ];
+
+  for (const id of requiredIds) {
+    assert(gameHtml.includes(`id="${id}"`), `Missing required ID="${id}" in games/merge-grid/index.html`);
+  }
+});
+
+// 30c. Merge Grid Core Engine, Sliding Compression, Value Merging, Score Accrual, and Loss State
+it('Merge Grid engine computes valid slides, merges, score tallying, undo, and game-over detection correctly', () => {
+  const engine = require('./games/merge-grid/js/engine.js');
+  const {
+    GRID_SIZE,
+    WIN_VALUE,
+    slideRow,
+    moveBoard,
+    getEmptyIndices,
+    spawnTile,
+    hasMovesLeft,
+    isWin,
+    createInitialBoard
+  } = engine;
+
+  assert.strictEqual(GRID_SIZE, 4, 'Board grid size must be 4');
+  assert.strictEqual(WIN_VALUE, 2048, 'Win target value must be 2048');
+
+  // 1. Single row compression & merging
+  const res1 = slideRow([2, 2, 4, 8]);
+  assert.deepStrictEqual(res1.row, [4, 4, 8, 0], '2+2 should merge into 4 and compress left');
+  assert.strictEqual(res1.score, 4, 'Score should increase by merged value (4)');
+  assert.strictEqual(res1.merged, true);
+
+  const res2 = slideRow([4, 4, 4, 4]);
+  assert.deepStrictEqual(res2.row, [8, 8, 0, 0], 'Double pair [4,4,4,4] should merge into [8,8,0,0]');
+  assert.strictEqual(res2.score, 16);
+
+  const res3 = slideRow([2, 0, 2, 0]);
+  assert.deepStrictEqual(res3.row, [4, 0, 0, 0], 'Empty spaces should be compressed prior to merging');
+  assert.strictEqual(res3.score, 4);
+
+  const res4 = slideRow([2, 4, 8, 16]);
+  assert.deepStrictEqual(res4.row, [2, 4, 8, 16], 'No merges should occur when numbers differ');
+  assert.strictEqual(res4.score, 0);
+  assert.strictEqual(res4.merged, false);
+
+  // 2. Full board directional moves
+  const testBoard = [
+    2, 0, 0, 2,
+    0, 4, 0, 4,
+    8, 8, 8, 8,
+    0, 0, 0, 0
+  ];
+
+  const leftMove = moveBoard(testBoard, 'left');
+  assert.strictEqual(leftMove.changed, true);
+  assert.strictEqual(leftMove.score, 4 + 8 + 32);
+  assert.strictEqual(leftMove.board[0], 4);
+  assert.strictEqual(leftMove.board[1], 0);
+  assert.strictEqual(leftMove.board[4], 8);
+  assert.strictEqual(leftMove.board[8], 16);
+  assert.strictEqual(leftMove.board[9], 16);
+
+  // 3. Tile spawning & initial board
+  const seededRng = () => 0.5;
+  const initBoard = createInitialBoard(seededRng);
+  assert.strictEqual(initBoard.length, 16);
+  const nonZeros = initBoard.filter(v => v > 0);
+  assert.strictEqual(nonZeros.length, 2, 'Initial board must start with exactly 2 tiles');
+
+  // 4. Win condition detection
+  const winBoard = new Array(16).fill(0);
+  winBoard[5] = 2048;
+  assert.strictEqual(isWin(winBoard), true);
+  assert.strictEqual(isWin(testBoard), false);
+
+  // 5. Game over / Move availability
+  const fullBoardNoMoves = [
+    2, 4, 2, 4,
+    4, 2, 4, 2,
+    2, 4, 2, 4,
+    4, 2, 4, 2
+  ];
+  assert.strictEqual(hasMovesLeft(fullBoardNoMoves), false, 'Full board without equal neighbors has no moves');
+
+  const fullBoardWithMove = [
+    2, 4, 2, 4,
+    4, 2, 4, 2,
+    2, 4, 2, 4,
+    4, 2, 4, 4
+  ];
+  assert.strictEqual(hasMovesLeft(fullBoardWithMove), true, 'Full board with equal neighbors has available moves');
+});
+
 // 31. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
@@ -1453,11 +1566,12 @@ it('sitemap.xml exists, is valid XML, and contains all 17 canonical pages', () =
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/'), 'sitemap.xml must include homepage');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/citrus-blitz'), 'sitemap.xml must include citrus-blitz');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/dashverse'), 'sitemap.xml must include dashverse');
+  assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/merge-grid'), 'sitemap.xml must include merge-grid');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/about'), 'sitemap.xml must include about page');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/contact'), 'sitemap.xml must include contact page');
   
   const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
-  assert(urls.length >= 21, 'sitemap.xml must contain all canonical URLs including category hubs');
+  assert(urls.length >= 22, 'sitemap.xml must contain all canonical URLs including category hubs');
 });
 
 // 33. Technical SEO: 404 page error handling
@@ -1488,7 +1602,8 @@ it('All HTML pages have verified canonical tags and valid Schema.org JSON-LD', (
     'games/number-puzzle/index.html',
     'games/tap-challenge/index.html',
     'games/memory-match/index.html',
-    'games/tic-tac-toe/index.html'
+    'games/tic-tac-toe/index.html',
+    'games/merge-grid/index.html'
   ];
 
   for (const page of pages) {
@@ -1584,7 +1699,7 @@ it('AdSense configuration and ad-unit controller exist with safe preparation mod
 });
 
 // 40. Google AdSense Placements & Policy Compliance Verification
-it('Homepage and all 12 game pages have non-intrusive AdSense placement containers and 404 is clean', () => {
+it('Homepage and all 13 game pages have non-intrusive AdSense placement containers and 404 is clean', () => {
   const indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
   assert(indexHtml.includes('data-ad-placement="homeTop"'), 'index.html must have homeTop placement');
   assert(indexHtml.includes('data-ad-placement="homeList"'), 'index.html must have homeList placement');
