@@ -39,6 +39,8 @@
     timerVal: document.getElementById('hh-hud-timer-val'),
     foundVal: document.getElementById('hh-hud-found-val'),
     scoreVal: document.getElementById('hh-hud-score-val'),
+    progressFill: document.getElementById('hh-hud-progress-fill'),
+    progressText: document.getElementById('hh-hud-progress-text'),
     hintBtn: document.getElementById('hh-btn-hint'),
     muteBtn: document.getElementById('hh-btn-mute'),
     backToLevelsBtn: document.getElementById('hh-btn-back-levels')
@@ -47,6 +49,19 @@
   const viewport = document.getElementById('hh-viewport');
   const canvasWrap = document.getElementById('hh-scene-wrap');
   const targetsList = document.getElementById('hh-targets-list');
+  const toastEl = document.getElementById('hh-toast');
+  const toastText = document.getElementById('hh-toast-text');
+  let toastTimeout = null;
+
+  function showDiscoveryToast(text) {
+    if (!toastEl || !toastText) return;
+    toastText.textContent = text;
+    toastEl.classList.remove('hidden');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      if (toastEl) toastEl.classList.add('hidden');
+    }, 2200);
+  }
 
   const modals = {
     complete: document.getElementById('modal-complete'),
@@ -197,6 +212,10 @@
     if (hud.levelName) hud.levelName.textContent = level.title;
     if (hud.foundVal) hud.foundVal.textContent = `0 / ${level.objects.length}`;
     if (hud.scoreVal) hud.scoreVal.textContent = '0';
+    if (hud.progressText) hud.progressText.textContent = `0 / ${level.objects.length} OBJECTS FOUND — 0%`;
+    if (hud.progressFill) hud.progressFill.style.width = '0%';
+    if (hud.timerVal) hud.timerVal.classList.remove('timer-warning');
+
     if (hud.hintBtn) {
       hud.hintBtn.classList.remove('disabled');
       hud.hintBtn.textContent = `💡 Hint (${currentSession.hintsRemaining})`;
@@ -234,23 +253,34 @@
       const mins = Math.floor(currentSession.timeRemaining / 60);
       const secs = currentSession.timeRemaining % 60;
       hud.timerVal.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+      // Warning treatment only when time is low (<= 20s)
+      if (currentSession.timeRemaining <= 20) {
+        hud.timerVal.classList.add('timer-warning');
+      } else {
+        hud.timerVal.classList.remove('timer-warning');
+      }
     } else {
       const mins = Math.floor(currentSession.timeElapsed / 60);
       const secs = currentSession.timeElapsed % 60;
       hud.timerVal.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      hud.timerVal.classList.remove('timer-warning');
     }
   }
 
-  function renderTargetShelf(objects, foundIds) {
+  function renderTargetShelf(objects, foundIds, hintTargetId = null) {
     if (!targetsList) return;
     const foundSet = new Set(foundIds);
     targetsList.innerHTML = objects.map(obj => {
       const isFound = foundSet.has(obj.id);
+      const isHint = hintTargetId === obj.id && !isFound;
       return `
-        <div class="hh-target-pill ${isFound ? 'found' : ''}" id="shelf-${obj.id}">
-          <span>${obj.icon}</span>
-          <span>${obj.name}</span>
-          <span class="target-check">${isFound ? '✓' : '○'}</span>
+        <div class="hh-target-card ${isFound ? 'found' : ''} ${isHint ? 'hint-target' : ''}" id="shelf-${obj.id}">
+          <div class="target-info-wrap">
+            <span class="target-card-icon">${obj.icon}</span>
+            <span class="target-card-name">${obj.name}</span>
+          </div>
+          <span class="target-status-badge">${isFound ? '✓ FOUND' : '○'}</span>
         </div>
       `;
     }).join('');
@@ -279,11 +309,19 @@
     });
   }
 
+  const DISCOVERY_MESSAGES = [
+    'Excellent discovery!',
+    'Well spotted!',
+    'One more clue found!',
+    'Sharp observation!',
+    'Splendid find!'
+  ];
+
   function handleTargetDiscovered(target) {
     const res = Engine.registerHit(currentSession, target);
     if (res.duplicate) return;
 
-    // Visual Updates
+    // Visual Updates in Scene
     const sceneObj = document.getElementById(`obj-${target.id}`);
     if (sceneObj) {
       sceneObj.classList.add('found');
@@ -291,11 +329,13 @@
       if (ring) ring.style.display = 'block';
     }
 
-    const shelfPill = document.getElementById(`shelf-${target.id}`);
-    if (shelfPill) {
-      shelfPill.classList.add('found');
-      const checkMark = shelfPill.querySelector('.target-check');
-      if (checkMark) checkMark.textContent = '✓';
+    // Visual Updates on Discovery Card
+    const shelfCard = document.getElementById(`shelf-${target.id}`);
+    if (shelfCard) {
+      shelfCard.classList.remove('hint-target');
+      shelfCard.classList.add('found');
+      const badge = shelfCard.querySelector('.target-status-badge');
+      if (badge) badge.textContent = '✓ FOUND';
     }
 
     // Audio Feedback
@@ -305,9 +345,20 @@
       Audio.playFound();
     }
 
-    // Update HUD
-    if (hud.foundVal) hud.foundVal.textContent = `${currentSession.foundObjectIds.length} / ${currentSession.totalTargets}`;
+    // Show Toast Feedback Pill
+    const toastMsg = DISCOVERY_MESSAGES[Math.floor(Math.random() * DISCOVERY_MESSAGES.length)];
+    const scoreBonus = res.combo > 1 ? ` (+${res.scoreAdded} • x${res.combo} Combo!)` : ` (+${res.scoreAdded})`;
+    showDiscoveryToast(`${toastMsg}${scoreBonus}`);
+
+    // Update HUD Found & Score
+    const foundCount = currentSession.foundObjectIds.length;
+    const totalTargets = currentSession.totalTargets;
+    const progressPct = Math.round((foundCount / totalTargets) * 100);
+
+    if (hud.foundVal) hud.foundVal.textContent = `${foundCount} / ${totalTargets}`;
     if (hud.scoreVal) hud.scoreVal.textContent = currentSession.score.toLocaleString();
+    if (hud.progressText) hud.progressText.textContent = `${foundCount} / ${totalTargets} OBJECTS FOUND — ${progressPct}%`;
+    if (hud.progressFill) hud.progressFill.style.width = `${progressPct}%`;
 
     // Check Level Complete
     if (res.isLevelComplete) {
@@ -322,7 +373,7 @@
 
     // Subtle red vibration pulse
     if (viewport) {
-      viewport.style.boxShadow = 'inset 0 0 30px rgba(244,63,94,0.6)';
+      viewport.style.boxShadow = 'inset 0 0 30px rgba(231,124,104,0.6)';
       setTimeout(() => {
         if (viewport) viewport.style.boxShadow = 'none';
       }, 200);
@@ -347,15 +398,26 @@
 
     Audio.playHint();
 
-    // Move SVG Hint Pin
+    // 1. Move & Show SVG Hint Beacon Pin in Scene
     const hintPin = document.getElementById('scene-hint-pin');
     if (hintPin) {
       hintPin.setAttribute('transform', `translate(${target.x * 1000}, ${target.y * 600})`);
       hintPin.style.display = 'block';
       setTimeout(() => {
         if (hintPin) hintPin.style.display = 'none';
-      }, 3500);
+      }, 3800);
     }
+
+    // 2. Highlight corresponding Discovery Card with pulsing antique gold border
+    const shelfCard = document.getElementById(`shelf-${target.id}`);
+    if (shelfCard) {
+      shelfCard.classList.add('hint-target');
+      setTimeout(() => {
+        if (shelfCard) shelfCard.classList.remove('hint-target');
+      }, 3800);
+    }
+
+    showDiscoveryToast(`Hint active: Look near the ${target.name}!`);
   }
 
   // --- Level Completion ---
@@ -629,3 +691,4 @@
   }
 
 })();
+

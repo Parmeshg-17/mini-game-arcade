@@ -247,17 +247,26 @@
           </div>
 
           <div class="hh-hud-center">
-            <div class="hh-timer-box">
-              <span class="hh-hud-label">Time</span>
-              <span id="hh-hud-timer-val" class="hh-hud-val">0:00</span>
+            <div class="hh-hud-stat-group">
+              <div class="hh-timer-box">
+                <span class="hh-hud-label">Time</span>
+                <span id="hh-hud-timer-val" class="hh-hud-val">0:00</span>
+              </div>
+              <div class="hh-counter-box">
+                <span class="hh-hud-label">Found</span>
+                <span id="hh-hud-found-val" class="hh-hud-val">0 / 5</span>
+              </div>
+              <div class="hh-counter-box">
+                <span class="hh-hud-label">Score</span>
+                <span id="hh-hud-score-val" class="hh-hud-val">0</span>
+              </div>
             </div>
-            <div class="hh-counter-box">
-              <span class="hh-hud-label">Found</span>
-              <span id="hh-hud-found-val" class="hh-hud-val">0 / 5</span>
-            </div>
-            <div class="hh-counter-box">
-              <span class="hh-hud-label">Score</span>
-              <span id="hh-hud-score-val" class="hh-hud-val">0</span>
+
+            <div class="hh-hud-progress-block">
+              <span id="hh-hud-progress-text" class="hh-progress-text">0 / 5 OBJECTS FOUND — 0%</span>
+              <div class="hh-progress-track">
+                <div id="hh-hud-progress-fill" class="hh-progress-bar-fill"></div>
+              </div>
             </div>
           </div>
 
@@ -269,24 +278,30 @@
 
         <!-- Viewport Stage -->
         <div id="hh-viewport" class="hh-viewport-stage">
+          <!-- Floating Toast Discovery Notification -->
+          <div id="hh-toast" class="hh-toast-pill hidden" aria-live="polite">
+            <span class="hh-toast-spark">✦</span>
+            <span id="hh-toast-text">Excellent discovery!</span>
+          </div>
+
           <!-- Zoom Controls Floating Bar -->
           <div class="hh-zoom-controls">
-            <button id="hh-btn-zoom-in" class="hh-zoom-btn" title="Zoom In">+</button>
-            <button id="hh-btn-zoom-out" class="hh-zoom-btn" title="Zoom Out">−</button>
-            <button id="hh-btn-zoom-reset" class="hh-zoom-btn" title="Reset Zoom">⟲</button>
+            <button id="hh-btn-zoom-in" class="hh-zoom-btn" title="Zoom In" aria-label="Zoom In">+</button>
+            <button id="hh-btn-zoom-out" class="hh-zoom-btn" title="Zoom Out" aria-label="Zoom Out">−</button>
+            <button id="hh-btn-zoom-reset" class="hh-zoom-btn" title="Reset Zoom" aria-label="Reset Zoom">⟲</button>
           </div>
 
           <!-- Scalable SVG Scene Wrap -->
           <div id="hh-scene-wrap" class="hh-scene-canvas-wrap"></div>
         </div>
 
-        <!-- Target Objects Shelf Ribbon -->
+        <!-- Target Objects Discovery Panel -->
         <div class="hh-targets-bar">
-          <div class="hh-targets-bar-header">
-            <span>TARGET OBJECTS TO FIND</span>
-            <span style="color: var(--accent-gold);">Tap on Scene to Find</span>
+          <div class="hh-discovery-header">
+            <h3 class="hh-discovery-title">OBJECTS TO DISCOVER</h3>
+            <p class="hh-discovery-subtitle">Find every hidden item in the room.</p>
           </div>
-          <div id="hh-targets-list" class="hh-targets-list"></div>
+          <div id="hh-targets-list" class="hh-targets-list" role="region" aria-label="Target items to find"></div>
         </div>
       </div>
 
@@ -540,3 +555,4 @@
 
 </body>
 </html>
+
