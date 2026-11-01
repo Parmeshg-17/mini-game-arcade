@@ -10,16 +10,46 @@
   const SCENE_HEIGHT = 1080;
 
   /**
-   * Resolves the raster artwork path for a given world
+   * Complete 15-level dynamic raster artwork asset map
+   * Every level has its dedicated high-resolution painterly WebP environment illustration.
+   */
+  const LEVEL_ASSET_MAP = {
+    // World 1: The Old Library
+    'lib_1': '/games/hidden-hunt/assets/the-old-library.webp',
+    'lib_2': '/games/hidden-hunt/assets/library-forgotten-bookshelf.webp',
+    'lib_3': '/games/hidden-hunt/assets/library-collectors-desk.webp',
+    'lib_4': '/games/hidden-hunt/assets/library-secret-archive.webp',
+    'lib_5': '/games/hidden-hunt/assets/library-locked-study.webp',
+
+    // World 2: Mystery Forest
+    'for_1': '/games/hidden-hunt/assets/mystery-forest.webp',
+    'for_2': '/games/hidden-hunt/assets/forest-mushroom-garden.webp',
+    'for_3': '/games/hidden-hunt/assets/forest-hidden-waterfall.webp',
+    'for_4': '/games/hidden-hunt/assets/forest-forgotten-treehouse.webp',
+    'for_5': '/games/hidden-hunt/assets/forest-enchanted-grove.webp',
+
+    // World 3: Pirate's Treasure
+    'pir_1': '/games/hidden-hunt/assets/pirate-cabin.webp',
+    'pir_2': '/games/hidden-hunt/assets/pirate-treasure-deck.webp',
+    'pir_3': '/games/hidden-hunt/assets/pirate-captains-quarters.webp',
+    'pir_4': '/games/hidden-hunt/assets/pirate-forgotten-island.webp',
+    'pir_5': '/games/hidden-hunt/assets/pirate-treasure-chamber.webp'
+  };
+
+  /**
+   * Resolves the raster artwork path for a given world & level
    */
   function getSceneImageSource(worldId, levelId) {
+    if (levelId && LEVEL_ASSET_MAP[levelId]) {
+      return LEVEL_ASSET_MAP[levelId];
+    }
     if (worldId === 'forest') {
       return '/games/hidden-hunt/assets/mystery-forest.webp';
     }
     if (worldId === 'pirate') {
       return '/games/hidden-hunt/assets/pirate-cabin.webp';
     }
-    return '/games/hidden-hunt/assets/the-forgotten-bookshelf.webp';
+    return '/games/hidden-hunt/assets/the-old-library.webp';
   }
 
   /**
@@ -98,90 +128,94 @@
         </circle>
         <circle cx="1320" cy="610" r="2.0" fill="#f4f2e9" opacity="0.35">
           <animate attributeName="cy" values="610;595;610" dur="4.8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.1;0.45;0.1" dur="4.8s" repeatCount="indefinite" />
         </circle>
       </g>
     `;
   }
 
   /**
-   * Builds the complete SVG container embedding the high-res painterly background
-   * and calibrated discovery overlay.
+   * Builds the complete SVG viewport with painterly raster background,
+   * atmospheric lighting, and high-precision interactive discovery hitboxes.
    */
-  function buildSceneSvg(world, level, foundIds = [], hintTargetId = null) {
-    const foundSet = new Set(foundIds);
-    const imgSrc = getSceneImageSource(world.id);
-    const atmosphereMarkup = renderAtmosphere(world.id);
+  function renderScene(worldId, levelId, objects, foundObjectIds) {
+    const imgSrc = getSceneImageSource(worldId, levelId);
+    const foundSet = new Set(foundObjectIds || []);
 
-    // Target object discovery markers (rendered over found items)
-    const targetsMarkup = level.objects.map(obj => {
+    // Generate discovery target zones
+    const targetElements = (objects || []).map(obj => {
       const isFound = foundSet.has(obj.id);
       const cx = Math.round(obj.x * SCENE_WIDTH);
       const cy = Math.round(obj.y * SCENE_HEIGHT);
-      const r = Math.max(34, Math.round((obj.radius || 0.05) * SCENE_WIDTH));
+      const radius = Math.round((obj.radius || 0.05) * SCENE_WIDTH);
 
       return `
-        <g id="obj-${obj.id}" class="scene-target-marker ${isFound ? 'found' : ''}" transform="translate(${cx}, ${cy})" style="cursor: pointer;">
-          <!-- Hitbox Target Area (transparent) -->
-          <circle cx="0" cy="0" r="${r}" fill="transparent" />
+        <g class="hh-target-zone ${isFound ? 'is-found' : ''}" 
+           data-object-id="${obj.id}" 
+           data-name="${obj.name}"
+           role="button" 
+           tabindex="${isFound ? '-1' : '0'}"
+           aria-label="${isFound ? obj.name + ' (Found)' : obj.name}"
+           aria-disabled="${isFound}">
+          <!-- Invisible high-precision clickable area -->
+          <circle class="hh-hit-area" 
+                  cx="${cx}" 
+                  cy="${cy}" 
+                  r="${radius}" 
+                  fill="rgba(0,0,0,0.001)" 
+                  cursor="pointer" />
+          
+          <!-- Animated Golden Halo & Sparkles on Discovery -->
+          <g class="hh-found-marker" opacity="${isFound ? '1' : '0'}">
+            <circle cx="${cx}" cy="${cy}" r="${radius + 10}" 
+                    fill="none" stroke="#ffd166" stroke-width="4" stroke-dasharray="8 4" opacity="0.85">
+              <animateTransform attributeName="transform" type="rotate" from="0 ${cx} ${cy}" to="360 ${cx} ${cy}" dur="8s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="${cx}" cy="${cy}" r="${radius}" 
+                    fill="none" stroke="#d5ff55" stroke-width="3" opacity="0.9" />
+            <circle cx="${cx}" cy="${cy}" r="6" fill="#ffd166" />
+          </g>
 
-          <!-- Discovery Visual Confirmation (Shown when object is claimed) -->
-          <g class="discovery-ring" style="display: ${isFound ? 'block' : 'none'}; pointer-events: none;">
-            <!-- Outer Golden Glow Ring -->
-            <circle cx="0" cy="0" r="${r}" fill="none" stroke="#d5ff55" stroke-width="3" filter="url(#hh-glow-lime)" opacity="0.9" />
-            <!-- Inner Soft Fill Tint -->
-            <circle cx="0" cy="0" r="${r}" fill="rgba(213, 255, 85, 0.12)" />
-            <!-- Verified Checkmark Badge -->
-            <circle cx="${r * 0.7}" cy="-${r * 0.7}" r="15" fill="#161411" stroke="#d5ff55" stroke-width="2" />
-            <text x="${r * 0.7}" y="-${r * 0.7 - 5}" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="900" fill="#d5ff55" text-anchor="middle">✓</text>
+          <!-- Hint Pulse Marker (toggled via active-hint class) -->
+          <g class="hh-hint-marker" display="none">
+            <circle cx="${cx}" cy="${cy}" r="${radius + 15}" fill="none" stroke="#38bdf8" stroke-width="5" opacity="0.9">
+              <animate attributeName="r" values="${radius + 5};${radius + 35};${radius + 5}" dur="1.2s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="1;0.1;1" dur="1.2s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="${cx}" cy="${cy}" r="${radius}" fill="rgba(56, 189, 248, 0.25)" />
           </g>
         </g>
       `;
-    }).join('');
+    }).join('\n');
 
     return `
-      <svg id="hidden-hunt-svg" viewBox="0 0 ${SCENE_WIDTH} ${SCENE_HEIGHT}" class="hh-scene-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <svg id="hh-scene-svg" 
+           viewBox="0 0 ${SCENE_WIDTH} ${SCENE_HEIGHT}" 
+           preserveAspectRatio="xMidYMid slice" 
+           xmlns="http://www.w3.org/2000/svg"
+           role="img"
+           aria-label="Hidden Hunt Scene: Find hidden objects in the scene">
         <defs>
-          <filter id="hh-glow-gold" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-          <filter id="hh-glow-lime" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
+          <filter id="cinematic-shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.6" />
           </filter>
         </defs>
 
-        <!-- High-Resolution Painterly Environment Artwork (Original Created Masterpiece) -->
-        <image id="scene-bg-img" href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="${SCENE_WIDTH}" height="${SCENE_HEIGHT}" preserveAspectRatio="xMidYMid slice" />
+        <!-- Base Masterpiece Painterly Background Image -->
+        <image id="hh-master-bg" 
+               href="${imgSrc}" 
+               x="0" 
+               y="0" 
+               width="${SCENE_WIDTH}" 
+               height="${SCENE_HEIGHT}" 
+               preserveAspectRatio="xMidYMid slice" />
 
-        <!-- Atmospheric Depth & Particle Layer -->
-        ${atmosphereMarkup}
+        <!-- Atmospheric dynamic lighting overlay -->
+        ${renderAtmosphere(worldId)}
 
-        <!-- Interactive Discovery Layer -->
-        <g id="scene-targets">
-          ${targetsMarkup}
-        </g>
-
-        <!-- Hint Marker Animated Beacon Overlay -->
-        <g id="scene-hint-pin" style="display: none; pointer-events: none;">
-          <!-- Pulsating Outer Golden Spotlight -->
-          <circle id="hint-ring" cx="0" cy="0" r="50" fill="none" stroke="#e6b85c" stroke-width="4" filter="url(#hh-glow-gold)">
-            <animate attributeName="r" values="30;70;30" dur="1.4s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="1;0.2;1" dur="1.4s" repeatCount="indefinite" />
-          </circle>
-          <!-- Pulsing Target Crosshair Pin -->
-          <circle cx="0" cy="0" r="8" fill="#ffd166" filter="url(#hh-glow-gold)">
-            <animate attributeName="r" values="6;10;6" dur="0.7s" repeatCount="indefinite" />
-          </circle>
-          <polygon id="hint-arrow" points="0,-48 -14,-72 14,-72" fill="#ffd166" filter="url(#hh-glow-gold)">
-            <animate attributeName="transform" type="translate" values="0,0; 0,-12; 0,0" dur="1.2s" repeatCount="indefinite" />
-          </polygon>
+        <!-- Interactive Discovery Target Zones -->
+        <g id="hh-targets-group" class="hh-targets-layer">
+          ${targetElements}
         </g>
       </svg>
     `;
@@ -190,6 +224,6 @@
   exports.SCENE_WIDTH = SCENE_WIDTH;
   exports.SCENE_HEIGHT = SCENE_HEIGHT;
   exports.getSceneImageSource = getSceneImageSource;
-  exports.buildSceneSvg = buildSceneSvg;
+  exports.renderScene = renderScene;
 
 })(typeof exports === 'undefined' ? (window.HiddenHuntScenes = {}) : exports);

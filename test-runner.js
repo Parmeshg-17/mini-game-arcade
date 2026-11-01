@@ -1593,6 +1593,10 @@ it('Hidden Hunt engine computes distance, hit detection, scores, stars, daily ch
     for (const lvl of world.levels) {
       totalLevels++;
       assert(lvl.objects.length >= 4, `Level ${lvl.id} must have at least 4 target objects`);
+      const scenes = require('./games/hidden-hunt/js/scenes.js');
+      const assetPath = scenes.getSceneImageSource(world.id, lvl.id);
+      const fullDiskPath = path.join(__dirname, assetPath.replace(/^\//, ''));
+      assert(fs.existsSync(fullDiskPath), `Asset file missing on disk for ${lvl.id}: ${fullDiskPath}`);
       for (const obj of lvl.objects) {
         assert(obj.x >= 0 && obj.x <= 1, `Object ${obj.id} X coord must be normalized between 0 and 1`);
         assert(obj.y >= 0 && obj.y <= 1, `Object ${obj.id} Y coord must be normalized between 0 and 1`);
