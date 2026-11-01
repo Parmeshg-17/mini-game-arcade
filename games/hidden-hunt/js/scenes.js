@@ -12,14 +12,14 @@
   /**
    * Resolves the raster artwork path for a given world
    */
-  function getSceneImageSource(worldId) {
+  function getSceneImageSource(worldId, levelId) {
     if (worldId === 'forest') {
       return '/games/hidden-hunt/assets/mystery-forest.webp';
     }
     if (worldId === 'pirate') {
       return '/games/hidden-hunt/assets/pirate-cabin.webp';
     }
-    return '/games/hidden-hunt/assets/the-old-library.webp';
+    return '/games/hidden-hunt/assets/the-forgotten-bookshelf.webp';
   }
 
   /**
@@ -157,8 +157,8 @@
           </filter>
         </defs>
 
-        <!-- High-Resolution Painterly Environment Artwork -->
-        <image id="scene-bg-img" href="${imgSrc}" x="0" y="0" width="${SCENE_WIDTH}" height="${SCENE_HEIGHT}" preserveAspectRatio="xMidYMid slice" />
+        <!-- High-Resolution Painterly Environment Artwork (Original Created Masterpiece) -->
+        <image id="scene-bg-img" href="${imgSrc}" xlink:href="${imgSrc}" x="0" y="0" width="${SCENE_WIDTH}" height="${SCENE_HEIGHT}" preserveAspectRatio="xMidYMid slice" />
 
         <!-- Atmospheric Depth & Particle Layer -->
         ${atmosphereMarkup}
