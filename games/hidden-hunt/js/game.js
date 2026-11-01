@@ -401,7 +401,9 @@
     // 1. Move & Show SVG Hint Beacon Pin in Scene
     const hintPin = document.getElementById('scene-hint-pin');
     if (hintPin) {
-      hintPin.setAttribute('transform', `translate(${target.x * 1000}, ${target.y * 600})`);
+      const sw = Scenes.SCENE_WIDTH || 1920;
+      const sh = Scenes.SCENE_HEIGHT || 1080;
+      hintPin.setAttribute('transform', `translate(${target.x * sw}, ${target.y * sh})`);
       hintPin.style.display = 'block';
       setTimeout(() => {
         if (hintPin) hintPin.style.display = 'none';

@@ -158,15 +158,16 @@ it('Search and category filter logic filters games correctly', () => {
   assert(res3.some(g => g.id === 'tap-challenge'));
   assert(res3.some(g => g.id === 'stack-rush'));
 
-  // Puzzle category filter matches Tic Tac Toe, Number Puzzle, Block Puzzle, Circuit Connect, Merge Grid, and Hidden Hunt
+  // Puzzle category filter matches Tic Tac Toe, Number Puzzle, Block Puzzle, Circuit Connect, Merge Grid, Hidden Hunt, and Jigpic Solitaire
   const res4 = filterGames('', 'Puzzle');
-  assert.strictEqual(res4.length, 6);
+  assert.strictEqual(res4.length, 7);
   assert(res4.some(g => g.id === 'tic-tac-toe'));
   assert(res4.some(g => g.id === 'number-puzzle'));
   assert(res4.some(g => g.id === 'block-puzzle'));
   assert(res4.some(g => g.id === 'circuit-connect'));
   assert(res4.some(g => g.id === 'merge-grid'));
   assert(res4.some(g => g.id === 'hidden-hunt'));
+  assert(res4.some(g => g.id === 'jigpic-solitaire'));
 
   // Casual category filter matches Memory Match and Bubble Pop
   const res5 = filterGames('', 'Casual');
@@ -209,11 +210,12 @@ it('Search and category filter logic filters games correctly', () => {
   assert(resTap.some(g => g.id === 'tap-challenge'));
   assert(resTap.some(g => g.id === 'stack-rush'));
 
-  // Tag search for block (matches block-puzzle and stack-rush)
+  // Tag search for block (matches block-puzzle, stack-rush, and jigpic-solitaire)
   const resBlock = filterGames('block', 'All');
-  assert.strictEqual(resBlock.length, 2);
+  assert.strictEqual(resBlock.length, 3);
   assert(resBlock.some(g => g.id === 'block-puzzle'));
   assert(resBlock.some(g => g.id === 'stack-rush'));
+  assert(resBlock.some(g => g.id === 'jigpic-solitaire'));
 
   // Tag search for stack rush
   const resStack = filterGames('stack', 'All');
@@ -1672,6 +1674,109 @@ it('Hidden Hunt engine computes distance, hit detection, scores, stars, daily ch
   assert(progress.unlockedWorlds.includes('forest'), 'Completing 5 library levels must unlock Mystery Forest');
 });
 
+// 30f. Dedicated Jigpic Solitaire Playable Page DOM & Asset Integrity
+it('Dedicated Jigpic Solitaire page (games/jigpic-solitaire/index.html) has all DOM elements required by game.js', () => {
+  const gameHtmlPath = path.join(__dirname, 'games/jigpic-solitaire/index.html');
+  assert(fs.existsSync(gameHtmlPath), 'games/jigpic-solitaire/index.html must exist');
+  const gameHtml = fs.readFileSync(gameHtmlPath, 'utf8');
+
+  const requiredIds = [
+    'jig-scene-title',
+    'jig-scene-desc',
+    'jig-level-select',
+    'jig-timer-val',
+    'jig-moves-val',
+    'jig-progress-val',
+    'jig-progress-fill',
+    'jig-score-val',
+    'jig-board',
+    'jig-deck-btn',
+    'jig-deck-count',
+    'jig-hand-slots',
+    'jig-peek-overlay',
+    'jig-peek-artwork',
+    'btn-peek',
+    'btn-hint',
+    'btn-undo',
+    'btn-restart',
+    'btn-mute',
+    'modal-complete',
+    'modal-stars',
+    'modal-score',
+    'modal-moves',
+    'modal-time',
+    'btn-next-scene',
+    'btn-replay',
+    'jig-toast'
+  ];
+
+  for (const id of requiredIds) {
+    assert(gameHtml.includes(`id="${id}"`), `Missing required ID="${id}" in games/jigpic-solitaire/index.html`);
+  }
+});
+
+// 30g. Jigpic Solitaire Engine Mechanics, Puzzle Grid, Draw Pile, Hints, Undo, and Star Evaluation
+it('Jigpic Solitaire engine computes valid draws, card placements, hints, undo, and star ratings accurately', () => {
+  const Engine = require('./games/jigpic-solitaire/js/engine.js');
+  const Scenes = require('./games/jigpic-solitaire/js/scenes.js');
+
+  assert.strictEqual(Engine.SCENES.length, 4, 'Must feature 4 scenic themes');
+  assert.strictEqual(Object.keys(Scenes.SCENE_ARTWORKS).length, 4, 'Scenes artwork generator must have all 4 scenes');
+
+  // 1. Initial State
+  const state = Engine.createGameState(0);
+  assert.strictEqual(state.scene.id, 'alpine-sunrise');
+  assert.strictEqual(state.totalPieces, 9);
+  assert.strictEqual(state.hand.length, 3);
+  assert.strictEqual(state.deck.length, 6);
+  assert.strictEqual(state.placedCount, 0);
+  assert.strictEqual(state.isWon, false);
+
+  // 2. Hint finding
+  const hint = Engine.getHint(state);
+  assert(hint, 'Hint must be generated');
+  assert.strictEqual(hint.type, 'hand_to_slot');
+  assert.strictEqual(typeof hint.targetSlot, 'number');
+
+  // 3. Piece Placement
+  const correctSlot = hint.targetSlot;
+  const matchHandIdx = Engine.findHandMatchForSlot(state, correctSlot);
+  assert.notStrictEqual(matchHandIdx, -1, 'Hand must contain matching card for hint slot');
+  state.selectedHandIndex = matchHandIdx;
+
+  const placeRes = Engine.placePiece(state, correctSlot);
+  assert.strictEqual(placeRes.success, true);
+  assert.strictEqual(placeRes.correct, true);
+  assert.strictEqual(state.placedCount, 1);
+  assert(state.score >= 100, 'Correct placement must award score');
+
+  // 4. Mismatch check
+  // Try placing a non-matching card on an open slot
+  const openSlot = state.grid.findIndex((v, i) => v === null && i !== state.hand[state.selectedHandIndex]);
+  if (openSlot !== -1) {
+    const wrongRes = Engine.placePiece(state, openSlot);
+    assert.strictEqual(wrongRes.success, false);
+    assert.strictEqual(wrongRes.reason, 'mismatch');
+  }
+
+  // 5. Undo verification
+  const prevPlaced = state.placedCount;
+  const prevMoves = state.moves;
+  const undone = Engine.undoMove(state);
+  assert.strictEqual(undone, true);
+  assert.strictEqual(state.moves, prevMoves - 1);
+
+  // 6. Draw deck cycling
+  const drawRes = Engine.cycleDrawDeck(state);
+  assert.strictEqual(drawRes, true);
+
+  // 7. Star evaluation
+  const stars3 = Engine.calculateStars(10, 60, 14, 90);
+  assert.strictEqual(stars3, 3);
+  const stars1 = Engine.calculateStars(40, 250, 14, 90);
+  assert.strictEqual(stars1, 1);
+});
+
 // 31. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
@@ -1714,6 +1819,7 @@ it('sitemap.xml exists, is valid XML, and contains all 17 canonical pages', () =
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/dashverse'), 'sitemap.xml must include dashverse');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/merge-grid'), 'sitemap.xml must include merge-grid');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/hidden-hunt'), 'sitemap.xml must include hidden-hunt');
+  assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/jigpic-solitaire'), 'sitemap.xml must include jigpic-solitaire');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/about'), 'sitemap.xml must include about page');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/contact'), 'sitemap.xml must include contact page');
   
@@ -1751,7 +1857,8 @@ it('All HTML pages have verified canonical tags and valid Schema.org JSON-LD', (
     'games/memory-match/index.html',
     'games/tic-tac-toe/index.html',
     'games/merge-grid/index.html',
-    'games/hidden-hunt/index.html'
+    'games/hidden-hunt/index.html',
+    'games/jigpic-solitaire/index.html'
   ];
 
   for (const page of pages) {
@@ -1847,7 +1954,7 @@ it('AdSense configuration and ad-unit controller exist with safe preparation mod
 });
 
 // 40. Google AdSense Placements & Policy Compliance Verification
-it('Homepage and all 14 game pages have non-intrusive AdSense placement containers and 404 is clean', () => {
+it('Homepage and all 15 game pages have non-intrusive AdSense placement containers and 404 is clean', () => {
   const indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
   assert(indexHtml.includes('data-ad-placement="homeTop"'), 'index.html must have homeTop placement');
   assert(indexHtml.includes('data-ad-placement="homeList"'), 'index.html must have homeList placement');

@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270" width="480" height="270">
+  <defs>
+    <filter id="glow-gold" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-lime" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10120f"/>
+      <stop offset="100%" stop-color="#181b15"/>
+    </linearGradient>
+    <linearGradient id="sky-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fdba74"/>
+      <stop offset="50%" stop-color="#fed7aa"/>
+      <stop offset="100%" stop-color="#a7f3d0"/>
+    </linearGradient>
+    <linearGradient id="card-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#242820"/>
+      <stop offset="100%" stop-color="#1a1d17"/>
+    </linearGradient>
+    <linearGradient id="gold-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffd166"/>
+      <stop offset="100%" stop-color="#e6b85c"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="480" height="270" fill="url(#bg-grad)"/>
+
+  <!-- Subtle grid pattern -->
+  <pattern id="jig-dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="1" fill="#20241e"/>
+  </pattern>
+  <rect width="480" height="270" fill="url(#jig-dots)" opacity="0.6"/>
+
+  <!-- Left: Picturesque Landscape Frame (Assembling blocks) -->
+  <g transform="translate(36, 32)">
+    <!-- Canvas Outer Frame -->
+    <rect x="0" y="0" width="230" height="196" rx="10" fill="#151713" stroke="#353b30" stroke-width="2"/>
+    <rect x="6" y="6" width="218" height="184" rx="6" fill="#1b1f18" stroke="#252b22" stroke-width="1"/>
+
+    <!-- Picture Artwork Segments (Assembled Grid) -->
+    <!-- Sky & Mountains (top half) -->
+    <clipPath id="frame-clip">
+      <rect x="8" y="8" width="214" height="180" rx="4"/>
+    </clipPath>
+    <g clip-path="url(#frame-clip)">
+      <!-- Gradient Sky -->
+      <rect x="8" y="8" width="214" height="110" fill="url(#sky-grad)"/>
+
+      <!-- Rising Golden Sun -->
+      <circle cx="115" cy="55" r="28" fill="#fef08a" opacity="0.9" filter="url(#glow-gold)"/>
+
+      <!-- Distant Mountains -->
+      <polygon points="10,105 75,45 130,105" fill="#64748b" opacity="0.75"/>
+      <polygon points="65,54 75,45 92,60 85,68" fill="#e2e8f0" opacity="0.85"/>
+      <polygon points="90,105 155,38 215,105" fill="#475569" opacity="0.85"/>
+      <polygon points="142,50 155,38 172,55 160,65" fill="#f8fafc"/>
+
+      <!-- Pine Tree Hills -->
+      <ellipse cx="60" cy="125" rx="70" ry="26" fill="#15803d"/>
+      <ellipse cx="170" cy="128" rx="80" ry="28" fill="#166534"/>
+
+      <!-- Lavender & Cottage Meadow (lower half) -->
+      <rect x="8" y="115" width="214" height="75" fill="#4ade80"/>
+      <!-- Lavender waves -->
+      <path d="M8,135 Q60,125 110,138 T222,130 L222,188 L8,188 Z" fill="#c084fc" opacity="0.75"/>
+      <path d="M8,155 Q50,145 120,158 T222,150 L222,188 L8,188 Z" fill="#a855f7" opacity="0.85"/>
+
+      <!-- Charming Stone Cottage -->
+      <g transform="translate(130, 95)">
+        <polygon points="28,0 4,20 52,20" fill="#b91c1c"/>
+        <rect x="10" y="20" width="36" height="24" fill="#e2e8f0"/>
+        <rect x="23" y="28" width="10" height="16" fill="#78350f"/>
+        <rect x="13" y="24" width="7" height="7" fill="#fef08a"/>
+        <rect x="36" y="24" width="7" height="7" fill="#fef08a"/>
+        <!-- Chimney smoke -->
+        <rect x="38" y="6" width="6" height="12" fill="#7f1d1d"/>
+        <circle cx="41" cy="2" r="3" fill="#cbd5e1" opacity="0.6"/>
+        <circle cx="44" cy="-3" r="4" fill="#cbd5e1" opacity="0.4"/>
+      </g>
+    </g>
+
+    <!-- Block Jigsaw Seams (3x3 grid) -->
+    <!-- Vertical Seam 1 -->
+    <line x1="79" y1="8" x2="79" y2="188" stroke="#10120f" stroke-width="2.5" opacity="0.8"/>
+    <!-- Vertical Seam 2 with snapping puzzle tabs -->
+    <line x1="151" y1="8" x2="151" y2="188" stroke="#10120f" stroke-width="2.5" opacity="0.8"/>
+    <!-- Horizontal Seam 1 -->
+    <line x1="8" y1="68" x2="222" y2="68" stroke="#10120f" stroke-width="2.5" opacity="0.8"/>
+    <!-- Horizontal Seam 2 -->
+    <line x1="8" y1="128" x2="222" y2="128" stroke="#10120f" stroke-width="2.5" opacity="0.8"/>
+
+    <!-- Glowing Snapping Block (Top-Middle piece gently slotting in with golden sparkles) -->
+    <rect x="80.5" y="9.5" width="69" height="57" rx="3" fill="none" stroke="#ffd166" stroke-width="2" filter="url(#glow-gold)"/>
+    <!-- Jigsaw interlock tab -->
+    <circle cx="115" cy="68" r="6" fill="#ffd166" filter="url(#glow-gold)"/>
+    <circle cx="151" cy="38" r="6" fill="#ffd166" filter="url(#glow-gold)"/>
+
+    <!-- Snapping sparkles -->
+    <path d="M82,12 L85,15 L82,18 L79,15 Z" fill="#ffd166"/>
+    <path d="M148,65 L151,68 L148,71 L145,68 Z" fill="#ffd166"/>
+  </g>
+
+  <!-- Right: Solitaire Tray & Cards Stack -->
+  <g transform="translate(288, 32)">
+    <!-- Header Badge -->
+    <rect x="0" y="0" width="154" height="22" rx="4" fill="#20241e" stroke="#353b30" stroke-width="1"/>
+    <text x="77" y="15" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#ffd166" letter-spacing="1.5">PUZZLE // SOLITAIRE</text>
+
+    <!-- Title -->
+    <text x="0" y="48" font-family="Space Grotesk, sans-serif" font-size="20" font-weight="800" fill="#f4f2e9">Jigpic Solitaire</text>
+
+    <!-- Subtext -->
+    <text x="0" y="68" font-family="Plus Jakarta Sans, sans-serif" font-size="11.5" fill="#a7ada0">Peaceful picture puzzle</text>
+
+    <!-- Solitaire Hand Cards (3 cards displayed) -->
+    <!-- Card 1 (Active block ready to place) -->
+    <g transform="translate(0, 84)">
+      <rect x="0" y="0" width="46" height="58" rx="6" fill="url(#card-grad)" stroke="#ffd166" stroke-width="1.8" filter="url(#glow-gold)"/>
+      <!-- Mini piece artwork preview inside card -->
+      <rect x="5" y="5" width="36" height="36" rx="3" fill="#fed7aa"/>
+      <circle cx="23" cy="23" r="10" fill="#fef08a"/>
+      <text x="23" y="52" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#ffd166">#1</text>
+    </g>
+
+    <!-- Card 2 -->
+    <g transform="translate(54, 84)">
+      <rect x="0" y="0" width="46" height="58" rx="6" fill="url(#card-grad)" stroke="#3a4035" stroke-width="1"/>
+      <rect x="5" y="5" width="36" height="36" rx="3" fill="#64748b"/>
+      <polygon points="12,35 23,12 34,35" fill="#94a3b8"/>
+      <text x="23" y="52" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#737d6e">#2</text>
+    </g>
+
+    <!-- Card 3 (Draw Deck / Stack) -->
+    <g transform="translate(108, 84)">
+      <rect x="2" y="-3" width="44" height="58" rx="6" fill="#151713" stroke="#2a3026" stroke-width="1"/>
+      <rect x="0" y="0" width="46" height="58" rx="6" fill="url(#card-grad)" stroke="#3a4035" stroke-width="1"/>
+      <circle cx="23" cy="24" r="10" fill="none" stroke="#d5ff55" stroke-width="1.5" stroke-dasharray="3,3"/>
+      <text x="23" y="27" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="11" font-weight="700" fill="#d5ff55">🎴</text>
+      <text x="23" y="52" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#d5ff55">DRAW</text>
+    </g>
+
+    <!-- Features Pills -->
+    <g transform="translate(0, 160)">
+      <rect x="0" y="0" width="70" height="20" rx="4" fill="#171a16" stroke="#252b22" stroke-width="1"/>
+      <text x="35" y="14" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#d5ff55">4 SCENES</text>
+
+      <rect x="76" y="0" width="78" height="20" rx="4" fill="#171a16" stroke="#252b22" stroke-width="1"/>
+      <text x="115" y="14" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#ffd166">CARD MATCH</text>
+    </g>
+
+    <!-- Rating Stars -->
+    <g transform="translate(0, 192)">
+      <text x="0" y="0" font-family="Plus Jakarta Sans, sans-serif" font-size="11" fill="#e6b85c">★ ★ ★ ★ ★</text>
+      <text x="74" y="-1" font-family="JetBrains Mono, monospace" font-size="9" fill="#6e7568">RELAXING</text>
+    </g>
+  </g>
+</svg>

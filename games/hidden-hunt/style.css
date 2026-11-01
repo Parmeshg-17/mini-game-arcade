@@ -604,8 +604,8 @@ body {
 .hh-viewport-stage {
   position: relative;
   width: 100%;
-  aspect-ratio: 10 / 6;
-  max-height: 520px;
+  aspect-ratio: 16 / 9;
+  max-height: 560px;
   background: #0B0A08;
   overflow: hidden;
   user-select: none;
@@ -618,6 +618,11 @@ body {
   transform-origin: 0 0;
   transition: transform 0.15s ease-out;
   cursor: crosshair;
+}
+.hh-scene-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 /* Zoom Controls Floating Bar */
@@ -1058,7 +1063,7 @@ body {
   .hh-hud-bar { padding: 8px 10px; gap: 6px; }
   .hh-hud-title-box { display: none; }
   .hh-hud-btn { padding: 6px 10px; font-size: 0.75rem; }
-  .hh-viewport-stage { aspect-ratio: 4 / 3; }
+  .hh-viewport-stage { aspect-ratio: 16 / 9; }
   .hh-modal-card { padding: 24px 18px; }
   .hh-targets-list {
     grid-template-columns: repeat(2, 1fr);

@@ -185,6 +185,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/hidden-hunt.svg',
     controlsSummary: 'Click / Tap to Find • Zoom & Pan Controls • 💡 Smart Hint • 🔊 Mute • 3 Worlds',
     features: ['15 Illustrated Scenes', '3 Themed Worlds', 'Zoom & Pan Viewport', 'Daily Hunt Challenge']
+  },
+  {
+    id: 'jigpic-solitaire',
+    title: 'Jigpic Solitaire',
+    category: 'Puzzle',
+    tags: ['puzzle', 'casual', 'jigsaw', 'solitaire', 'relax', 'landscape', 'blocks', 'cards', 'nature'],
+    badge: 'New',
+    tagline: 'Assemble gentle picture blocks. Unwind step by step.',
+    description: 'Step into a peaceful world of picturesque scenes made from gentle, carefully crafted blocks. Connect picture blocks step by step in a soothing blend of jigsaw puzzle craftsmanship and solitaire card matching.',
+    route: 'games/jigpic-solitaire/index.html',
+    thumbnail: 'assets/games/jigpic-solitaire.svg',
+    controlsSummary: 'Click / Drag card to matching slot · Keys 1-3 to pick card · D / Space to Draw · P to Peek · H for Hint · U to Undo · R to Restart · M to Mute',
+    features: ['4 Picturesque Scenes', 'Jigsaw & Solitaire Hybrid', 'Full Artwork Peek Overlay', 'Procedural Marimba & Chime Audio']
   }
 ];
 
