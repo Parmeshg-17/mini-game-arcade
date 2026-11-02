@@ -10,6 +10,7 @@ dist/
 build/
 .cache/
 .parcel-cache/
+scratch/
 
 # Environment and secrets
 .env

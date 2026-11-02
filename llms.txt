@@ -51,3 +51,4 @@ Website: https://mini-game-arcade-coral.vercel.app/
 
 - [Sitemap](https://mini-game-arcade-coral.vercel.app/sitemap.xml): Complete XML sitemap listing all canonical pages, game routes, and category hubs.
 - [Robots.txt](https://mini-game-arcade-coral.vercel.app/robots.txt): Search engine crawler directives.
+

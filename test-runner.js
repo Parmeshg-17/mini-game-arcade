@@ -2028,6 +2028,120 @@ it('llms.txt exists, follows llmstxt.org specification, and contains only verifi
   assert(txtHeader.headers.some(h => h.key === 'Content-Type' && h.value.includes('text/plain')), 'vercel.json must serve .txt files as text/plain');
 });
 
+// Helper to check PNG dimensions from buffer
+function getPngDimensions(filePath) {
+  const buf = fs.readFileSync(filePath);
+  // PNG magic number check: 89 50 4E 47 0D 0A 1A 0A
+  assert(buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47, `File ${filePath} is not a valid PNG`);
+  const width = buf.readUInt32BE(16);
+  const height = buf.readUInt32BE(20);
+  return { width, height };
+}
+
+// 42. Complete Open Graph & Social Media Sharing Preview Architecture
+it('Open Graph, Twitter Cards, canonical URLs, and 1200x630 social preview images are configured across all pages', () => {
+  // 1. Homepage preview images
+  const homeOg = path.join(__dirname, 'og-image.png');
+  const homePublicOg = path.join(__dirname, 'public/og-image.png');
+  assert(fs.existsSync(homeOg), 'og-image.png must exist at project root');
+  assert(fs.existsSync(homePublicOg), 'public/og-image.png must exist');
+  assert.deepStrictEqual(getPngDimensions(homeOg), { width: 1200, height: 630 }, 'og-image.png must be exactly 1200x630');
+  assert.deepStrictEqual(getPngDimensions(homePublicOg), { width: 1200, height: 630 }, 'public/og-image.png must be exactly 1200x630');
+
+  // 2. Homepage HTML metadata check
+  const homeHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+  assert(homeHtml.includes('<title>Mini Game Arcade – Free Online Browser Games</title>'), 'Homepage must have requested title');
+  assert(homeHtml.includes('content="Play free online arcade, puzzle and casual games instantly. Discover fun browser games and exciting challenges on Mini Game Arcade."'), 'Homepage must have requested description');
+  assert(homeHtml.includes('property="og:type" content="website"'), 'Homepage og:type must be website');
+  assert(homeHtml.includes('property="og:site_name" content="Mini Game Arcade"'), 'Homepage og:site_name must be Mini Game Arcade');
+  assert(homeHtml.includes('property="og:title" content="Mini Game Arcade – Free Online Browser Games"'), 'Homepage og:title must match requested title');
+  assert(homeHtml.includes('property="og:url" content="https://mini-game-arcade-coral.vercel.app/"'), 'Homepage og:url must match canonical URL');
+  assert(homeHtml.includes('property="og:image" content="https://mini-game-arcade-coral.vercel.app/og-image.png"'), 'Homepage og:image must point to og-image.png');
+  assert(homeHtml.includes('property="og:image:width" content="1200"'), 'Homepage og:image:width must be 1200');
+  assert(homeHtml.includes('property="og:image:height" content="630"'), 'Homepage og:image:height must be 630');
+  assert(homeHtml.includes('name="twitter:card" content="summary_large_image"'), 'Homepage twitter:card must be summary_large_image');
+  assert(homeHtml.includes('name="twitter:image" content="https://mini-game-arcade-coral.vercel.app/og-image.png"'), 'Homepage twitter:image must point to og-image.png');
+  assert(homeHtml.includes('<link rel="canonical" href="https://mini-game-arcade-coral.vercel.app/">'), 'Homepage canonical URL must be present');
+  assert(homeHtml.includes('name="robots" content="index, follow'), 'Homepage robots must permit indexing and following');
+
+  // 3. Hidden Hunt specific metadata check
+  const hhOg = path.join(__dirname, 'og/hidden-hunt.png');
+  const hhPublicOg = path.join(__dirname, 'public/og/hidden-hunt.png');
+  assert(fs.existsSync(hhOg), 'og/hidden-hunt.png must exist');
+  assert(fs.existsSync(hhPublicOg), 'public/og/hidden-hunt.png must exist');
+  assert.deepStrictEqual(getPngDimensions(hhOg), { width: 1200, height: 630 }, 'og/hidden-hunt.png must be 1200x630');
+  assert.deepStrictEqual(getPngDimensions(hhPublicOg), { width: 1200, height: 630 }, 'public/og/hidden-hunt.png must be 1200x630');
+
+  const hhHtml = fs.readFileSync(path.join(__dirname, 'games/hidden-hunt/index.html'), 'utf8');
+  assert(hhHtml.includes('<title>Hidden Hunt – Free Hidden Object Puzzle Game | Mini Game Arcade</title>'), 'Hidden Hunt must have requested title');
+  assert(hhHtml.includes('content="Explore mysterious environments, discover hidden objects, and challenge your observation skills in Hidden Hunt. Play free online at Mini Game Arcade."'), 'Hidden Hunt must have requested description');
+  assert(hhHtml.includes('property="og:title" content="Hidden Hunt – Free Hidden Object Puzzle Game"'), 'Hidden Hunt og:title must match requested title');
+  assert(hhHtml.includes('property="og:description" content="Explore mysterious environments and discover hidden objects in this free online puzzle adventure."'), 'Hidden Hunt og:description must match requested');
+  assert(hhHtml.includes('property="og:url" content="https://mini-game-arcade-coral.vercel.app/games/hidden-hunt"'), 'Hidden Hunt og:url must match');
+  assert(hhHtml.includes('property="og:image" content="https://mini-game-arcade-coral.vercel.app/og/hidden-hunt.png"'), 'Hidden Hunt og:image must match');
+  assert(hhHtml.includes('property="og:image:width" content="1200"'), 'Hidden Hunt og:image:width must be 1200');
+  assert(hhHtml.includes('property="og:image:height" content="630"'), 'Hidden Hunt og:image:height must be 630');
+  assert(hhHtml.includes('property="og:image:alt" content="Hidden Hunt – Hidden Object Puzzle Adventure"'), 'Hidden Hunt og:image:alt must match');
+  assert(hhHtml.includes('name="twitter:card" content="summary_large_image"'), 'Hidden Hunt twitter:card must be summary_large_image');
+  assert(hhHtml.includes('name="twitter:image" content="https://mini-game-arcade-coral.vercel.app/og/hidden-hunt.png"'), 'Hidden Hunt twitter:image must match');
+  assert(hhHtml.includes('<link rel="canonical" href="https://mini-game-arcade-coral.vercel.app/games/hidden-hunt">'), 'Hidden Hunt canonical must match');
+
+  // 4. All 15 games must have dedicated 1200x630 OG images and unique metadata
+  const { ARCADE_GAMES } = require('./js/games-data.js');
+  const seenTitles = new Set();
+  const seenImages = new Set();
+
+  for (const game of ARCADE_GAMES) {
+    const gameOg = path.join(__dirname, 'og', `${game.id}.png`);
+    const gamePublicOg = path.join(__dirname, 'public/og', `${game.id}.png`);
+    assert(fs.existsSync(gameOg), `Dedicated OG image missing: og/${game.id}.png`);
+    assert(fs.existsSync(gamePublicOg), `Dedicated public OG image missing: public/og/${game.id}.png`);
+    assert.deepStrictEqual(getPngDimensions(gameOg), { width: 1200, height: 630 }, `${game.id}.png must be 1200x630`);
+    assert.deepStrictEqual(getPngDimensions(gamePublicOg), { width: 1200, height: 630 }, `public/og/${game.id}.png must be 1200x630`);
+
+    const gHtml = fs.readFileSync(path.join(__dirname, 'games', game.id, 'index.html'), 'utf8');
+    const expectedCanonical = `https://mini-game-arcade-coral.vercel.app/games/${game.id}`;
+    const expectedOgImage = `https://mini-game-arcade-coral.vercel.app/og/${game.id}.png`;
+
+    assert(gHtml.includes(`<link rel="canonical" href="${expectedCanonical}">`), `${game.id} canonical URL must match`);
+    assert(gHtml.includes(`property="og:url" content="${expectedCanonical}"`), `${game.id} og:url must match canonical`);
+    assert(gHtml.includes(`property="og:image" content="${expectedOgImage}"`), `${game.id} og:image must match dedicated image`);
+    assert(gHtml.includes('property="og:image:width" content="1200"'), `${game.id} og:image:width must be 1200`);
+    assert(gHtml.includes('property="og:image:height" content="630"'), `${game.id} og:image:height must be 630`);
+    assert(gHtml.includes('name="twitter:card" content="summary_large_image"'), `${game.id} twitter:card must be summary_large_image`);
+    assert(gHtml.includes(`name="twitter:image" content="${expectedOgImage}"`), `${game.id} twitter:image must match`);
+
+    // Verify uniqueness
+    const titleMatch = gHtml.match(/<meta property="og:title" content="([^"]+)"/);
+    assert(titleMatch, `${game.id} must have og:title`);
+    const ogTitle = titleMatch[1];
+    assert(!seenTitles.has(ogTitle), `Duplicate og:title found for ${game.id}: ${ogTitle}`);
+    seenTitles.add(ogTitle);
+
+    assert(!seenImages.has(expectedOgImage), `Duplicate og:image found: ${expectedOgImage}`);
+    seenImages.add(expectedOgImage);
+
+    // Never reuse Hidden Hunt metadata
+    if (game.id !== 'hidden-hunt') {
+      assert(!ogTitle.includes('Hidden Hunt'), `${game.id} must not reuse Hidden Hunt title`);
+      assert(!gHtml.includes('Explore mysterious environments and discover hidden objects in this free online puzzle adventure'), `${game.id} must not reuse Hidden Hunt description`);
+    }
+  }
+
+  // 5. Informational & Category pages check
+  const staticPages = [
+    'about.html', 'contact.html', 'privacy.html', 'terms.html',
+    'category/arcade/index.html', 'category/action/index.html', 'category/puzzle/index.html', 'category/casual/index.html'
+  ];
+  for (const sp of staticPages) {
+    const sHtml = fs.readFileSync(path.join(__dirname, sp), 'utf8');
+    assert(sHtml.includes('property="og:image" content="https://mini-game-arcade-coral.vercel.app/og-image.png"'), `${sp} must have og:image pointing to og-image.png`);
+    assert(sHtml.includes('property="og:image:width" content="1200"'), `${sp} must have 1200 width`);
+    assert(sHtml.includes('property="og:image:height" content="630"'), `${sp} must have 630 height`);
+    assert(sHtml.includes('name="twitter:card" content="summary_large_image"'), `${sp} must have twitter:card`);
+  }
+});
+
 console.log(`\nQA Test Results: ${passedTests} / ${totalTests} passed.`);
 if (passedTests !== totalTests) {
   process.exit(1);
