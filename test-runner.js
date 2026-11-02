@@ -1983,6 +1983,51 @@ it('Homepage and all 15 game pages have non-intrusive AdSense placement containe
   assert(adsTxt.includes('pub-6654460587836639'), 'ads.txt must contain publisher ID');
 });
 
+// 41. LLM Context Standard: llms.txt validation & route integrity
+it('llms.txt exists, follows llmstxt.org specification, and contains only verified project routes', () => {
+  const llmsPath = path.join(__dirname, 'llms.txt');
+  assert(fs.existsSync(llmsPath), 'llms.txt must exist at project root');
+  const content = fs.readFileSync(llmsPath, 'utf8');
+
+  // Title and blockquote
+  assert(content.includes('# Mini Game Arcade'), 'llms.txt must have H1 title # Mini Game Arcade');
+  assert(content.includes('> Mini Game Arcade is a fast, responsive'), 'llms.txt must have summary blockquote');
+
+  // Verify all 15 games are linked
+  const { ARCADE_GAMES } = require('./js/games-data.js');
+  assert.strictEqual(ARCADE_GAMES.length, 15, 'Must contain all 15 arcade games');
+  for (const game of ARCADE_GAMES) {
+    const expectedUrl = `https://mini-game-arcade-coral.vercel.app/games/${game.id}`;
+    assert(content.includes(expectedUrl), `llms.txt must include game URL: ${expectedUrl}`);
+  }
+
+  // Specifically check Citrus Blitz and Hidden Hunt
+  assert(content.includes('https://mini-game-arcade-coral.vercel.app/games/citrus-blitz'), 'Must verify Citrus Blitz URL');
+  assert(content.includes('https://mini-game-arcade-coral.vercel.app/games/hidden-hunt'), 'Must verify Hidden Hunt URL');
+
+  // Verify Informational Pages
+  const infoPages = ['about', 'contact', 'privacy', 'terms'];
+  for (const page of infoPages) {
+    const expectedUrl = `https://mini-game-arcade-coral.vercel.app/${page}`;
+    assert(content.includes(expectedUrl), `llms.txt must include informational URL: ${expectedUrl}`);
+    assert(fs.existsSync(path.join(__dirname, `${page}.html`)), `Target file ${page}.html must exist on disk`);
+  }
+
+  // Verify Category Hubs
+  const categories = ['arcade', 'action', 'puzzle', 'casual'];
+  for (const cat of categories) {
+    const expectedUrl = `https://mini-game-arcade-coral.vercel.app/category/${cat}`;
+    assert(content.includes(expectedUrl), `llms.txt must include category hub URL: ${expectedUrl}`);
+    assert(fs.existsSync(path.join(__dirname, 'category', cat, 'index.html')), `Category page category/${cat}/index.html must exist on disk`);
+  }
+
+  // Verify vercel.json headers rule for text/plain
+  const vercelConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'vercel.json'), 'utf8'));
+  const txtHeader = vercelConfig.headers.find(h => h.source.includes('.txt'));
+  assert(txtHeader, 'vercel.json must have header configuration for .txt files');
+  assert(txtHeader.headers.some(h => h.key === 'Content-Type' && h.value.includes('text/plain')), 'vercel.json must serve .txt files as text/plain');
+});
+
 console.log(`\nQA Test Results: ${passedTests} / ${totalTests} passed.`);
 if (passedTests !== totalTests) {
   process.exit(1);

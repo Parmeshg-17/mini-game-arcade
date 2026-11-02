@@ -1,0 +1,53 @@
+# Mini Game Arcade
+
+> Mini Game Arcade is a fast, responsive, curated collection of 15 original browser-based mini-games built with vanilla HTML5, Canvas 2D, and Web Audio API. Zero external runtime dependencies, no account or installation required, instant play on mobile and desktop.
+
+Mini Game Arcade provides instant-play casual, arcade, action, and puzzle games engineered for speed, accessibility, and high performance. All visual effects, physics, and game audio are generated procedurally in the browser, featuring local high-score tracking, accessible touch and keyboard controls, and full offline PWA support.
+
+Website: https://mini-game-arcade-coral.vercel.app/
+
+## Featured Games
+
+- [Citrus Blitz](https://mini-game-arcade-coral.vercel.app/games/citrus-blitz): Fast-paced fruit-slicing arcade action with procedural Canvas 2D physics, dynamic blade swipe trails, bomb hazards, combo multipliers, and Blitz and Survival modes.
+- [Hidden Hunt](https://mini-game-arcade-coral.vercel.app/games/hidden-hunt): Premium hidden-object adventure puzzle game featuring 15 hand-illustrated scenes across The Old Library, Mystery Forest, and Pirate's Treasure with zoom and pan controls, smart hints, and daily observation challenges.
+
+## Playable Arcade & Action Games
+
+- [Dashverse](https://mini-game-arcade-coral.vercel.app/games/dashverse): High-octane cyberpunk rooftop parkour runner. Vault chasms, double jump over rooftop vents, slide under laser barriers, collect data shards, and complete courier missions.
+- [Stack Rush](https://mini-game-arcade-coral.vercel.app/games/stack-rush): One-button 3D tower stacking game. Time horizontal block drops across alternating axes, trim overlapping edges with realistic debris physics, and build ascending chime combos.
+- [Brick Breaker](https://mini-game-arcade-coral.vercel.app/games/brick-breaker): Retro-arcade neon breakout with 100% Canvas 2D physics, angle-deflecting paddle rebounds, multi-ball power-ups, particle shatter bursts, and 3 progressive waves.
+- [Space Dodge](https://mini-game-arcade-coral.vercel.app/games/space-dodge): Pilot an agile cyber starship through asteroid belts, dodge plasma comets, collect energy crystals, execute near-miss dodges, and trigger EMP shockwaves across 3 sectors or Endless Hyperspace.
+- [Tap Challenge](https://mini-game-arcade-coral.vercel.app/games/tap-challenge): High-speed reaction and agility arena featuring Reflex Rush, Number Sprint sequence tests, and a 10-second CPS click speed frenzy with combo multipliers.
+
+## Playable Puzzle & Strategy Games
+
+- [Circuit Connect](https://mini-game-arcade-coral.vercel.app/games/circuit-connect): Logic puzzle connecting matching neon color terminals across 30 handcrafted levels with a 100% board fill constraint and built-in smart hint solver.
+- [Merge Grid](https://mini-game-arcade-coral.vercel.app/games/merge-grid): Strategic 4x4 sliding number tile puzzle. Slide and merge matching values toward 2048 with full undo history, best-score tracking, and swipe controls.
+- [Jigpic Solitaire](https://mini-game-arcade-coral.vercel.app/games/jigpic-solitaire): Relaxing jigsaw and solitaire hybrid. Assemble picturesque picture blocks step by step across warm landscapes, blooming gardens, and coastal scenes.
+- [Block Puzzle](https://mini-game-arcade-coral.vercel.app/games/block-puzzle): 8x8 polyomino block-fitting game. Place pieces to clear horizontal rows and vertical columns across Classic Endless, 10-Line Challenge, and 90-Second Timed Blitz.
+- [Number Puzzle](https://mini-game-arcade-coral.vercel.app/games/number-puzzle): Definitive classic 15-puzzle sliding challenge with 3x3, 4x4, and 5x5 grid modes, move counters, stopwatch tracking, and 100% solvability guarantee.
+- [Tic Tac Toe](https://mini-game-arcade-coral.vercel.app/games/tic-tac-toe): Classic 3x3 strategy game featuring an unbeatable Minimax AI bot and two-player pass-and-play on the same device with match timers and scoreboard tracking.
+
+## Playable Casual Games
+
+- [Memory Match](https://mini-game-arcade-coral.vercel.app/games/memory-match): Visual recall card-matching challenge across Easy (8 cards), Medium (16 cards), and Hard (24 cards) modes with 3D card flips, move counters, and star ratings.
+- [Bubble Pop](https://mini-game-arcade-coral.vercel.app/games/bubble-pop): Classic arcade bubble shooter with reflective laser aiming, hexagonal grid snapping, Match-3 bursting, color swaps, and falling island avalanches.
+
+## Category Hubs
+
+- [Arcade Games Hub](https://mini-game-arcade-coral.vercel.app/category/arcade): Fast-paced reflex, stacking, and slicing browser games.
+- [Action Games Hub](https://mini-game-arcade-coral.vercel.app/category/action): High-energy parkour running, space dodging, and brick-breaking games.
+- [Puzzle Games Hub](https://mini-game-arcade-coral.vercel.app/category/puzzle): Logic, flow, tile-sliding, hidden-object, and polyomino puzzle challenges.
+- [Casual Games Hub](https://mini-game-arcade-coral.vercel.app/category/casual): Relaxing card-matching, bubble shooting, and picture jigsaw games.
+
+## Information & Policies
+
+- [About Mini Game Arcade](https://mini-game-arcade-coral.vercel.app/about): Background on the platform, mission, engineering principles, and browser gaming philosophy.
+- [Contact Us](https://mini-game-arcade-coral.vercel.app/contact): Support, developer feedback, and bug reporting contact channels.
+- [Privacy Policy](https://mini-game-arcade-coral.vercel.app/privacy): Information regarding local storage usage, advertising policies, and user data privacy.
+- [Terms of Service](https://mini-game-arcade-coral.vercel.app/terms): Terms and conditions governing the use of Mini Game Arcade.
+
+## Machine-Readable Resources
+
+- [Sitemap](https://mini-game-arcade-coral.vercel.app/sitemap.xml): Complete XML sitemap listing all canonical pages, game routes, and category hubs.
+- [Robots.txt](https://mini-game-arcade-coral.vercel.app/robots.txt): Search engine crawler directives.
