@@ -211,6 +211,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/water-sort.svg',
     controlsSummary: 'Click / Tap tube to pick & pour • U to Undo • R to Restart • H for Hint • +1 Tube Assist • M to Mute',
     features: ['150+ Solvable Stages', 'Fluid Pouring Stream Physics', 'Multi-Step Undo & Hints', 'Daily Challenge & Streaks']
+  },
+  {
+    id: 'screw-master',
+    title: 'Screw Master',
+    category: 'Puzzle',
+    tags: ['puzzle', 'mechanical', 'screw', 'nuts', 'bolts', 'wood', 'logic', 'brain', 'casual'],
+    badge: 'New',
+    tagline: 'Unscrew. Strategize. Unlock.',
+    description: 'Remove screws in the right order, release overlapping panels, and solve challenging mechanical puzzles in Screw Master. Features realistic panel physics, procedural audio, undo, hints, and 150+ solvable stages.',
+    route: 'games/screw-master/index.html',
+    thumbnail: 'assets/games/screw-master.svg',
+    controlsSummary: 'Click / Tap screw to select • Tap empty hole or tray to move • U to Undo • R to Restart • H for Hint • +1 Slot',
+    features: ['150+ Solvable Stages', 'Physical Panel Drop Physics', 'Multi-Step Undo & Hints', 'Daily & Time Rush Modes']
   }
 ];
 

@@ -1,0 +1,200 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270" width="480" height="270">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="sm-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#121822"/>
+      <stop offset="50%" stop-color="#17202d"/>
+      <stop offset="100%" stop-color="#0f141d"/>
+    </linearGradient>
+
+    <!-- Wood Textures -->
+    <linearGradient id="wood-oak" x1="0" y1="0" x2="1" y2="0.3">
+      <stop offset="0%" stop-color="#d4a373"/>
+      <stop offset="50%" stop-color="#ba8551"/>
+      <stop offset="100%" stop-color="#9e6d3c"/>
+    </linearGradient>
+
+    <linearGradient id="wood-walnut" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#6b442a"/>
+      <stop offset="50%" stop-color="#52311c"/>
+      <stop offset="100%" stop-color="#3d2211"/>
+    </linearGradient>
+
+    <!-- Metal Plate -->
+    <linearGradient id="metal-bracket" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="40%" stop-color="#cbd5e1"/>
+      <stop offset="70%" stop-color="#64748b"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+
+    <!-- Screw Metallic Heads -->
+    <radialGradient id="screw-steel" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="35%" stop-color="#cbd5e1"/>
+      <stop offset="80%" stop-color="#64748b"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </radialGradient>
+
+    <radialGradient id="screw-brass" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="35%" stop-color="#facc15"/>
+      <stop offset="80%" stop-color="#a16207"/>
+      <stop offset="100%" stop-color="#713f12"/>
+    </radialGradient>
+
+    <!-- Hole Recess Shadow -->
+    <radialGradient id="hole-dark" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#07090d"/>
+      <stop offset="70%" stop-color="#0b0e14"/>
+      <stop offset="100%" stop-color="#2d3748"/>
+    </radialGradient>
+
+    <!-- Glow Filter -->
+    <filter id="sm-glow-lime" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="sm-glow-gold" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Drop Shadows for Panels -->
+    <filter id="panel-shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background Backplate -->
+  <rect width="480" height="270" fill="url(#sm-bg)"/>
+
+  <!-- Mechanical Grid Pattern -->
+  <pattern id="grid-dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+    <circle cx="10" cy="10" r="1.2" fill="#2d3748" opacity="0.6"/>
+  </pattern>
+  <rect width="480" height="270" fill="url(#grid-dots)"/>
+
+  <!-- Ambient Workspace Glow -->
+  <circle cx="240" cy="130" r="110" fill="#d5ff55" opacity="0.08" filter="url(#sm-glow-lime)"/>
+  <circle cx="360" cy="180" r="90" fill="#00d2ff" opacity="0.06"/>
+
+  <!-- PRE-DRILLED BOARD HOLES (Empty spots) -->
+  <g>
+    <!-- Empty Hole 1 -->
+    <circle cx="120" cy="70" r="14" fill="url(#hole-dark)" stroke="#3a4556" stroke-width="2"/>
+    <circle cx="120" cy="70" r="9" fill="none" stroke="#ffffff" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.3"/>
+
+    <!-- Empty Hole 2 -->
+    <circle cx="360" cy="70" r="14" fill="url(#hole-dark)" stroke="#3a4556" stroke-width="2"/>
+    <circle cx="360" cy="70" r="9" fill="none" stroke="#ffffff" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.3"/>
+
+    <!-- Empty Hole 3 -->
+    <circle cx="120" cy="200" r="14" fill="url(#hole-dark)" stroke="#3a4556" stroke-width="2"/>
+    <circle cx="120" cy="200" r="9" fill="none" stroke="#ffffff" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.3"/>
+
+    <!-- Empty Hole 4 (Target for unscrewed bolt) -->
+    <circle cx="360" cy="200" r="14" fill="url(#hole-dark)" stroke="#d5ff55" stroke-width="2" filter="url(#sm-glow-lime)"/>
+    <circle cx="360" cy="200" r="9" fill="none" stroke="#d5ff55" stroke-width="1.2" stroke-dasharray="3,2" opacity="0.8"/>
+  </g>
+
+  <!-- PANEL 1: Lower Walnut Vertical Beam (Layer 1) -->
+  <g filter="url(#panel-shadow)">
+    <rect x="210" y="45" width="60" height="180" rx="12" fill="url(#wood-walnut)" stroke="#2b1709" stroke-width="2"/>
+    <!-- Subtle wood grain lines -->
+    <line x1="225" y1="50" x2="225" y2="220" stroke="#7c4a2a" stroke-width="1" opacity="0.4"/>
+    <line x1="245" y1="50" x2="245" y2="220" stroke="#3b1f0c" stroke-width="1.2" opacity="0.5"/>
+  </g>
+
+  <!-- PANEL 2: Middle Oak Horizontal Plank (Layer 2) -->
+  <g filter="url(#panel-shadow)">
+    <rect x="130" y="105" width="220" height="60" rx="12" fill="url(#wood-oak)" stroke="#7a5026" stroke-width="2"/>
+    <!-- Wood grain lines -->
+    <line x1="135" y1="120" x2="345" y2="120" stroke="#e0b182" stroke-width="1" opacity="0.4"/>
+    <line x1="135" y1="140" x2="345" y2="140" stroke="#87582b" stroke-width="1" opacity="0.4"/>
+    <line x1="135" y1="150" x2="345" y2="150" stroke="#e0b182" stroke-width="0.8" opacity="0.3"/>
+  </g>
+
+  <!-- PANEL 3: Top Steel Cross-Bracket (Layer 3 - Angle) -->
+  <g filter="url(#panel-shadow)" transform="translate(240, 135) rotate(-28) translate(-110, -25)">
+    <rect x="0" y="0" width="220" height="50" rx="10" fill="url(#metal-bracket)" stroke="#1e293b" stroke-width="2"/>
+    <!-- Metallic brushed highlight -->
+    <line x1="5" y1="10" x2="215" y2="10" stroke="#ffffff" stroke-width="1" opacity="0.5"/>
+    <line x1="5" y1="40" x2="215" y2="40" stroke="#334155" stroke-width="1" opacity="0.6"/>
+  </g>
+
+  <!-- SCREWS IN PLACE -->
+  <!-- Screw 1: Left Oak Joint (Brass) -->
+  <g transform="translate(170, 135)">
+    <circle cx="0" cy="0" r="16" fill="url(#screw-brass)" stroke="#713f12" stroke-width="1.8"/>
+    <!-- Phillips Slot (+) -->
+    <rect x="-8" y="-2" width="16" height="4" rx="1" fill="#451a03"/>
+    <rect x="-2" y="-8" width="4" height="16" rx="1" fill="#451a03"/>
+  </g>
+
+  <!-- Screw 2: Bottom Walnut Joint (Steel) -->
+  <g transform="translate(240, 195)">
+    <circle cx="0" cy="0" r="16" fill="url(#screw-steel)" stroke="#334155" stroke-width="1.8"/>
+    <!-- Phillips Slot (+) -->
+    <rect x="-8" y="-2" width="16" height="4" rx="1" fill="#1e293b"/>
+    <rect x="-2" y="-8" width="4" height="16" rx="1" fill="#1e293b"/>
+  </g>
+
+  <!-- Screw 3: Top Walnut Joint (Steel) -->
+  <g transform="translate(240, 75)">
+    <circle cx="0" cy="0" r="16" fill="url(#screw-steel)" stroke="#334155" stroke-width="1.8"/>
+    <!-- Phillips Slot (+) -->
+    <rect x="-8" y="-2" width="16" height="4" rx="1" fill="#1e293b"/>
+    <rect x="-2" y="-8" width="4" height="16" rx="1" fill="#1e293b"/>
+  </g>
+
+  <!-- DYNAMIC ACTION: SCREW 4 IN MID-UNSCREW EXTRACTION! -->
+  <!-- Motion Trail / Unscrewing Spiral Arc -->
+  <path d="M 310 135 C 310 90, 350 90, 360 180" fill="none" stroke="#d5ff55" stroke-width="3" stroke-dasharray="6,4" opacity="0.8" filter="url(#sm-glow-lime)"/>
+
+  <!-- Lifted Rotating Screw -->
+  <g transform="translate(330, 95) rotate(45)">
+    <!-- Glow aura -->
+    <circle cx="0" cy="0" r="22" fill="#d5ff55" opacity="0.25" filter="url(#sm-glow-lime)"/>
+    <!-- Screw Head -->
+    <circle cx="0" cy="0" r="18" fill="url(#screw-brass)" stroke="#d5ff55" stroke-width="2.5" filter="url(#sm-glow-gold)"/>
+    <!-- Phillips Slot -->
+    <rect x="-9" y="-2.5" width="18" height="5" rx="1" fill="#451a03"/>
+    <rect x="-2.5" y="-9" width="5" height="18" rx="1" fill="#451a03"/>
+    <!-- Threaded shaft visible beneath lifted head -->
+    <rect x="-5" y="14" width="10" height="14" rx="2" fill="#a16207" stroke="#713f12" stroke-width="1"/>
+    <line x1="-5" y1="18" x2="5" y2="20" stroke="#fef08a" stroke-width="1.5"/>
+    <line x1="-5" y1="23" x2="5" y2="25" stroke="#fef08a" stroke-width="1.5"/>
+  </g>
+
+  <!-- Mechanical Sparkles / Particles -->
+  <g fill="#d5ff55" opacity="0.9">
+    <circle cx="315" cy="80" r="2" filter="url(#sm-glow-lime)"/>
+    <circle cx="355" cy="110" r="2.5" filter="url(#sm-glow-lime)"/>
+    <circle cx="340" cy="65" r="1.5"/>
+    <circle cx="370" cy="150" r="2"/>
+  </g>
+
+  <!-- Category Badge at Top Left -->
+  <g transform="translate(24, 20)">
+    <rect width="98" height="24" rx="12" fill="#172230" stroke="#d5ff55" stroke-width="1.2" opacity="0.95"/>
+    <circle cx="12" cy="12" r="4" fill="#d5ff55" filter="url(#sm-glow-lime)"/>
+    <text x="24" y="16" fill="#f4f2e9" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="11" letter-spacing="1">PUZZLE</text>
+  </g>
+
+  <!-- Bottom Tray Visual Accent -->
+  <g transform="translate(140, 246)">
+    <rect width="200" height="18" rx="6" fill="#131922" stroke="#253244" stroke-width="1"/>
+    <circle cx="40" cy="9" r="6" fill="#0b0e14" stroke="#334155" stroke-width="1"/>
+    <circle cx="100" cy="9" r="6" fill="#0b0e14" stroke="#334155" stroke-width="1"/>
+    <circle cx="160" cy="9" r="6" fill="#0b0e14" stroke="#334155" stroke-width="1"/>
+  </g>
+</svg>
+

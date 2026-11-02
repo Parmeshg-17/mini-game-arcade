@@ -160,7 +160,7 @@ it('Search and category filter logic filters games correctly', () => {
 
   // Puzzle category filter matches Tic Tac Toe, Number Puzzle, Block Puzzle, Circuit Connect, Merge Grid, Hidden Hunt, Jigpic Solitaire, and Water Sort
   const res4 = filterGames('', 'Puzzle');
-  assert.strictEqual(res4.length, 8);
+  assert.strictEqual(res4.length, 9);
   assert(res4.some(g => g.id === 'tic-tac-toe'));
   assert(res4.some(g => g.id === 'number-puzzle'));
   assert(res4.some(g => g.id === 'block-puzzle'));
@@ -169,6 +169,7 @@ it('Search and category filter logic filters games correctly', () => {
   assert(res4.some(g => g.id === 'hidden-hunt'));
   assert(res4.some(g => g.id === 'jigpic-solitaire'));
   assert(res4.some(g => g.id === 'water-sort'));
+  assert(res4.some(g => g.id === 'screw-master'));
 
   // Casual category filter matches Memory Match and Bubble Pop
   const res5 = filterGames('', 'Casual');
@@ -1908,6 +1909,119 @@ it('Water Sort engine executes legal liquid pours, BFS solver, hints, and guaran
   assert.strictEqual(dailyA.isDaily, true);
 });
 
+
+// 30j. Dedicated Screw Master Playable Page DOM & Asset Integrity
+it('Dedicated Screw Master page (games/screw-master/index.html) has all DOM elements required by game.js', () => {
+  const gameHtmlPath = path.join(__dirname, 'games/screw-master/index.html');
+  assert(fs.existsSync(gameHtmlPath), 'games/screw-master/index.html must exist');
+  const gameHtml = fs.readFileSync(gameHtmlPath, 'utf8');
+
+  const requiredIds = [
+    'mechanical-stage',
+    'level-title',
+    'level-tier',
+    'moves-count',
+    'timer-display',
+    'best-moves',
+    'game-toast',
+    'btn-undo',
+    'btn-restart',
+    'btn-hint',
+    'btn-add-slot',
+    'btn-sound',
+    'btn-levels',
+    'win-modal',
+    'level-modal'
+  ];
+
+  for (const id of requiredIds) {
+    assert(gameHtml.includes(`id="${id}"`), `Missing required ID="${id}" in games/screw-master/index.html`);
+  }
+
+  // Verify vector thumbnail and dedicated OG preview images
+  const svgPath = path.join(__dirname, 'assets/games/screw-master.svg');
+  assert(fs.existsSync(svgPath), 'assets/games/screw-master.svg must exist');
+  const ogPath = path.join(__dirname, 'og/screw-master.png');
+  assert(fs.existsSync(ogPath), 'og/screw-master.png must exist');
+  const publicOgPath = path.join(__dirname, 'public/og/screw-master.png');
+  assert(fs.existsSync(publicOgPath), 'public/og/screw-master.png must exist');
+});
+
+// 30k. Screw Master Engine Mechanics, Overlapping Layers, Accessibility, Panel Releases, and BFS Solvability
+it('Screw Master engine executes mechanical screw extraction, panel releases, accessibility checks, and BFS solving accurately', () => {
+  const Engine = require('./games/screw-master/js/engine.js');
+
+  assert(Object.keys(Engine.PANEL_MATERIALS).length >= 5, 'Must define multiple visual panel materials');
+  assert(Object.keys(Engine.SCREW_STYLES).length >= 4, 'Must define multiple screw styles');
+
+  // 1. Accessibility checking on Level 1
+  const l1 = Engine.generateLevel(1);
+  assert.strictEqual(l1.level, 1);
+  assert.strictEqual(l1.panels.length, 2);
+  assert.strictEqual(l1.screws.length, 3);
+
+  // In Level 1: Panel 1 (Top, layer 2) covers h3 beneath it, so screw at h3 is blocked
+  // Screws at h1 and h2 are on top layer -> accessible
+  assert.strictEqual(Engine.isScrewAccessible(l1, 's1'), true, 'Screw 1 on top layer must be accessible');
+  assert.strictEqual(Engine.isScrewAccessible(l1, 's2'), true, 'Screw 2 on top layer must be accessible');
+  assert.strictEqual(Engine.isScrewAccessible(l1, 's3'), false, 'Screw 3 covered by Panel 1 must be blocked');
+
+  // Attempting to move blocked screw must fail
+  const blockedMove = Engine.executeMove(l1, 's3', 'h4');
+  assert.strictEqual(blockedMove.success, false, 'Moving blocked screw must fail');
+
+  // 2. Moving accessible screw
+  // Move s1 to empty hole h4
+  const move1 = Engine.executeMove(l1, 's1', 'h4');
+  assert.strictEqual(move1.success, true);
+  assert.strictEqual(move1.screwId, 's1');
+  assert.strictEqual(move1.targetHoleId, 'h4');
+
+  // Panel 1 still has s2 holding it -> not released yet
+  assert.strictEqual(l1.panels[0].status, 'active');
+
+  // Move s2 to empty hole h5 -> Panel 1 now has 0 screws holding it!
+  const move2 = Engine.executeMove(l1, 's2', 'h5');
+  assert.strictEqual(move2.success, true);
+  assert.deepStrictEqual(move2.releasedPanels, ['p1'], 'Panel 1 must be released when both screws are extracted');
+  assert.strictEqual(l1.panels[0].status, 'released');
+
+  // Now that Panel 1 is released, Screw 3 underneath is uncovered and ACCESSIBLE!
+  assert.strictEqual(Engine.isScrewAccessible(l1, 's3'), true, 'Screw 3 must now be accessible');
+
+  // Move s3 to free hole h1 -> Panel 2 released -> VICTORY!
+  const move3 = Engine.executeMove(l1, 's3', 'h1');
+  assert.strictEqual(move3.success, true);
+  assert.deepStrictEqual(move3.releasedPanels, ['p2']);
+  assert.strictEqual(move3.isWon, true, 'Clearing all panels must trigger victory');
+  assert.strictEqual(Engine.checkWin(l1), true);
+
+  // 3. BFS Solver Validation
+  const freshL1 = Engine.generateLevel(1);
+  const solution = Engine.solvePuzzle(freshL1);
+  assert(Array.isArray(solution), 'Solver must return valid solution array');
+  assert.strictEqual(solution.length, 3, 'Level 1 optimal solution is 3 moves');
+
+  // 4. In-Game Hint
+  const hint = Engine.findHint(freshL1);
+  assert(hint, 'Hint must be found');
+  assert(hint.screwId && hint.targetHoleId, 'Hint must recommend screw and target hole');
+
+  // 5. Procedural Level Generation across tiers
+  const l10 = Engine.generateLevel(10);
+  assert(l10.minMoves > 0, 'Level 10 must have positive minMoves');
+  assert(l10.panels.length >= 3, 'Level 10 must have at least 3 panels');
+
+  const l50 = Engine.generateLevel(50);
+  assert(l50.minMoves > 0, 'Level 50 must have positive minMoves');
+
+  // 6. Deterministic Daily Challenge
+  const dailyA = Engine.getDailyLevel('2026-11-02');
+  const dailyB = Engine.getDailyLevel('2026-11-02');
+  assert.deepStrictEqual(dailyA.panels, dailyB.panels, 'Daily challenge must be 100% deterministic');
+  assert.strictEqual(dailyA.isDaily, true);
+});
+
 // 31. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
@@ -1952,6 +2066,7 @@ it('sitemap.xml exists, is valid XML, and contains all 17 canonical pages', () =
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/hidden-hunt'), 'sitemap.xml must include hidden-hunt');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/jigpic-solitaire'), 'sitemap.xml must include jigpic-solitaire');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/water-sort'), 'sitemap.xml must include water-sort');
+  assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/screw-master'), 'sitemap.xml must include screw-master');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/about'), 'sitemap.xml must include about page');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/contact'), 'sitemap.xml must include contact page');
   
@@ -1991,7 +2106,8 @@ it('All HTML pages have verified canonical tags and valid Schema.org JSON-LD', (
     'games/merge-grid/index.html',
     'games/hidden-hunt/index.html',
     'games/jigpic-solitaire/index.html',
-    'games/water-sort/index.html'
+    'games/water-sort/index.html',
+    'games/screw-master/index.html'
   ];
 
   for (const page of pages) {
@@ -2124,7 +2240,7 @@ it('llms.txt exists, follows llmstxt.org specification, and contains only verifi
 
   // Verify all 15 games are linked
   const { ARCADE_GAMES } = require('./js/games-data.js');
-  assert.strictEqual(ARCADE_GAMES.length, 16, 'Must contain all 16 arcade games');
+  assert.strictEqual(ARCADE_GAMES.length, 17, 'Must contain all 17 arcade games');
   for (const game of ARCADE_GAMES) {
     const expectedUrl = `https://mini-game-arcade-coral.vercel.app/games/${game.id}`;
     assert(content.includes(expectedUrl), `llms.txt must include game URL: ${expectedUrl}`);
