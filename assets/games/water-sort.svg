@@ -1,0 +1,203 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270" width="480" height="270">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="ws-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#120c24"/>
+      <stop offset="50%" stop-color="#181530"/>
+      <stop offset="100%" stop-color="#0e1320"/>
+    </linearGradient>
+
+    <!-- Glass Gradients -->
+    <linearGradient id="glass-body" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.25"/>
+      <stop offset="15%" stop-color="#ffffff" stop-opacity="0.05"/>
+      <stop offset="85%" stop-color="#ffffff" stop-opacity="0.03"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.2"/>
+    </linearGradient>
+
+    <!-- Liquid Gradients -->
+    <linearGradient id="liq-red" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff4d79"/>
+      <stop offset="100%" stop-color="#d9044b"/>
+    </linearGradient>
+    <linearGradient id="liq-yellow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffea66"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="liq-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="liq-green" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+    <linearGradient id="liq-purple" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c084fc"/>
+      <stop offset="100%" stop-color="#7e22ce"/>
+    </linearGradient>
+
+    <!-- Glow Filters -->
+    <filter id="ws-glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="ws-glow-gold" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="480" height="270" fill="url(#ws-bg)"/>
+
+  <!-- Ambient Light Orbs -->
+  <circle cx="140" cy="70" r="90" fill="#8338ec" opacity="0.18" filter="url(#ws-glow-cyan)"/>
+  <circle cx="340" cy="180" r="110" fill="#00d2ff" opacity="0.14" filter="url(#ws-glow-cyan)"/>
+  <circle cx="240" cy="120" r="80" fill="#ffd166" opacity="0.12" filter="url(#ws-glow-gold)"/>
+
+  <!-- Subtle laboratory grid line accent -->
+  <path d="M0 240 L480 240" stroke="#252a38" stroke-width="2"/>
+  <path d="M0 241 L480 241" stroke="#00d2ff" stroke-width="1" opacity="0.3"/>
+
+  <!-- TUBE 1 (Left Tube) -->
+  <g transform="translate(110, 75)">
+    <!-- Tube Shadow -->
+    <rect x="2" y="10" width="44" height="145" rx="22" fill="#000000" opacity="0.4" filter="blur(6px)"/>
+    <!-- Liquid Stack (Clip to tube body) -->
+    <clipPath id="tube1-clip">
+      <path d="M 0 0 L 44 0 L 44 125 A 22 22 0 0 1 0 125 Z"/>
+    </clipPath>
+    <g clip-path="url(#tube1-clip)">
+      <!-- Segment 1 (Bottom): Blue -->
+      <rect x="0" y="102" width="44" height="45" fill="url(#liq-blue)"/>
+      <ellipse cx="22" cy="102" rx="22" ry="4" fill="#60a5fa" opacity="0.6"/>
+      <circle cx="16" cy="125" r="2.5" fill="#ffffff" opacity="0.6"/>
+      <!-- Segment 2: Yellow -->
+      <rect x="0" y="68" width="44" height="34" fill="url(#liq-yellow)"/>
+      <ellipse cx="22" cy="68" rx="22" ry="4" fill="#fef08a" opacity="0.6"/>
+      <circle cx="28" cy="85" r="2" fill="#ffffff" opacity="0.6"/>
+      <!-- Segment 3: Red -->
+      <rect x="0" y="34" width="44" height="34" fill="url(#liq-red)"/>
+      <ellipse cx="22" cy="34" rx="22" ry="4" fill="#fda4af" opacity="0.6"/>
+      <!-- Segment 4: Green -->
+      <rect x="0" y="0" width="44" height="34" fill="url(#liq-green)"/>
+      <ellipse cx="22" cy="0" rx="22" ry="4" fill="#86efac" opacity="0.7"/>
+      <circle cx="14" cy="18" r="2.5" fill="#ffffff" opacity="0.7"/>
+    </g>
+    <!-- Glass Body -->
+    <path d="M 0 0 L 44 0 L 44 125 A 22 22 0 0 1 0 125 Z" fill="url(#glass-body)" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.6"/>
+    <!-- Specular Highlight Line -->
+    <line x1="6" y1="8" x2="6" y2="120" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+    <line x1="38" y1="12" x2="38" y2="105" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.35"/>
+    <!-- Glass Lip -->
+    <rect x="-4" y="-5" width="52" height="7" rx="3.5" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" opacity="0.9"/>
+  </g>
+
+  <!-- TUBE 2 (Center Destination Tube - Receiving Pour) -->
+  <g transform="translate(195, 75)">
+    <!-- Tube Shadow -->
+    <rect x="2" y="10" width="44" height="145" rx="22" fill="#000000" opacity="0.4" filter="blur(6px)"/>
+    <!-- Liquid Stack -->
+    <clipPath id="tube2-clip">
+      <path d="M 0 0 L 44 0 L 44 125 A 22 22 0 0 1 0 125 Z"/>
+    </clipPath>
+    <g clip-path="url(#tube2-clip)">
+      <!-- Segment 1 (Bottom): Blue -->
+      <rect x="0" y="102" width="44" height="45" fill="url(#liq-blue)"/>
+      <circle cx="26" cy="120" r="2" fill="#ffffff" opacity="0.6"/>
+      <!-- Segment 2: Green -->
+      <rect x="0" y="68" width="44" height="34" fill="url(#liq-green)"/>
+      <ellipse cx="22" cy="68" rx="22" ry="4" fill="#86efac" opacity="0.6"/>
+      <!-- Segment 3: Rising Yellow from pour! -->
+      <rect x="0" y="34" width="44" height="34" fill="url(#liq-yellow)"/>
+      <ellipse cx="22" cy="34" rx="22" ry="5" fill="#fffbeb" opacity="0.9"/>
+      <!-- Bubbles from stream entry -->
+      <circle cx="22" cy="40" r="3" fill="#ffffff" opacity="0.9"/>
+      <circle cx="16" cy="48" r="2" fill="#ffffff" opacity="0.7"/>
+      <circle cx="28" cy="45" r="2.5" fill="#ffffff" opacity="0.8"/>
+    </g>
+    <!-- Glass Body -->
+    <path d="M 0 0 L 44 0 L 44 125 A 22 22 0 0 1 0 125 Z" fill="url(#glass-body)" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.7"/>
+    <!-- Specular Highlights -->
+    <line x1="6" y1="8" x2="6" y2="120" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.75"/>
+    <line x1="38" y1="12" x2="38" y2="105" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+    <!-- Glass Lip -->
+    <rect x="-4" y="-5" width="52" height="7" rx="3.5" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" opacity="0.95"/>
+  </g>
+
+  <!-- TUBE 3 (Right Tube) -->
+  <g transform="translate(280, 75)">
+    <!-- Tube Shadow -->
+    <rect x="2" y="10" width="44" height="145" rx="22" fill="#000000" opacity="0.4" filter="blur(6px)"/>
+    <!-- Liquid Stack -->
+    <clipPath id="tube3-clip">
+      <path d="M 0 0 L 44 0 L 44 125 A 22 22 0 0 1 0 125 Z"/>
+    </clipPath>
+    <g clip-path="url(#tube3-clip)">
+      <!-- Segment 1: Green -->
+      <rect x="0" y="102" width="44" height="45" fill="url(#liq-green)"/>
+      <!-- Segment 2: Red -->
+      <rect x="0" y="68" width="44" height="34" fill="url(#liq-red)"/>
+      <ellipse cx="22" cy="68" rx="22" ry="4" fill="#fda4af" opacity="0.6"/>
+      <!-- Segment 3: Red -->
+      <rect x="0" y="34" width="44" height="34" fill="url(#liq-red)"/>
+      <ellipse cx="22" cy="34" rx="22" ry="4" fill="#fda4af" opacity="0.6"/>
+      <!-- Segment 4: Purple -->
+      <rect x="0" y="0" width="44" height="34" fill="url(#liq-purple)"/>
+      <ellipse cx="22" cy="0" rx="22" ry="4" fill="#e9d5ff" opacity="0.7"/>
+      <circle cx="20" cy="15" r="2.5" fill="#ffffff" opacity="0.7"/>
+    </g>
+    <!-- Glass Body -->
+    <path d="M 0 0 L 44 0 L 44 125 A 22 22 0 0 1 0 125 Z" fill="url(#glass-body)" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.6"/>
+    <!-- Specular Highlight -->
+    <line x1="6" y1="8" x2="6" y2="120" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+    <line x1="38" y1="12" x2="38" y2="105" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.35"/>
+    <!-- Glass Lip -->
+    <rect x="-4" y="-5" width="52" height="7" rx="3.5" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" opacity="0.9"/>
+  </g>
+
+  <!-- POURING STREAM (Flowing into Center Tube) -->
+  <path d="M 230 42 Q 220 55 217 105" fill="none" stroke="url(#liq-yellow)" stroke-width="9" stroke-linecap="round" filter="url(#ws-glow-gold)"/>
+  <path d="M 230 42 Q 220 55 217 105" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- TILTED POURING TUBE (Angled above center tube) -->
+  <g transform="translate(230, 42) rotate(-55)">
+    <!-- Liquid remaining inside tilted tube -->
+    <clipPath id="tilted-clip">
+      <path d="M 0 0 L 40 0 L 40 120 A 20 20 0 0 1 0 120 Z"/>
+    </clipPath>
+    <g clip-path="url(#tilted-clip)">
+      <polygon points="0,20 40,0 40,120 0,120" fill="url(#liq-red)"/>
+      <polygon points="0,5 40,0 40,40 0,60" fill="url(#liq-yellow)"/>
+      <circle cx="22" cy="70" r="3" fill="#ffffff" opacity="0.7"/>
+    </g>
+    <!-- Glass Body -->
+    <path d="M 0 0 L 40 0 L 40 120 A 20 20 0 0 1 0 120 Z" fill="url(#glass-body)" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.8"/>
+    <!-- Specular highlight -->
+    <line x1="5" y1="5" x2="5" y2="115" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+    <!-- Lip -->
+    <rect x="-3" y="-5" width="46" height="6" rx="3" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" opacity="0.95"/>
+  </g>
+
+  <!-- Sparkle Stars -->
+  <g fill="#ffffff" opacity="0.85">
+    <path d="M 75 40 Q 80 40 80 35 Q 80 40 85 40 Q 80 40 80 45 Q 80 40 75 40 Z" filter="url(#ws-glow-gold)"/>
+    <path d="M 390 60 Q 395 60 395 55 Q 395 60 400 60 Q 395 60 395 65 Q 395 60 390 60 Z" filter="url(#ws-glow-cyan)"/>
+    <path d="M 370 190 Q 374 190 374 186 Q 374 190 378 190 Q 374 190 374 194 Q 374 190 370 190 Z"/>
+    <path d="M 90 200 Q 94 200 94 196 Q 94 200 98 200 Q 94 200 94 204 Q 94 200 90 200 Z"/>
+  </g>
+
+  <!-- Badge Pill at Top Left -->
+  <g transform="translate(24, 20)">
+    <rect width="96" height="24" rx="12" fill="#1b212d" stroke="#00d2ff" stroke-width="1.2" opacity="0.9"/>
+    <circle cx="12" cy="12" r="4" fill="#00d2ff" filter="url(#ws-glow-cyan)"/>
+    <text x="24" y="16" fill="#f4f2e9" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="11" letter-spacing="1">PUZZLE</text>
+  </g>
+</svg>

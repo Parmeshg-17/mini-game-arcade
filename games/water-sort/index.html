@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Water Sort – Free Color Sorting Liquid Puzzle Game | Mini Game Arcade</title>
+  <link rel="canonical" href="https://mini-game-arcade-coral.vercel.app/games/water-sort">
+  <meta name="description" content="Play Water Sort free online. Sort vibrant colored liquids into glass test tubes until each tube holds a single color. 150+ solvable levels, daily challenges, and hints.">
+  <meta name="theme-color" content="#10120f">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+
+  <!-- OpenGraph -->
+  <meta property="og:site_name" content="Mini Game Arcade">
+  <meta property="og:title" content="Water Sort – Free Color Sorting Liquid Puzzle Game">
+  <meta property="og:description" content="Pour and sort vibrant colored waters into matching glass tubes in this addictive, brain-teasing puzzle game.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mini-game-arcade-coral.vercel.app/games/water-sort">
+  <meta property="og:image" content="https://mini-game-arcade-coral.vercel.app/og/water-sort.png">
+  <meta property="og:image:secure_url" content="https://mini-game-arcade-coral.vercel.app/og/water-sort.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Water Sort – Color Sorting Liquid Puzzle Game">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Water Sort – Free Color Sorting Liquid Puzzle Game">
+  <meta name="twitter:description" content="Pour and sort vibrant colored waters into matching glass tubes in this addictive, brain-teasing puzzle game.">
+  <meta name="twitter:image" content="https://mini-game-arcade-coral.vercel.app/og/water-sort.png">
+  <meta name="twitter:image:alt" content="Water Sort – Color Sorting Liquid Puzzle Game">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/water-sort#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://mini-game-arcade-coral.vercel.app/" },
+        { "@type": "ListItem", "position": 2, "name": "Games", "item": "https://mini-game-arcade-coral.vercel.app/#games-section" },
+        { "@type": "ListItem", "position": 3, "name": "Water Sort", "item": "https://mini-game-arcade-coral.vercel.app/games/water-sort" }
+      ]
+    },
+    {
+      "@type": "VideoGame",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/water-sort#game",
+      "name": "Water Sort",
+      "url": "https://mini-game-arcade-coral.vercel.app/games/water-sort",
+      "image": "https://mini-game-arcade-coral.vercel.app/assets/games/water-sort.svg",
+      "description": "Pour and sort colorful liquid layers into clear glass test tubes until each tube contains a single uniform color. Features fluid animations, procedural audio, undo, hints, and 150+ solvable stages.",
+      "genre": ["Puzzle", "Logic", "Brain Teaser", "Casual Game"],
+      "gamePlatform": "Web Browser",
+      "operatingSystem": "Any",
+      "applicationCategory": "Game",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/water-sort#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do you play Water Sort?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Tap or click any tube containing liquid to select it, then tap another tube to pour. You can only pour liquid if the destination tube has enough space and either has no liquid at all or its top liquid color matches the liquid being poured. The objective is to organize all colors so that each tube contains only one uniform color."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are all levels in Water Sort solvable?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! Every single level in Water Sort is generated and verified with a built-in breadth-first search (BFS) puzzle solver to guarantee that at least one valid path to victory exists without requiring dead-end guessing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What should I do if I get stuck?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can use the Undo button to step backward move-by-move, tap the Hint button to have the solver highlight an optimal next move, or click '+1 Tube' to summon an additional empty glass tube buffer to untangle complex liquid combinations."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Water Sort work on mobile devices and touchscreens?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Water Sort is built with responsive HTML5, touch-friendly tap interactions, and fluid SVG pouring animations designed specifically for mobile phones, tablets, and desktop browsers."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the Daily Challenge mode?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Every day at 00:00 UTC, a unique deterministic Water Sort puzzle is released. Players around the world solve the exact same board configuration and track their daily completion streaks."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Water Sort completely free to play?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Water Sort is 100% free with zero downloads, no installations, and no paywalls directly in your browser on Mini Game Arcade."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Google Fonts Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Root-relative Stylesheet -->
+  <link rel="stylesheet" href="/games/water-sort/style.css">
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6654460587836639" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/ads.css">
+</head>
+<body>
+
+  <!-- Sticky Top Arcade Navigation Bar -->
+  <header class="arcade-nav-bar">
+    <div class="nav-content-container">
+      <a href="/" class="back-link" aria-label="Return to Mini Game Arcade Homepage">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Arcade</span>
+      </a>
+
+      <div class="nav-brand-title">Water Sort</div>
+
+      <div class="nav-actions">
+        <button id="btn-sound" class="nav-btn" type="button" aria-label="Toggle Sound Effects">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"></path>
+          </svg>
+          Sound
+        </button>
+        <button id="btn-levels" class="nav-btn" type="button" aria-label="Open Level Selector">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          Levels
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Stage Wrapper -->
+  <main class="game-page-wrapper">
+
+    <!-- Editorial Header -->
+    <section class="game-editorial-header">
+      <nav class="breadcrumbs" aria-label="Breadcrumbs">
+        <a href="/">Home</a>
+        <span class="crumb-separator">/</span>
+        <a href="/#games-section">Puzzle</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-current">Water Sort</span>
+      </nav>
+
+      <div class="game-eyebrow">
+        <span class="game-eyebrow-pip"></span>
+        <span>Color Logic & Flow Puzzle</span>
+      </div>
+
+      <h1 class="game-h1">Water Sort</h1>
+      <p class="game-tagline">
+        Pour and arrange vibrant colored liquids into matching glass tubes with fluid stream animations, soothing chimes, and 150+ solvable stages.
+      </p>
+    </section>
+
+    <!-- Main Game Card / Playfield -->
+    <div class="water-sort-card" role="region" aria-label="Water Sort Game Board">
+
+      <!-- HUD Top Bar -->
+      <div class="game-hud-bar">
+        <div class="hud-group">
+          <div class="level-badge">
+            <span id="level-title" class="level-number">Level 1</span>
+            <span id="level-tier" class="level-tier-pill">Beginner</span>
+          </div>
+        </div>
+
+        <div class="hud-group">
+          <div class="hud-stat-box">
+            <div class="hud-stat-label">Moves</div>
+            <div id="moves-count" class="hud-stat-val">0</div>
+          </div>
+          <div class="hud-stat-box">
+            <div class="hud-stat-label">Time</div>
+            <div id="timer-display" class="hud-stat-val">00:00</div>
+          </div>
+          <div class="hud-stat-box">
+            <div class="hud-stat-label">Record</div>
+            <div id="best-moves" class="hud-stat-val accent">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Playfield Tubes Arena -->
+      <div class="playfield-container">
+        <!-- SVG Stream overlay for pouring arc -->
+        <div id="pouring-stream-layer" class="pouring-stream-layer" aria-hidden="true"></div>
+
+        <!-- Tubes Container -->
+        <div id="tubes-grid" class="tubes-grid"></div>
+      </div>
+
+      <!-- Controls Dock -->
+      <div class="game-controls-dock">
+        <button id="btn-undo" class="action-btn btn-secondary" type="button" disabled aria-label="Undo last move">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7v6h6"></path>
+            <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"></path>
+          </svg>
+          Undo
+        </button>
+
+        <button id="btn-restart" class="action-btn btn-secondary" type="button" aria-label="Restart current level">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0118.8-4.3M22 12.5a10 10 0 01-18.8 4.2"></path>
+          </svg>
+          Restart
+        </button>
+
+        <button id="btn-hint" class="action-btn btn-accent" type="button" aria-label="Get solver move hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18h6M10 22h4M12 2a7 7 0 00-7 7c0 2.5 1.5 4.5 3 6h8c1.5-1.5 3-3.5 3-6a7 7 0 00-7-7z"></path>
+          </svg>
+          Hint
+        </button>
+
+        <button id="btn-add-tube" class="action-btn btn-primary" type="button" aria-label="Add extra empty tube assist">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Tube <span class="badge-tag">+1</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Victory Modal -->
+    <div id="win-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="win-title">
+      <div class="modal-dialog">
+        <button class="modal-close-btn" type="button" aria-label="Close victory modal">✕</button>
+        <div id="win-stars" class="stars-container">
+          <span class="star-icon">★</span>
+          <span class="star-icon">★</span>
+          <span class="star-icon">★</span>
+        </div>
+        <h2 id="win-title" class="modal-title">Level Cleared!</h2>
+        <p class="modal-subtitle">All colorful liquids are completely sorted and purified!</p>
+
+        <div class="win-stats-grid">
+          <div class="win-stat-card">
+            <div class="win-stat-label">Moves Taken</div>
+            <div id="win-moves" class="win-stat-val">12</div>
+          </div>
+          <div class="win-stat-card">
+            <div class="win-stat-label">Time Elapsed</div>
+            <div id="win-time" class="win-stat-val">00:45</div>
+          </div>
+        </div>
+
+        <div class="modal-btn-row">
+          <button id="btn-replay-level" class="action-btn btn-secondary" type="button">Replay</button>
+          <button id="btn-next-level" class="action-btn btn-lime" type="button">Next Level →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level Select Modal -->
+    <div id="level-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="level-modal-title">
+      <div class="modal-dialog">
+        <button class="modal-close-btn" type="button" aria-label="Close level selector">✕</button>
+        <h2 id="level-modal-title" class="modal-title">Select Level</h2>
+        <p class="modal-subtitle">Choose any unlocked stage to play or replay for 3 stars:</p>
+        <div id="level-select-grid" class="level-select-grid"></div>
+      </div>
+    </div>
+
+    <!-- Editorial, Rules, and Strategy Guide -->
+    <section class="editorial-section">
+      <h2>How to Play Water Sort</h2>
+      <p>
+        <strong>Water Sort</strong> is an elegant color-sorting logic puzzle designed to test your spatial reasoning, working memory, and forward planning. The objective is deceptively straightforward: group all liquids of the same color into their own individual glass test tubes until the entire laboratory is neatly organized.
+      </p>
+
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Matching Colors Only
+          </div>
+          <div class="rule-card-desc">
+            You can only pour liquid into a tube if its top color matches the color being poured, or if the destination tube is completely empty.
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+            Tube Capacity Limit
+          </div>
+          <div class="rule-card-desc">
+            Each glass tube holds a maximum of 4 liquid units. If a destination tube only has 1 empty slot remaining, only 1 unit will transfer.
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            Contiguous Transfer
+          </div>
+          <div class="rule-card-desc">
+            When pouring, all contiguous matching units at the top of the source tube will transfer together, as long as there is enough space.
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/></svg>
+            Empty Tube Buffer
+          </div>
+          <div class="rule-card-desc">
+            Empty tubes act as crucial temporary holding bays. Guard your empty tubes carefully to avoid boxing yourself into an unsolvable corner.
+          </div>
+        </div>
+      </div>
+
+      <h3>Strategic Tips for Puzzle Masters</h3>
+      <ul>
+        <li><strong>Clear a Tube Early:</strong> Having an empty tube gives you tremendous mobility. Always look for quick opportunities to empty a mixed tube completely.</li>
+        <li><strong>Consolidate Large Blocks:</strong> Whenever you can unite two 2-unit segments of the same color, you instantly create a 4-unit completed tube, freeing up permanent board space.</li>
+        <li><strong>Avoid Meaningless Shuffling:</strong> Pouring liquid into an empty tube without a concrete subsequent plan reduces your maneuvering room. Keep empty tubes clear until you need them.</li>
+        <li><strong>Use Assists Responsibly:</strong> If you find yourself in a tight spot on expert levels, the <em>Hint</em> button calculates the provably best move, and <em>+1 Tube</em> adds an emergency glass vessel.</li>
+      </ul>
+
+      <!-- FAQ Accordion -->
+      <h3 style="margin-top: 36px;">Frequently Asked Questions</h3>
+      <div class="faq-accordion">
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>What are the basic rules of Water Sort?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            The goal is to sort all colored water layers so that each tube contains only one uniform color. You can pour liquid from one tube into another only if the destination tube has free space and either is empty or shares the exact same top color.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Are the levels guaranteed to be solvable?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Yes! Every level is generated deterministically and pre-verified using an intelligent breadth-first search (BFS) solver. You will never encounter an impossible board configuration.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Can I undo a mistaken move?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Absolutely. You can tap the "Undo" button at any time to rewind your previous pours step-by-step all the way back to the start of the level.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>What does the "+1 Tube" button do?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            On particularly demanding advanced or expert levels, you can activate the "+1 Tube" assist once per level to introduce an extra empty glass test tube to help untangle deep color layers.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>How does the 3-star rating work?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Stars are awarded based on your move efficiency compared to the computer solver's benchmark (par). Completing the puzzle within par + 2 moves awards the maximum 3 stars!
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Is Water Sort playable on phones and tablets?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Yes, Water Sort is fully optimized for touch displays on iOS and Android devices, featuring responsive glass scaling and fluid animation physics with zero lag.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AdSense Placement: Game Page Bottom Unit -->
+    <div class="ad-placement-wrap">
+      <aside class="arcade-ad-wrapper arcade-ad-game-bottom" data-ad-placement="gameBottom" aria-label="Sponsored Content">
+        <span class="arcade-ad-label" aria-hidden="true">ADVERTISEMENT</span>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-6654460587836639"
+             data-ad-slot="2158222958"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </aside>
+    </div>
+
+    <!-- Related Arcade Games Grid -->
+    <section class="related-games-section">
+      <h2 class="section-h2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        More Brain & Puzzle Games
+      </h2>
+
+      <div class="related-grid">
+        <a href="/games/circuit-connect" class="related-card">
+          <img src="/assets/games/circuit-connect.svg" alt="Circuit Connect" class="related-thumb" width="48" height="48">
+          <div class="related-info">
+            <span class="related-title">Circuit Connect</span>
+            <span class="related-genre">Logic / Grid</span>
+          </div>
+        </a>
+
+        <a href="/games/merge-grid" class="related-card">
+          <img src="/assets/games/merge-grid.svg" alt="Merge Grid" class="related-thumb" width="48" height="48">
+          <div class="related-info">
+            <span class="related-title">Merge Grid</span>
+            <span class="related-genre">Sliding Numbers</span>
+          </div>
+        </a>
+
+        <a href="/games/block-puzzle" class="related-card">
+          <img src="/assets/games/block-puzzle.svg" alt="Block Puzzle" class="related-thumb" width="48" height="48">
+          <div class="related-info">
+            <span class="related-title">Block Puzzle</span>
+            <span class="related-genre">Spatial / Fit</span>
+          </div>
+        </a>
+
+        <a href="/games/jigpic-solitaire" class="related-card">
+          <img src="/assets/games/jigpic-solitaire.svg" alt="Jigpic Solitaire" class="related-thumb" width="48" height="48">
+          <div class="related-info">
+            <span class="related-title">Jigpic Solitaire</span>
+            <span class="related-genre">Jigsaw / Card</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">Mini Game Arcade</div>
+        <div class="footer-links">
+          <a href="/">Home</a>
+          <a href="/about.html">About</a>
+          <a href="/contact.html">Contact</a>
+          <a href="/privacy.html">Privacy Policy</a>
+          <a href="/terms.html">Terms of Service</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Mini Game Arcade. All rights reserved. Free browser gaming platform.</span>
+        <span>Zero downloads &bull; Safe HTML5 Games</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/games/water-sort/js/engine.js"></script>
+  <script src="/games/water-sort/js/audio.js"></script>
+  <script src="/games/water-sort/js/game.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # Mini Game Arcade
 
-> Mini Game Arcade is a fast, responsive, curated collection of 15 original browser-based mini-games built with vanilla HTML5, Canvas 2D, and Web Audio API. Zero external runtime dependencies, no account or installation required, instant play on mobile and desktop.
+> Mini Game Arcade is a fast, responsive, curated collection of 16 original browser-based mini-games built with vanilla HTML5, Canvas 2D, and Web Audio API. Zero external runtime dependencies, no account or installation required, instant play on mobile and desktop.
 
 Mini Game Arcade provides instant-play casual, arcade, action, and puzzle games engineered for speed, accessibility, and high performance. All visual effects, physics, and game audio are generated procedurally in the browser, featuring local high-score tracking, accessible touch and keyboard controls, and full offline PWA support.
 
@@ -24,6 +24,7 @@ Website: https://mini-game-arcade-coral.vercel.app/
 - [Circuit Connect](https://mini-game-arcade-coral.vercel.app/games/circuit-connect): Logic puzzle connecting matching neon color terminals across 30 handcrafted levels with a 100% board fill constraint and built-in smart hint solver.
 - [Merge Grid](https://mini-game-arcade-coral.vercel.app/games/merge-grid): Strategic 4x4 sliding number tile puzzle. Slide and merge matching values toward 2048 with full undo history, best-score tracking, and swipe controls.
 - [Jigpic Solitaire](https://mini-game-arcade-coral.vercel.app/games/jigpic-solitaire): Relaxing jigsaw and solitaire hybrid. Assemble picturesque picture blocks step by step across warm landscapes, blooming gardens, and coastal scenes.
+- [Water Sort](https://mini-game-arcade-coral.vercel.app/games/water-sort): Color-sorting liquid logic puzzle. Sort vibrant liquids into clear glass test tubes with fluid stream animations, multi-step undo, hints, extra tube assists, and 150+ solvable stages.
 - [Block Puzzle](https://mini-game-arcade-coral.vercel.app/games/block-puzzle): 8x8 polyomino block-fitting game. Place pieces to clear horizontal rows and vertical columns across Classic Endless, 10-Line Challenge, and 90-Second Timed Blitz.
 - [Number Puzzle](https://mini-game-arcade-coral.vercel.app/games/number-puzzle): Definitive classic 15-puzzle sliding challenge with 3x3, 4x4, and 5x5 grid modes, move counters, stopwatch tracking, and 100% solvability guarantee.
 - [Tic Tac Toe](https://mini-game-arcade-coral.vercel.app/games/tic-tac-toe): Classic 3x3 strategy game featuring an unbeatable Minimax AI bot and two-player pass-and-play on the same device with match timers and scoreboard tracking.

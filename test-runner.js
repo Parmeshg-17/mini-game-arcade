@@ -158,9 +158,9 @@ it('Search and category filter logic filters games correctly', () => {
   assert(res3.some(g => g.id === 'tap-challenge'));
   assert(res3.some(g => g.id === 'stack-rush'));
 
-  // Puzzle category filter matches Tic Tac Toe, Number Puzzle, Block Puzzle, Circuit Connect, Merge Grid, Hidden Hunt, and Jigpic Solitaire
+  // Puzzle category filter matches Tic Tac Toe, Number Puzzle, Block Puzzle, Circuit Connect, Merge Grid, Hidden Hunt, Jigpic Solitaire, and Water Sort
   const res4 = filterGames('', 'Puzzle');
-  assert.strictEqual(res4.length, 7);
+  assert.strictEqual(res4.length, 8);
   assert(res4.some(g => g.id === 'tic-tac-toe'));
   assert(res4.some(g => g.id === 'number-puzzle'));
   assert(res4.some(g => g.id === 'block-puzzle'));
@@ -168,6 +168,7 @@ it('Search and category filter logic filters games correctly', () => {
   assert(res4.some(g => g.id === 'merge-grid'));
   assert(res4.some(g => g.id === 'hidden-hunt'));
   assert(res4.some(g => g.id === 'jigpic-solitaire'));
+  assert(res4.some(g => g.id === 'water-sort'));
 
   // Casual category filter matches Memory Match and Bubble Pop
   const res5 = filterGames('', 'Casual');
@@ -1781,6 +1782,132 @@ it('Jigpic Solitaire engine computes valid draws, card placements, hints, undo, 
   assert.strictEqual(stars1, 1);
 });
 
+
+// 30h. Dedicated Water Sort Playable Page DOM & Asset Integrity
+it('Dedicated Water Sort page (games/water-sort/index.html) has all DOM elements required by game.js', () => {
+  const gameHtmlPath = path.join(__dirname, 'games/water-sort/index.html');
+  assert(fs.existsSync(gameHtmlPath), 'games/water-sort/index.html must exist');
+  const gameHtml = fs.readFileSync(gameHtmlPath, 'utf8');
+
+  const requiredIds = [
+    'tubes-grid',
+    'pouring-stream-layer',
+    'level-title',
+    'level-tier',
+    'moves-count',
+    'timer-display',
+    'best-moves',
+    'btn-undo',
+    'btn-restart',
+    'btn-hint',
+    'btn-add-tube',
+    'btn-sound',
+    'btn-levels',
+    'win-modal',
+    'level-modal'
+  ];
+
+  for (const id of requiredIds) {
+    assert(gameHtml.includes(`id="${id}"`), `Missing required ID="${id}" in games/water-sort/index.html`);
+  }
+
+  // Verify vector thumbnail and dedicated OG preview image
+  const svgPath = path.join(__dirname, 'assets/games/water-sort.svg');
+  assert(fs.existsSync(svgPath), 'assets/games/water-sort.svg must exist');
+  const ogPath = path.join(__dirname, 'og/water-sort.png');
+  assert(fs.existsSync(ogPath), 'og/water-sort.png must exist');
+  const publicOgPath = path.join(__dirname, 'public/og/water-sort.png');
+  assert(fs.existsSync(publicOgPath), 'public/og/water-sort.png must exist');
+});
+
+// 30i. Water Sort Engine Mechanics, Pour Validation, BFS Solvability, and Deterministic Daily Challenge
+it('Water Sort engine executes legal liquid pours, BFS solver, hints, and guaranteed solvable level generation accurately', () => {
+  const Engine = require('./games/water-sort/js/engine.js');
+
+  assert.strictEqual(Engine.TUBE_CAPACITY, 4, 'Tube capacity must be 4 units');
+  assert(Engine.LIQUID_COLORS.length >= 12, 'Must have at least 12 distinct liquid colors');
+
+  // 1. Move validation
+  // Tube 0: [red, red, blue], Tube 1: [blue], Tube 2: []
+  const testTubes = [
+    ['crimson', 'crimson', 'cyan'],
+    ['cyan'],
+    []
+  ];
+
+  // Legal: Tube 0 to Tube 1 (both have top color cyan, Tube 1 has space)
+  assert.strictEqual(Engine.canPour(testTubes, 0, 1), true, 'Can pour matching top colors');
+  assert.strictEqual(Engine.calculatePourUnits(testTubes, 0, 1), 1, 'Only 1 contiguous cyan unit');
+
+  // Legal: Tube 0 to Tube 2 (Tube 2 is empty)
+  assert.strictEqual(Engine.canPour(testTubes, 0, 2), true, 'Can pour into empty tube');
+
+  // Cannot pour from empty tube
+  assert.strictEqual(Engine.canPour(testTubes, 2, 0), false, 'Cannot pour from empty tube');
+
+  // Cannot pour into full tube
+  const fullTube = ['crimson', 'crimson', 'crimson', 'crimson'];
+  assert.strictEqual(Engine.canPour([['crimson'], fullTube], 0, 1), false, 'Cannot pour into full tube');
+
+  // Cannot pour into same tube
+  assert.strictEqual(Engine.canPour(testTubes, 0, 0), false, 'Cannot pour into self');
+
+  // Cannot pour pure tube into empty tube (useless move)
+  assert.strictEqual(Engine.canPour([['cyan', 'cyan'], []], 0, 1), false, 'Pointless to pour pure tube into empty');
+
+  // 2. Execute Pour
+  const pourRes = Engine.executePour(testTubes, 0, 1);
+  assert.strictEqual(pourRes.success, true);
+  assert.strictEqual(pourRes.units, 1);
+  assert.strictEqual(pourRes.color, 'cyan');
+  assert.deepStrictEqual(pourRes.tubes[0], ['crimson', 'crimson']);
+  assert.deepStrictEqual(pourRes.tubes[1], ['cyan', 'cyan']);
+
+  // 3. Win Condition Evaluation
+  const nonWinTubes = [['crimson', 'crimson'], ['cyan', 'cyan']];
+  assert.strictEqual(Engine.checkWin(nonWinTubes), false, 'Partial tubes are not win state');
+
+  const winTubes = [
+    ['crimson', 'crimson', 'crimson', 'crimson'],
+    ['cyan', 'cyan', 'cyan', 'cyan'],
+    []
+  ];
+  assert.strictEqual(Engine.checkWin(winTubes), true, 'Monochromatic full tubes and empty tubes is win');
+
+  // 4. Deterministic Level Generation and Solvability
+  const level1 = Engine.generateLevel(1);
+  assert.strictEqual(level1.level, 1);
+  assert.strictEqual(level1.numColors, 3);
+  assert(level1.minMoves > 0, 'Level 1 must have positive minMoves');
+  assert(level1.tubes.length >= 4, 'Level 1 must have at least 4 tubes');
+
+  // 5. BFS Solver & Hint
+  const hint = Engine.findHint(level1.tubes);
+  assert(hint, 'Hint must be found for Level 1');
+  assert.strictEqual(typeof hint.from, 'number');
+  assert.strictEqual(typeof hint.to, 'number');
+  assert.strictEqual(Engine.canPour(level1.tubes, hint.from, hint.to), true, 'Hint move must be legally valid');
+
+  const fullSolution = Engine.solvePuzzle(level1.tubes);
+  assert(Array.isArray(fullSolution), 'BFS solver must find valid solution array');
+  assert(fullSolution.length >= 3, 'Solution must require at least 3 steps');
+
+  // Walk through solution to verify victory
+  let currentTubes = level1.tubes;
+  for (const step of fullSolution) {
+    const r = Engine.executePour(currentTubes, step.from, step.to);
+    assert.strictEqual(r.success, true);
+    currentTubes = r.tubes;
+  }
+  assert.strictEqual(Engine.checkWin(currentTubes), true, 'Executing solution must reach win state');
+
+  // 6. Deterministic Daily Challenge
+  const dailyA = Engine.getDailyLevel('2026-11-02');
+  const dailyB = Engine.getDailyLevel('2026-11-02');
+  assert.deepStrictEqual(dailyA.tubes, dailyB.tubes, 'Daily challenge must be 100% deterministic');
+  assert.strictEqual(dailyA.isDaily, true);
+});
+
 // 31. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
@@ -1824,6 +1951,7 @@ it('sitemap.xml exists, is valid XML, and contains all 17 canonical pages', () =
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/merge-grid'), 'sitemap.xml must include merge-grid');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/hidden-hunt'), 'sitemap.xml must include hidden-hunt');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/jigpic-solitaire'), 'sitemap.xml must include jigpic-solitaire');
+  assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/water-sort'), 'sitemap.xml must include water-sort');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/about'), 'sitemap.xml must include about page');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/contact'), 'sitemap.xml must include contact page');
   
@@ -1862,7 +1990,8 @@ it('All HTML pages have verified canonical tags and valid Schema.org JSON-LD', (
     'games/tic-tac-toe/index.html',
     'games/merge-grid/index.html',
     'games/hidden-hunt/index.html',
-    'games/jigpic-solitaire/index.html'
+    'games/jigpic-solitaire/index.html',
+    'games/water-sort/index.html'
   ];
 
   for (const page of pages) {
@@ -1995,7 +2124,7 @@ it('llms.txt exists, follows llmstxt.org specification, and contains only verifi
 
   // Verify all 15 games are linked
   const { ARCADE_GAMES } = require('./js/games-data.js');
-  assert.strictEqual(ARCADE_GAMES.length, 15, 'Must contain all 15 arcade games');
+  assert.strictEqual(ARCADE_GAMES.length, 16, 'Must contain all 16 arcade games');
   for (const game of ARCADE_GAMES) {
     const expectedUrl = `https://mini-game-arcade-coral.vercel.app/games/${game.id}`;
     assert(content.includes(expectedUrl), `llms.txt must include game URL: ${expectedUrl}`);

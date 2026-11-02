@@ -198,6 +198,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/jigpic-solitaire.svg',
     controlsSummary: 'Click / Drag card to matching slot · Keys 1-3 to pick card · D / Space to Draw · P to Peek · H for Hint · U to Undo · R to Restart · M to Mute',
     features: ['4 Picturesque Scenes', 'Jigsaw & Solitaire Hybrid', 'Full Artwork Peek Overlay', 'Procedural Marimba & Chime Audio']
+  },
+  {
+    id: 'water-sort',
+    title: 'Water Sort',
+    category: 'Puzzle',
+    tags: ['puzzle', 'logic', 'water', 'sort', 'color', 'tubes', 'liquid', 'brain', 'casual'],
+    badge: 'New',
+    tagline: 'Sort vibrant liquid layers. Purify every test tube.',
+    description: 'Pour and arrange colorful liquid layers into clear glass test tubes until each tube contains a single uniform color. Features fluid animations, procedural audio, undo, hints, and 150+ solvable stages.',
+    route: 'games/water-sort/index.html',
+    thumbnail: 'assets/games/water-sort.svg',
+    controlsSummary: 'Click / Tap tube to pick & pour • U to Undo • R to Restart • H for Hint • +1 Tube Assist • M to Mute',
+    features: ['150+ Solvable Stages', 'Fluid Pouring Stream Physics', 'Multi-Step Undo & Hints', 'Daily Challenge & Streaks']
   }
 ];
 
