@@ -153,10 +153,11 @@ it('Search and category filter logic filters games correctly', () => {
 
   // Category filter
   const res3 = filterGames('', 'Arcade');
-  assert.strictEqual(res3.length, 3);
+  assert.strictEqual(res3.length, 4);
   assert(res3.some(g => g.id === 'citrus-blitz'));
   assert(res3.some(g => g.id === 'tap-challenge'));
   assert(res3.some(g => g.id === 'stack-rush'));
+  assert(res3.some(g => g.id === 'neon-tower'));
 
   // Puzzle category filter matches Tic Tac Toe, Number Puzzle, Block Puzzle, Circuit Connect, Merge Grid, Hidden Hunt, Jigpic Solitaire, and Water Sort
   const res4 = filterGames('', 'Puzzle');
@@ -212,17 +213,19 @@ it('Search and category filter logic filters games correctly', () => {
   assert(resTap.some(g => g.id === 'tap-challenge'));
   assert(resTap.some(g => g.id === 'stack-rush'));
 
-  // Tag search for block (matches block-puzzle, stack-rush, and jigpic-solitaire)
+  // Tag search for block (matches block-puzzle, stack-rush, jigpic-solitaire, and neon-tower)
   const resBlock = filterGames('block', 'All');
-  assert.strictEqual(resBlock.length, 3);
+  assert.strictEqual(resBlock.length, 4);
   assert(resBlock.some(g => g.id === 'block-puzzle'));
   assert(resBlock.some(g => g.id === 'stack-rush'));
   assert(resBlock.some(g => g.id === 'jigpic-solitaire'));
+  assert(resBlock.some(g => g.id === 'neon-tower'));
 
-  // Tag search for stack rush
+  // Tag search for stack (matches stack-rush and neon-tower)
   const resStack = filterGames('stack', 'All');
-  assert.strictEqual(resStack.length, 1);
-  assert.strictEqual(resStack[0].id, 'stack-rush');
+  assert.strictEqual(resStack.length, 2);
+  assert(resStack.some(g => g.id === 'stack-rush'));
+  assert(resStack.some(g => g.id === 'neon-tower'));
 
   // Tag search for circuit connect
   const resCircuit = filterGames('circuit', 'All');
@@ -2022,6 +2025,119 @@ it('Screw Master engine executes mechanical screw extraction, panel releases, ac
   assert.strictEqual(dailyA.isDaily, true);
 });
 
+// 30l. Dedicated Neon Tower Playable Page DOM & Asset Integrity
+it('Dedicated Neon Tower page (games/neon-tower/index.html) has all DOM elements required by game.js', () => {
+  const gameHtmlPath = path.join(__dirname, 'games/neon-tower/index.html');
+  assert(fs.existsSync(gameHtmlPath), 'games/neon-tower/index.html must exist');
+  const gameHtml = fs.readFileSync(gameHtmlPath, 'utf8');
+
+  const requiredIds = [
+    'neon-canvas',
+    'floor-count',
+    'score-display',
+    'combo-display',
+    'combo-box',
+    'best-floor',
+    'btn-sound',
+    'btn-sound-text',
+    'btn-restart',
+    'btn-pause',
+    'game-overlay',
+    'overlay-title',
+    'overlay-subtitle',
+    'modal-gameover',
+    'modal-floor-val',
+    'modal-score-val',
+    'modal-best-val',
+    'modal-combo-val',
+    'modal-rank-val',
+    'modal-stars-val',
+    'modal-restart-btn',
+    'modal-close-btn'
+  ];
+
+  for (const id of requiredIds) {
+    assert(gameHtml.includes(`id="${id}"`), `Missing required ID="${id}" in games/neon-tower/index.html`);
+  }
+
+  // Verify vector thumbnail and dedicated OG preview images
+  const svgPath = path.join(__dirname, 'assets/games/neon-tower.svg');
+  assert(fs.existsSync(svgPath), 'assets/games/neon-tower.svg must exist');
+  const ogPath = path.join(__dirname, 'og/neon-tower.png');
+  assert(fs.existsSync(ogPath), 'og/neon-tower.png must exist');
+  const publicOgPath = path.join(__dirname, 'public/og/neon-tower.png');
+  assert(fs.existsSync(publicOgPath), 'public/og/neon-tower.png must exist');
+});
+
+// 30m. Neon Tower Engine Physics, Precision Slicing, Snap Window, Combos, and Speed Progression
+it('Neon Tower engine computes precision block drops, perfect snapping, combos, and speed scaling accurately', () => {
+  const Engine = require('./games/neon-tower/js/engine.js');
+
+  // 1. Initial State
+  const state = Engine.createInitialState();
+  assert.strictEqual(state.floor, 0);
+  assert.strictEqual(state.score, 0);
+  assert.strictEqual(state.combo, 0);
+  assert.strictEqual(state.tower.length, 1);
+  assert.strictEqual(state.currentWidth, Engine.INITIAL_WIDTH);
+  assert(state.movingBlock, 'Moving block must be initialized');
+
+  // 2. Speed scaling
+  const speed1 = Engine.getSpeedForFloor(1);
+  const speed10 = Engine.getSpeedForFloor(10);
+  const speed50 = Engine.getSpeedForFloor(50);
+  assert(speed10 > speed1, 'Speed must escalate with floor height');
+  assert(speed50 >= speed10, 'Speed must increase smoothly');
+  assert(speed50 <= Engine.MAX_SPEED, 'Speed must not exceed max cap');
+
+  // 3. Perfect Alignment Snap (within tolerance)
+  const baseBlock = state.tower[0];
+  state.movingBlock.x = baseBlock.x + 1.5; // within 3.5px tolerance
+  const drop1 = Engine.dropBlock(state);
+  assert.strictEqual(drop1.outcome, 'perfect');
+  assert.strictEqual(drop1.combo, 1);
+  assert.strictEqual(state.floor, 1);
+  assert.strictEqual(drop1.placedBlock.x, baseBlock.x, 'Block must snap to base position');
+  assert.strictEqual(drop1.placedBlock.width, baseBlock.width);
+  assert.strictEqual(state.score, 100);
+
+  // 4. Overhang Precision Cut (outside tolerance)
+  const topBlock = state.tower[state.tower.length - 1];
+  const shift = 30; // 30px overhang to the right
+  state.movingBlock.x = topBlock.x + shift;
+  const drop2 = Engine.dropBlock(state);
+  assert.strictEqual(drop2.outcome, 'trim');
+  assert.strictEqual(drop2.combo, 0, 'Combo streak must reset on trim');
+  assert.strictEqual(state.floor, 2);
+  assert.strictEqual(drop2.placedBlock.width, topBlock.width - shift);
+  assert(drop2.cutDebris, 'Overhang piece must become falling cut debris');
+  assert.strictEqual(drop2.cutDebris.width, shift);
+
+  // 5. Combo Streak Width Expansion
+  state.currentWidth = 140;
+  state.tower[state.tower.length - 1].width = 140;
+  state.movingBlock.width = 140;
+  state.combo = Engine.COMBO_EXPANSION_THRESHOLD - 1; // 4 combos
+  state.movingBlock.x = state.tower[state.tower.length - 1].x; // Perfect snap!
+  const drop3 = Engine.dropBlock(state);
+  assert.strictEqual(drop3.outcome, 'perfect');
+  assert.strictEqual(drop3.combo, Engine.COMBO_EXPANSION_THRESHOLD);
+  assert.strictEqual(drop3.bonusExpansion, true, 'Reaching combo threshold must expand block width');
+  assert(drop3.placedBlock.width > 140, 'Placed block width must expand');
+
+  // 6. Complete Miss (Game Over)
+  state.movingBlock.x = 0;
+  state.tower[state.tower.length - 1].x = 400; // Far away, zero overlap
+  const dropMiss = Engine.dropBlock(state);
+  assert.strictEqual(dropMiss.outcome, 'miss');
+  assert.strictEqual(state.isGameOver, true);
+
+  // 7. Rating evaluation
+  assert.strictEqual(Engine.evaluateRating(55).stars, 3);
+  assert.strictEqual(Engine.evaluateRating(12).stars, 2);
+  assert.strictEqual(Engine.evaluateRating(3).stars, 1);
+});
+
 // 31. Security & Clean Static Deployment Verification
 it('No external dependencies, API keys, or hardcoded local paths across any source file', () => {
   const checkDir = (dir) => {
@@ -2054,7 +2170,7 @@ it('robots.txt exists, allows crawlers, and specifies sitemap location', () => {
 });
 
 // 32. Technical SEO: sitemap.xml validation
-it('sitemap.xml exists, is valid XML, and contains all 17 canonical pages', () => {
+it('sitemap.xml exists, is valid XML, and contains all 18 canonical pages', () => {
   const sitemapPath = path.join(__dirname, 'sitemap.xml');
   assert(fs.existsSync(sitemapPath), 'sitemap.xml must exist at project root');
   const xml = fs.readFileSync(sitemapPath, 'utf8');
@@ -2067,11 +2183,12 @@ it('sitemap.xml exists, is valid XML, and contains all 17 canonical pages', () =
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/jigpic-solitaire'), 'sitemap.xml must include jigpic-solitaire');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/water-sort'), 'sitemap.xml must include water-sort');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/screw-master'), 'sitemap.xml must include screw-master');
+  assert(xml.includes('https://mini-game-arcade-coral.vercel.app/games/neon-tower'), 'sitemap.xml must include neon-tower');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/about'), 'sitemap.xml must include about page');
   assert(xml.includes('https://mini-game-arcade-coral.vercel.app/contact'), 'sitemap.xml must include contact page');
   
   const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
-  assert(urls.length >= 23, 'sitemap.xml must contain all canonical URLs including category hubs');
+  assert(urls.length >= 24, 'sitemap.xml must contain all canonical URLs including category hubs');
 });
 
 // 33. Technical SEO: 404 page error handling
@@ -2107,7 +2224,8 @@ it('All HTML pages have verified canonical tags and valid Schema.org JSON-LD', (
     'games/hidden-hunt/index.html',
     'games/jigpic-solitaire/index.html',
     'games/water-sort/index.html',
-    'games/screw-master/index.html'
+    'games/screw-master/index.html',
+    'games/neon-tower/index.html'
   ];
 
   for (const page of pages) {
@@ -2240,7 +2358,7 @@ it('llms.txt exists, follows llmstxt.org specification, and contains only verifi
 
   // Verify all 15 games are linked
   const { ARCADE_GAMES } = require('./js/games-data.js');
-  assert.strictEqual(ARCADE_GAMES.length, 17, 'Must contain all 17 arcade games');
+  assert.strictEqual(ARCADE_GAMES.length, 18, 'Must contain all 18 arcade games');
   for (const game of ARCADE_GAMES) {
     const expectedUrl = `https://mini-game-arcade-coral.vercel.app/games/${game.id}`;
     assert(content.includes(expectedUrl), `llms.txt must include game URL: ${expectedUrl}`);

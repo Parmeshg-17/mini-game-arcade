@@ -224,6 +224,19 @@ const ARCADE_GAMES = [
     thumbnail: 'assets/games/screw-master.svg',
     controlsSummary: 'Click / Tap screw to select • Tap empty hole or tray to move • U to Undo • R to Restart • H for Hint • +1 Slot',
     features: ['150+ Solvable Stages', 'Physical Panel Drop Physics', 'Multi-Step Undo & Hints', 'Daily & Time Rush Modes']
+  },
+  {
+    id: 'neon-tower',
+    title: 'Neon Tower',
+    category: 'Arcade',
+    tags: ['arcade', 'neon', 'tower', 'stack', 'stacker', 'timing', 'reflex', 'precision', 'cyber'],
+    badge: 'New',
+    tagline: 'Stack moving blocks perfectly to build the tallest tower.',
+    description: 'Stack moving blocks perfectly to build the tallest tower in Neon Tower. Increasing speed makes every round harder. Chain combos, trim overhangs with laser sparks, and set personal records.',
+    route: 'games/neon-tower/index.html',
+    thumbnail: 'assets/games/neon-tower.svg',
+    controlsSummary: 'Click / Tap to drop block • Space / Enter to drop • P to Pause • R to Restart • M to Mute',
+    features: ['Precision Stacker Physics', 'Ascending Pentatonic Chimes', 'Combo Width Restoration', 'Persistent High Scores']
   }
 ];
 

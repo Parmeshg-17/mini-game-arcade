@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Neon Tower – Free Cyber Tower Stacking Game | Mini Game Arcade</title>
+  <link rel="canonical" href="https://mini-game-arcade-coral.vercel.app/games/neon-tower">
+  <meta name="description" content="Stack moving neon blocks perfectly to build the tallest skyscraper in Neon Tower. Chain combos, trim overhangs, and set high-score records in this free arcade game.">
+  <meta name="theme-color" content="#07090e">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+
+  <!-- OpenGraph -->
+  <meta property="og:site_name" content="Mini Game Arcade">
+  <meta property="og:title" content="Neon Tower – Free Cyber Tower Stacking Game">
+  <meta property="og:description" content="Stack moving neon blocks perfectly to build the tallest skyscraper. Chain combos, trim overhangs, and beat your best record.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mini-game-arcade-coral.vercel.app/games/neon-tower">
+  <meta property="og:image" content="https://mini-game-arcade-coral.vercel.app/og/neon-tower.png">
+  <meta property="og:image:secure_url" content="https://mini-game-arcade-coral.vercel.app/og/neon-tower.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Neon Tower – Free Cyber Tower Stacking Game">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Neon Tower – Free Cyber Tower Stacking Game">
+  <meta name="twitter:description" content="Stack moving neon blocks perfectly to build the tallest skyscraper in Neon Tower.">
+  <meta name="twitter:image" content="https://mini-game-arcade-coral.vercel.app/og/neon-tower.png">
+  <meta name="twitter:image:alt" content="Neon Tower – Free Cyber Tower Stacking Game">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/neon-tower#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://mini-game-arcade-coral.vercel.app/" },
+        { "@type": "ListItem", "position": 2, "name": "Arcade", "item": "https://mini-game-arcade-coral.vercel.app/category/arcade" },
+        { "@type": "ListItem", "position": 3, "name": "Neon Tower", "item": "https://mini-game-arcade-coral.vercel.app/games/neon-tower" }
+      ]
+    },
+    {
+      "@type": "VideoGame",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/neon-tower#game",
+      "name": "Neon Tower",
+      "url": "https://mini-game-arcade-coral.vercel.app/games/neon-tower",
+      "image": "https://mini-game-arcade-coral.vercel.app/assets/games/neon-tower.svg",
+      "description": "Stack moving neon blocks perfectly to build the tallest skyscraper in Neon Tower. Chain combos, trim overhangs, and set high-score records in this free arcade game.",
+      "genre": ["Arcade", "Skill", "Casual", "Precision", "Timing"],
+      "gamePlatform": "Web Browser",
+      "operatingSystem": "Any",
+      "applicationCategory": "Game",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/neon-tower#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do you play Neon Tower?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Tap the screen or press the Spacebar to drop the oscillating neon block directly onto the tower below. If you align it within precision tolerance, you earn a PERFECT snap and combo points. Any overhang is sliced off, making subsequent floors narrower."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a Perfect Stack in Neon Tower?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A Perfect Stack occurs when you drop a block within 3.5 pixels of the block underneath. It snaps flawlessly into alignment, triggers an ascending pentatonic chime, increases your combo multiplier, and preserves full block width."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does the Combo Streak reward work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "When you chain 5 or more consecutive Perfect Stacks, your tower block receives a bonus expansion, widening the platform and restoring lost width!"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the game get faster as the tower rises?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! Each floor gradually increases the oscillation speed of the moving slab, demanding sharper reflexes, rhythm, and precision timing as your skyscraper climbs higher."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I play Neon Tower on mobile phones and tablets?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Neon Tower is completely responsive, lightweight HTML5, optimized for instant single-tap touch controls on iPhone, iPad, Android, and desktop browsers with zero lag."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are my high scores and personal records saved?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, your highest floor count, total score, and maximum combo streak are automatically saved to your browser's local storage so you can continually challenge your personal best."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Clean URL Safe Root-Relative Stylesheet Link -->
+  <link rel="stylesheet" href="/games/neon-tower/style.css">
+</head>
+<body>
+
+  <!-- Sticky Arcade Navigation Bar -->
+  <header class="arcade-nav-bar">
+    <div class="nav-content-container">
+      <a href="/" class="back-link" aria-label="Return to Mini Game Arcade Homepage">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span>Arcade</span>
+      </a>
+
+      <div class="nav-brand-title">Neon Tower</div>
+
+      <div class="nav-actions">
+        <button id="btn-sound" class="nav-btn" type="button" aria-label="Toggle Sound Effects">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"></path>
+          </svg>
+          <span id="btn-sound-text">Sound</span>
+        </button>
+        <button id="btn-restart" class="nav-btn" type="button" aria-label="Restart Current Game">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+          </svg>
+          <span>Restart</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Stage Wrapper -->
+  <main class="game-page-wrapper">
+
+    <!-- Editorial Header -->
+    <section class="game-editorial-header">
+      <nav class="breadcrumbs" aria-label="Breadcrumbs">
+        <a href="/">Home</a>
+        <span class="crumb-separator">/</span>
+        <a href="/category/arcade">Arcade</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-current">Neon Tower</span>
+      </nav>
+
+      <div class="game-eyebrow">
+        <span class="game-eyebrow-pip"></span>
+        <span>Cyber Stacking &amp; Precision Reflexes</span>
+      </div>
+
+      <h1 class="game-h1">Neon Tower</h1>
+      <p class="game-tagline">
+        Stack moving blocks perfectly to build the tallest tower. Increasing speed makes every round harder. Chain combos, trim overhangs, and set your personal records.
+      </p>
+    </section>
+
+    <!-- Main Game Card / Playfield -->
+    <div class="neon-tower-card" role="region" aria-label="Neon Tower Game Board">
+
+      <!-- HUD Top Bar -->
+      <div class="game-hud-bar">
+        <div class="hud-group">
+          <div class="hud-stat-box">
+            <div class="hud-stat-label">Floor</div>
+            <div id="floor-count" class="hud-stat-val accent">0</div>
+          </div>
+          <div class="hud-stat-box">
+            <div class="hud-stat-label">Score</div>
+            <div id="score-display" class="hud-stat-val">0</div>
+          </div>
+        </div>
+
+        <div class="hud-group">
+          <div id="combo-box" class="combo-badge">
+            <div class="hud-stat-label">Combo</div>
+            <div id="combo-display" class="combo-val">—</div>
+          </div>
+
+          <div class="hud-stat-box">
+            <div class="hud-stat-label">Best</div>
+            <div id="best-floor" class="hud-stat-val gold">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Canvas Stage Container -->
+      <div class="canvas-container">
+        <!-- Interactive Canvas -->
+        <canvas id="neon-canvas"></canvas>
+
+        <!-- Start / Pause Overlay -->
+        <div id="game-overlay" class="game-overlay">
+          <div class="overlay-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </div>
+          <div id="overlay-title" class="overlay-title">NEON TOWER</div>
+          <div id="overlay-subtitle" class="overlay-subtitle">TAP OR PRESS SPACE TO START</div>
+        </div>
+      </div>
+
+      <!-- Controls Dock -->
+      <div class="game-controls-dock">
+        <button id="btn-pause" class="action-btn" type="button" aria-label="Pause or Resume Game">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+          <span>Pause</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="modal-gameover" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="game-modal-card">
+        <div id="modal-rank-val" class="modal-badge-rank">Grid Runner</div>
+        <div id="modal-stars-val" class="modal-stars">★★☆</div>
+        <h2 id="modal-title" class="modal-title">TOWER COLLAPSED!</h2>
+
+        <div class="modal-stats-grid">
+          <div class="modal-stat-cell">
+            <div class="modal-stat-title">Floors Built</div>
+            <div id="modal-floor-val" class="modal-stat-number accent">0</div>
+          </div>
+          <div class="modal-stat-cell">
+            <div class="modal-stat-title">Total Score</div>
+            <div id="modal-score-val" class="modal-stat-number">0</div>
+          </div>
+          <div class="modal-stat-cell">
+            <div class="modal-stat-title">Best Height</div>
+            <div id="modal-best-val" class="modal-stat-number">0</div>
+          </div>
+          <div class="modal-stat-cell">
+            <div class="modal-stat-title">Max Combo</div>
+            <div id="modal-combo-val" class="modal-stat-number">0</div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="modal-restart-btn" class="action-btn btn-primary" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="1 4 1 10 7 10"></polyline>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            </svg>
+            <span>Play Again</span>
+          </button>
+          <button id="modal-close-btn" class="action-btn" type="button">
+            <span>Review Tower</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Editorial Guide Section -->
+    <section class="game-editorial-section">
+      <h2>Mastering the Neon Tower</h2>
+      <p>
+        <strong>Neon Tower</strong> combines fast arcade reflexes with rhythmic timing. Each floor demands exact precision: tap or click the moment the oscillating neon slab centers over your skyscraper's top platform. Overhanging segments are cleanly sliced away by laser sparks, leaving a narrower foundation for subsequent floors.
+      </p>
+
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Precision Timing
+          </div>
+          <div class="rule-card-desc">
+            Hit the placement window within 3.5 pixels to trigger a PERFECT snap, earning ascending harmonic chimes and big combo score multipliers.
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Combo Expansion Bonus
+          </div>
+          <div class="rule-card-desc">
+            Chain 5 consecutive perfect stacks to restore lost width! The combo multiplier expands your block back toward initial size.
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Escalating Speed
+          </div>
+          <div class="rule-card-desc">
+            As your tower ascends through the synthwave atmosphere, the moving block speeds up smoothly, testing your rhythm and focus.
+          </div>
+        </div>
+      </div>
+
+      <h3>Strategic Tips for High-Score Seekers</h3>
+      <ul>
+        <li><strong>Find Your Rhythm:</strong> The slab moves with uniform sinusoidal frequency across each edge. Count the beats as it bounces off the screen boundary to anticipate the center point.</li>
+        <li><strong>Protect Your Width:</strong> Slices compound quickly. If you make a sloppy cut, focus entirely on small, safe trims until you can trigger a 5x Perfect Combo expansion.</li>
+        <li><strong>Listen to the Audio:</strong> Procedural pentatonic bell tones climb the musical scale with every successive perfect drop, providing instant auditory feedback without looking away.</li>
+        <li><strong>Keyboard Controls:</strong> On desktop browsers, the Spacebar or Enter key offers microsecond precision compared to mouse clicks.</li>
+      </ul>
+
+      <!-- FAQ Accordion -->
+      <h3 style="margin-top: 36px;">Frequently Asked Questions</h3>
+      <div class="faq-accordion">
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>How do you play Neon Tower?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Tap the screen or press Spacebar when the moving neon block is directly aligned over your tower. Perfect alignments keep your block full size; imperfect ones trim the overhang. Build as high as possible before missing!
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>What happens when I get a Perfect Combo?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Placing blocks within 3.5px of alignment triggers a Perfect drop. Chaining multiple perfect drops increments your combo multiplier up to 10x points, and reaching 5 consecutive perfects restores +10px of lost platform width.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>How fast does the tower get?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            The moving block starts at an accessible 240 px/s and accelerates by 8.5 px/s per floor, reaching maximum velocity around Floor 50.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Can I mute the sound effects?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Yes! Click the Sound button in the top navigation or press the "M" key on your keyboard to instantly mute or unmute synthesized Web Audio. Your preference is saved across sessions.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Is Neon Tower free to play without download?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Yes, Neon Tower is 100% free with zero installations, accounts, or downloads required. It loads instantly in any modern web browser.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Are personal records saved automatically?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Yes! Your maximum floor count, all-time high score, and longest combo streak are stored in browser localStorage.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AdSense Placement: Game Page Bottom Unit -->
+    <div class="ad-placement-wrap">
+      <aside class="arcade-ad-wrapper arcade-ad-game-bottom" data-ad-placement="gameBottom" aria-label="Sponsored Content">
+        <span class="arcade-ad-label" aria-hidden="true">ADVERTISEMENT</span>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-6654460587836639"
+             data-ad-slot="2158222958"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </aside>
+    </div>
+
+    <!-- Related Arcade Games Grid -->
+    <section class="related-games-section">
+      <h2 class="section-h2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        More Arcade &amp; Reflex Challenges
+      </h2>
+
+      <div class="related-grid">
+        <a href="/games/citrus-blitz" class="related-card">
+          <img src="/assets/games/citrus-blitz.svg" alt="Citrus Blitz" class="related-thumb" width="48" height="48">
+          <div class="related-info">
+            <span class="related-title">Citrus Blitz</span>
+            <span class="related-genre">Action / Slicer</span>
+          </div>
+        </a>
+
+        <a href="/games/stack-rush" class="related-card">
+          <img src="/assets/games/stack-rush.svg" alt="Stack Rush" class="related-thumb" width="48" height="48">
+          <div class="related-info">
+            <span class="related-title">Stack Rush</span>
+            <span class="related-genre">3D / Stacking</span>
+          </div>
+        </a>
+
+        <a href="/games/dashverse" class="related-card">
+          <img src="/assets/games/dashverse.svg" alt="Dashverse" class="related-thumb" width="48" height="48">
+          <div class="related-info">
+            <span class="related-title">Dashverse</span>
+            <span class="related-genre">Parkour / Runner</span>
+          </div>
+        </a>
+
+        <a href="/games/space-dodge" class="related-card">
+          <img src="/assets/games/space-dodge.svg" alt="Space Dodge" class="related-thumb" width="48" height="48">
+          <div class="related-info">
+            <span class="related-title">Space Dodge</span>
+            <span class="related-genre">Action / Survival</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">Mini Game Arcade</div>
+        <div class="footer-links">
+          <a href="/">Home</a>
+          <a href="/about.html">About</a>
+          <a href="/contact.html">Contact</a>
+          <a href="/privacy.html">Privacy Policy</a>
+          <a href="/terms.html">Terms of Service</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Mini Game Arcade. All rights reserved. Free browser gaming platform.</span>
+        <span>Zero downloads &bull; Safe HTML5 Games</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/games/neon-tower/js/engine.js"></script>
+  <script src="/games/neon-tower/js/audio.js"></script>
+  <script src="/games/neon-tower/js/game.js"></script>
+</body>
+</html>

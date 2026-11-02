@@ -1,6 +1,6 @@
 # Mini Game Arcade
 
-> Mini Game Arcade is a fast, responsive, curated collection of 17 original browser-based mini-games built with vanilla HTML5, Canvas 2D, and Web Audio API. Zero external runtime dependencies, no account or installation required, instant play on mobile and desktop.
+> Mini Game Arcade is a fast, responsive, curated collection of 18 original browser-based mini-games built with vanilla HTML5, Canvas 2D, and Web Audio API. Zero external runtime dependencies, no account or installation required, instant play on mobile and desktop.
 
 Mini Game Arcade provides instant-play casual, arcade, action, and puzzle games engineered for speed, accessibility, and high performance. All visual effects, physics, and game audio are generated procedurally in the browser, featuring local high-score tracking, accessible touch and keyboard controls, and full offline PWA support.
 
@@ -13,6 +13,7 @@ Website: https://mini-game-arcade-coral.vercel.app/
 
 ## Playable Arcade & Action Games
 
+- [Neon Tower](https://mini-game-arcade-coral.vercel.app/games/neon-tower): Cyber block-stacking timing game. Stack oscillating neon blocks perfectly to build the tallest skyscraper, chain combo multipliers, trim overhangs with laser sparks, and conquer escalating speeds.
 - [Dashverse](https://mini-game-arcade-coral.vercel.app/games/dashverse): High-octane cyberpunk rooftop parkour runner. Vault chasms, double jump over rooftop vents, slide under laser barriers, collect data shards, and complete courier missions.
 - [Stack Rush](https://mini-game-arcade-coral.vercel.app/games/stack-rush): One-button 3D tower stacking game. Time horizontal block drops across alternating axes, trim overlapping edges with realistic debris physics, and build ascending chime combos.
 - [Brick Breaker](https://mini-game-arcade-coral.vercel.app/games/brick-breaker): Retro-arcade neon breakout with 100% Canvas 2D physics, angle-deflecting paddle rebounds, multi-ball power-ups, particle shatter bursts, and 3 progressive waves.
