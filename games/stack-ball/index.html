@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Stack Ball – Free 3D Helix Platform Smash Game | Mini Game Arcade</title>
+  <link rel="canonical" href="https://mini-game-arcade-coral.vercel.app/games/stack-ball">
+  <meta name="description" content="Smash and plunge through rotating helix platforms in Stack Ball. Break colored discs, avoid black hazard zones, ignite unstoppable Fireball streaks, and conquer every level!">
+  <meta name="theme-color" content="#080a0f">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+
+  <!-- OpenGraph -->
+  <meta property="og:site_name" content="Mini Game Arcade">
+  <meta property="og:title" content="Stack Ball – Free 3D Helix Platform Smash Game">
+  <meta property="og:description" content="Guide the bouncing ball downward by destroying stacked platforms. Break colored discs, avoid black hazard zones, and ignite invincible Fireball streaks.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mini-game-arcade-coral.vercel.app/games/stack-ball">
+  <meta property="og:image" content="https://mini-game-arcade-coral.vercel.app/og/stack-ball.png">
+  <meta property="og:image:secure_url" content="https://mini-game-arcade-coral.vercel.app/og/stack-ball.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Stack Ball – Free 3D Helix Platform Smash Game">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Stack Ball – Free 3D Helix Platform Smash Game">
+  <meta name="twitter:description" content="Smash through rotating helix platforms in Stack Ball. Break colored discs, avoid black hazards, and ignite Fireball streaks.">
+  <meta name="twitter:image" content="https://mini-game-arcade-coral.vercel.app/og/stack-ball.png">
+  <meta name="twitter:image:alt" content="Stack Ball – Free 3D Helix Platform Smash Game">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/stack-ball#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://mini-game-arcade-coral.vercel.app/" },
+        { "@type": "ListItem", "position": 2, "name": "Arcade", "item": "https://mini-game-arcade-coral.vercel.app/category/arcade" },
+        { "@type": "ListItem", "position": 3, "name": "Stack Ball", "item": "https://mini-game-arcade-coral.vercel.app/games/stack-ball" }
+      ]
+    },
+    {
+      "@type": "VideoGame",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/stack-ball#game",
+      "name": "Stack Ball",
+      "url": "https://mini-game-arcade-coral.vercel.app/games/stack-ball",
+      "image": "https://mini-game-arcade-coral.vercel.app/assets/games/stack-ball.svg",
+      "description": "Smash and plunge through rotating helix platforms in Stack Ball. Break colored discs, avoid black hazard zones, ignite unstoppable Fireball streaks, and conquer every level!",
+      "genre": ["Arcade", "Casual", "3D", "Helix", "Destruction", "Timing"],
+      "gamePlatform": "Web Browser",
+      "operatingSystem": "Any",
+      "applicationCategory": "Game",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://mini-game-arcade-coral.vercel.app/games/stack-ball#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do you play Stack Ball?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Hold your click, tap, or press Spacebar to drive the bouncing ball downward, smashing through colored platform segments. Release your hold to stop and bounce safely before hitting any black hazard segments."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if you hit a black segment?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Black segments are dangerous hazards. In normal mode, touching a black segment instantly shatters the ball and forces a level restart. However, in Fireball Mode, the ball can smash through black segments without dying!"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do you activate Fireball Mode?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "By maintaining an unbroken plunge through multiple consecutive colored platforms, your streak meter fills up. Once fully charged, the ball ignites into an unstoppable blazing Fireball that annihilates every platform in its path."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How many levels are there in Stack Ball?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Stack Ball features infinite progressive levels. As you advance, towers get taller, rotation patterns alternate unpredictably, and black hazard segments become tighter and trickier to navigate."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I play Stack Ball on phones and tablets?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! Stack Ball is engineered with responsive HTML5 Canvas and touch-optimized controls for seamless single-tap and hold play across iPhone, iPad, Android, and desktop browsers."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are personal records and level progress saved?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! Your current unlocked level, all-time high score, and maximum smash streak are saved directly to your browser's local storage."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+
+  <!-- Clean URL Safe Root-Relative Stylesheet Link -->
+  <link rel="stylesheet" href="/games/stack-ball/style.css">
+</head>
+<body>
+
+  <!-- Sticky Arcade Navigation Bar -->
+  <header class="arcade-nav-bar">
+    <div class="nav-content-container">
+      <a href="/" class="back-link" aria-label="Return to Mini Game Arcade Homepage">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span>Arcade</span>
+      </a>
+
+      <div class="nav-brand-title">Stack Ball</div>
+
+      <div class="nav-actions">
+        <button id="btn-sound" class="nav-btn" type="button" aria-label="Toggle Sound Effects">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"></path>
+          </svg>
+          <span id="btn-sound-text">Sound</span>
+        </button>
+        <button id="btn-restart" class="nav-btn" type="button" aria-label="Restart Current Game">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+          </svg>
+          <span>Restart</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Stage Wrapper -->
+  <main class="game-page-wrapper">
+
+    <!-- Editorial Header -->
+    <section class="game-editorial-header">
+      <nav class="breadcrumbs" aria-label="Breadcrumbs">
+        <a href="/">Home</a>
+        <span class="crumb-separator">/</span>
+        <a href="/category/arcade">Arcade</a>
+        <span class="crumb-separator">/</span>
+        <span class="crumb-current">Stack Ball</span>
+      </nav>
+
+      <div class="game-eyebrow">
+        <span class="game-eyebrow-pip"></span>
+        <span>3D Helix Destruction &amp; Momentum</span>
+      </div>
+
+      <h1 class="game-h1">Stack Ball</h1>
+      <p class="game-tagline">
+        What looks calm quickly turns thrilling as Stack Ball places a bouncing ball above towering platforms begging to be destroyed. Time your plunge, avoid black hazard zones, and unleash unstoppable Fireball streaks!
+      </p>
+    </section>
+
+    <!-- Main Game Card / Playfield -->
+    <div class="stack-ball-card" role="region" aria-label="Stack Ball Game Board">
+
+      <!-- Top Level Progress Track -->
+      <div class="level-progress-wrap">
+        <div class="level-badge">Level <span id="level-display">1</span></div>
+        <div class="progress-bar-track">
+          <div id="progress-bar-fill" class="progress-bar-fill"></div>
+        </div>
+        <div id="progress-text" class="progress-percent">0%</div>
+      </div>
+
+      <!-- Fireball Streak Gauge -->
+      <div class="fireball-gauge-wrap">
+        <span class="fireball-label">Fireball</span>
+        <div class="fireball-track">
+          <div id="fireball-meter-fill" class="fireball-fill"></div>
+        </div>
+      </div>
+
+      <!-- HUD Top Bar -->
+      <div class="game-hud-bar">
+        <div class="hud-group">
+          <div class="hud-stat-box">
+            <div class="hud-stat-label">Score</div>
+            <div id="score-display" class="hud-stat-val accent">0</div>
+          </div>
+          <div class="streak-badge">
+            <div class="hud-stat-label">Streak</div>
+            <div id="streak-display" class="streak-val">—</div>
+          </div>
+        </div>
+
+        <div class="hud-group">
+          <div class="hud-stat-box">
+            <div class="hud-stat-label">Best Record</div>
+            <div id="best-score" class="hud-stat-val gold">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Canvas Stage Container -->
+      <div class="canvas-container">
+        <!-- Interactive Canvas -->
+        <canvas id="stack-canvas"></canvas>
+
+        <!-- Start / Pause Overlay -->
+        <div id="game-overlay" class="game-overlay">
+          <div class="overlay-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </div>
+          <div id="overlay-title" class="overlay-title">STACK BALL</div>
+          <div id="overlay-subtitle" class="overlay-subtitle">HOLD TO SMASH • RELEASE TO BOUNCE</div>
+        </div>
+      </div>
+
+      <!-- Controls Dock -->
+      <div class="game-controls-dock">
+        <button id="btn-pause" class="action-btn" type="button" aria-label="Pause or Resume Game">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+          <span>Pause</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="modal-gameover" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="gameover-title">
+      <div class="game-modal-card">
+        <div class="modal-badge-rank">HAZARD IMPACT!</div>
+        <h2 id="gameover-title" class="modal-title">BALL SHATTERED</h2>
+
+        <div class="modal-stats-grid">
+          <div class="modal-stat-cell">
+            <div class="modal-stat-title">Level</div>
+            <div id="modal-gameover-level" class="modal-stat-number accent">1</div>
+          </div>
+          <div class="modal-stat-cell">
+            <div class="modal-stat-title">Score</div>
+            <div id="modal-gameover-score" class="modal-stat-number">0</div>
+          </div>
+          <div class="modal-stat-cell" style="grid-column: span 2;">
+            <div class="modal-stat-title">Personal Best</div>
+            <div id="modal-gameover-best" class="modal-stat-number gold">0</div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="modal-gameover-restart-btn" class="action-btn btn-primary" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="1 4 1 10 7 10"></polyline>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            </svg>
+            <span>Try Again</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level Win Modal -->
+    <div id="modal-win" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="win-title">
+      <div class="game-modal-card">
+        <div class="modal-badge-rank" style="border-color: #00e676; color: #00e676; background: rgba(0, 230, 118, 0.15);">BASE REACHED!</div>
+        <div id="modal-win-stars" class="modal-stars">★★★</div>
+        <h2 id="win-title" class="modal-title">LEVEL COMPLETE!</h2>
+
+        <div class="modal-stats-grid">
+          <div class="modal-stat-cell">
+            <div class="modal-stat-title">Cleared Level</div>
+            <div id="modal-win-level" class="modal-stat-number accent">1</div>
+          </div>
+          <div class="modal-stat-cell">
+            <div class="modal-stat-title">Total Score</div>
+            <div id="modal-win-score" class="modal-stat-number gold">0</div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="modal-win-next-btn" class="action-btn btn-success" type="button">
+            <span>Next Level →</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Editorial Guide Section -->
+    <section class="game-editorial-section">
+      <h2>Gameplay: Break, Fall, and Repeat</h2>
+      <p>
+        Each round in <strong>Stack Ball</strong> challenges you to guide a bouncing ball downward by destroying stacked circular platforms beneath it. Only colored layers allow safe landings and successful breaks, while touching any black segment instantly shatters the ball and forces a restart.
+      </p>
+      <p>
+        Smart timing creates consecutive piercings, which activate a powerful <strong>Fireball State</strong> that smashes through every stack without restriction! Levels grow more demanding through denser layouts and trickier color patterns, so reaching the checkered base safely becomes the ultimate goal.
+      </p>
+
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Simple Controls
+          </div>
+          <div class="rule-card-desc">
+            A single tap or click drops the ball one level. Holding the input plunges through multiple layers when conditions remain safe.
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Fireball Streaks
+          </div>
+          <div class="rule-card-desc">
+            Smashing multiple consecutive safe platforms builds momentum, transforming the ball into a flaming meteor that annihilates black hazard segments.
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Dynamic Rotations
+          </div>
+          <div class="rule-card-desc">
+            Each floor rotates at independent speeds and alternating directions, creating dynamic windows of opportunity to pierce downward.
+          </div>
+        </div>
+      </div>
+
+      <h3>Why Players Keep Bouncing</h3>
+      <ul>
+        <li><strong>Instant Satisfaction:</strong> One-touch controls deliver immediate tactile feedback with every shattered layer.</li>
+        <li><strong>Smooth Physical Destruction:</strong> Broken platform wedges tumble away with realistic outward velocity, spin, and gravity.</li>
+        <li><strong>Strategic Risk &amp; Reward:</strong> Fireball streaks change risk decisions, encouraging brave plunge streaks through safe patterns.</li>
+        <li><strong>Escalating Challenge:</strong> Levels ramp up smoothly with denser hazard distributions without ever feeling unfair.</li>
+      </ul>
+
+      <h3>Win Faster, Smash Smarter</h3>
+      <ul>
+        <li><strong>Wait Briefly Before Plunging:</strong> Anticipate the rotation to ensure a clean multi-layer opening before committing to a hold.</li>
+        <li><strong>Chase Fireball Streaks:</strong> When you spot a cluster of safe colored arcs, plunge aggressively to ignite the fireball.</li>
+        <li><strong>Release Before Black Segments:</strong> Releasing input immediately returns the ball to a safe bounce atop the platform.</li>
+        <li><strong>Use Single Taps in Crowded Zones:</strong> When hazard black segments dominate, tap once to advance floor-by-floor carefully.</li>
+      </ul>
+
+      <!-- FAQ Accordion -->
+      <h3 style="margin-top: 36px;">Frequently Asked Questions</h3>
+      <div class="faq-accordion">
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>What is the core objective in Stack Ball?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Your goal is to guide the bouncing ball all the way to the checkered green base at the bottom of the cylinder by smashing through colored platforms and avoiding black hazard zones.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>How does Fireball Mode work?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Smashing 4 or more safe colored platforms in a single continuous plunge activates Fireball Mode. For a brief duration, the ball is invulnerable and can smash through black hazard platforms safely!
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>What happens if I touch a black segment?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Unless you are currently in Fireball Mode, hitting a black segment instantly shatters the ball and triggers a game over, requiring you to retry the level.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Can I play with a keyboard on desktop?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Yes! Press and hold Spacebar, Enter, or the Down Arrow key to smash, and release to bounce. Press R to restart, P to pause, and M to mute audio.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Is Stack Ball free to play without download?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Yes, Stack Ball is 100% free with zero downloads, accounts, or installations. It runs instantly in any modern mobile or desktop web browser.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Are high scores and levels saved?</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="faq-answer">
+            Yes, your highest unlocked level, total score, and personal best records are saved automatically in your browser's local storage.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AdSense Placement: Game Page Bottom Unit -->
+    <div class="ad-placement-wrap">
+      <aside class="arcade-ad-wrapper arcade-ad-game-bottom" data-ad-placement="gameBottom" aria-label="Sponsored Content">
+        <span class="arcade-ad-label" aria-hidden="true">ADVERTISEMENT</span>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-6654460587836639"
+             data-ad-slot="2158222958"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </aside>
+    </div>
+
+    <!-- Related Arcade Games Grid -->
+    <section class="related-games-section">
+      <h2 class="section-h2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        More Arcade &amp; Reflex Challenges
+      </h2>
+
+      <div class="related-grid">
+        <a href="/games/neon-tower" class="related-card">
+          <img src="/assets/games/neon-tower.svg" alt="Neon Tower" class="related-thumb" width="48" height="48">
+          <div class="related-info">
+            <span class="related-title">Neon Tower</span>
+            <span class="related-genre">Cyber / Stacker</span>
+          </div>
+        </a>
+
+        <a href="/games/citrus-blitz" class="related-card">
+          <img src="/assets/games/citrus-blitz.svg" alt="Citrus Blitz" class="related-thumb" width="48" height="48">
+          <div class="related-info">
+            <span class="related-title">Citrus Blitz</span>
+            <span class="related-genre">Action / Slicer</span>
+          </div>
+        </a>
+
+        <a href="/games/dashverse" class="related-card">
+          <img src="/assets/games/dashverse.svg" alt="Dashverse" class="related-thumb" width="48" height="48">
+          <div class="related-info">
+            <span class="related-title">Dashverse</span>
+            <span class="related-genre">Parkour / Runner</span>
+          </div>
+        </a>
+
+        <a href="/games/brick-breaker" class="related-card">
+          <img src="/assets/games/brick-breaker.svg" alt="Brick Breaker" class="related-thumb" width="48" height="48">
+          <div class="related-info">
+            <span class="related-title">Brick Breaker</span>
+            <span class="related-genre">Retro / Breakout</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">Mini Game Arcade</div>
+        <div class="footer-links">
+          <a href="/">Home</a>
+          <a href="/about.html">About</a>
+          <a href="/contact.html">Contact</a>
+          <a href="/privacy.html">Privacy Policy</a>
+          <a href="/terms.html">Terms of Service</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Mini Game Arcade. All rights reserved. Free browser gaming platform.</span>
+        <span>Zero downloads &bull; Safe HTML5 Games</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/games/stack-ball/js/engine.js"></script>
+  <script src="/games/stack-ball/js/audio.js"></script>
+  <script src="/games/stack-ball/js/game.js"></script>
+</body>
+</html>

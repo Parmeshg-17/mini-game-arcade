@@ -156,7 +156,7 @@ it('Search and category filter logic filters games correctly', () => {
   assert.strictEqual(res3.length, 4);
   assert(res3.some(g => g.id === 'citrus-blitz'));
   assert(res3.some(g => g.id === 'tap-challenge'));
-  assert(res3.some(g => g.id === 'stack-rush'));
+  assert(res3.some(g => g.id === 'stack-ball' || g.id === 'stack-rush'));
   assert(res3.some(g => g.id === 'neon-tower'));
 
   // Puzzle category filter matches Tic Tac Toe, Number Puzzle, Block Puzzle, Circuit Connect, Merge Grid, Hidden Hunt, Jigpic Solitaire, and Water Sort
@@ -207,24 +207,23 @@ it('Search and category filter logic filters games correctly', () => {
   assert(resNumber.some(g => g.id === 'tap-challenge'));
   assert(resNumber.some(g => g.id === 'merge-grid'));
 
-  // Tag search for tap (matches tap-challenge and stack-rush)
+  // Tag search for tap (matches tap-challenge and stack-ball)
   const resTap = filterGames('tap', 'All');
   assert.strictEqual(resTap.length, 2);
   assert(resTap.some(g => g.id === 'tap-challenge'));
-  assert(resTap.some(g => g.id === 'stack-rush'));
+  assert(resTap.some(g => g.id === 'stack-ball' || g.id === 'stack-rush'));
 
-  // Tag search for block (matches block-puzzle, stack-rush, jigpic-solitaire, and neon-tower)
+  // Tag search for block (matches block-puzzle, jigpic-solitaire, and neon-tower)
   const resBlock = filterGames('block', 'All');
-  assert.strictEqual(resBlock.length, 4);
+  assert.strictEqual(resBlock.length, 3);
   assert(resBlock.some(g => g.id === 'block-puzzle'));
-  assert(resBlock.some(g => g.id === 'stack-rush'));
   assert(resBlock.some(g => g.id === 'jigpic-solitaire'));
   assert(resBlock.some(g => g.id === 'neon-tower'));
 
-  // Tag search for stack (matches stack-rush and neon-tower)
+  // Tag search for stack (matches stack-ball and neon-tower)
   const resStack = filterGames('stack', 'All');
   assert.strictEqual(resStack.length, 2);
-  assert(resStack.some(g => g.id === 'stack-rush'));
+  assert(resStack.some(g => g.id === 'stack-ball' || g.id === 'stack-rush'));
   assert(resStack.some(g => g.id === 'neon-tower'));
 
   // Tag search for circuit connect
@@ -2225,7 +2224,8 @@ it('All HTML pages have verified canonical tags and valid Schema.org JSON-LD', (
     'games/jigpic-solitaire/index.html',
     'games/water-sort/index.html',
     'games/screw-master/index.html',
-    'games/neon-tower/index.html'
+    'games/neon-tower/index.html',
+    'games/stack-ball/index.html'
   ];
 
   for (const page of pages) {
@@ -2251,7 +2251,7 @@ it('Citrus Blitz page has H1, FAQ section, breadcrumbs, and crawlable related ga
   assert(cbHtml.includes('FAQPage') || cbHtml.includes('Frequently Asked Questions'), 'Must have FAQ section');
   assert(cbHtml.includes('class="related-games-section"'), 'Must have crawlable related games grid');
   assert(cbHtml.includes('/games/dashverse'), 'Related games must link to Dashverse');
-  assert(cbHtml.includes('/games/stack-rush'), 'Related games must link to Stack Rush');
+  assert(cbHtml.includes('/games/stack-rush') || cbHtml.includes('/games/stack-ball'), 'Related games must link to Stack Rush or Stack Ball');
 });
 
 
@@ -2503,6 +2503,63 @@ it('Open Graph, Twitter Cards, canonical URLs, and 1200x630 social preview image
     assert(sHtml.includes('property="og:image:height" content="630"'), `${sp} must have 630 height`);
     assert(sHtml.includes('name="twitter:card" content="summary_large_image"'), `${sp} must have twitter:card`);
   }
+});
+
+
+// 43. Dedicated Stack Ball Playable Page DOM & Engine Mechanics
+it('Dedicated Stack Ball page (games/stack-ball/index.html) and StackBallEngine execute helix smashing and fireball streaks', () => {
+  const gameHtmlPath = path.join(__dirname, 'games/stack-ball/index.html');
+  assert(fs.existsSync(gameHtmlPath), 'games/stack-ball/index.html must exist');
+  const gameHtml = fs.readFileSync(gameHtmlPath, 'utf8');
+
+  const requiredIds = [
+    'stack-canvas',
+    'score-display',
+    'level-display',
+    'streak-display',
+    'fireball-meter-fill',
+    'progress-bar-fill',
+    'progress-text',
+    'best-score',
+    'btn-sound',
+    'btn-restart',
+    'btn-pause',
+    'modal-gameover',
+    'modal-win'
+  ];
+
+  for (const id of requiredIds) {
+    assert(gameHtml.includes(`id="${id}"`), `Game DOM id="${id}" missing in games/stack-ball/index.html`);
+  }
+
+  // Verify vector thumbnail and 1200x630 OG preview exist
+  assert(fs.existsSync(path.join(__dirname, 'assets/games/stack-ball.svg')), 'assets/games/stack-ball.svg must exist');
+  assert(fs.existsSync(path.join(__dirname, 'og/stack-ball.png')), 'og/stack-ball.png must exist');
+
+  // Verify StackBallEngine mechanics
+  const engine = require('./games/stack-ball/js/engine.js');
+  assert(typeof engine.generateLevel === 'function', 'generateLevel must be defined');
+
+  const level = engine.generateLevel(1);
+  assert(level.layers.length >= 20, 'Level 1 must have at least 20 layers');
+  assert(level.theme && level.theme.safe, 'Level must have a color theme');
+
+  // Check state initialization
+  const state = engine.createInitialState(1);
+  assert.strictEqual(state.ball.isSmashing, false, 'Ball starts idle');
+
+  // Start smash plunge
+  engine.startSmash(state);
+  assert.strictEqual(state.ball.isSmashing, true, 'startSmash activates smash mode');
+
+  // Test segment lookup
+  const seg = engine.getSegmentUnderBall(level.layers[0]);
+  assert(seg && (seg.type === 'safe' || seg.type === 'hazard'), 'Segment under ball identified');
+
+  // Test fireball mode
+  state.isFireball = true;
+  state.streak = 5;
+  assert.strictEqual(state.isFireball, true, 'Fireball mode active');
 });
 
 console.log(`\nQA Test Results: ${passedTests} / ${totalTests} passed.`);

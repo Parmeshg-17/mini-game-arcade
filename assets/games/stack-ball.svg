@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270" width="480" height="270" role="img" aria-label="Stack Ball 3D Helix Platform Smash Game Thumbnail">
+  <defs>
+    <!-- Background Radial Gradient -->
+    <radialGradient id="sb-bg" cx="50%" cy="40%" r="75%">
+      <stop offset="0%" stop-color="#182030"/>
+      <stop offset="55%" stop-color="#0c111a"/>
+      <stop offset="100%" stop-color="#05070a"/>
+    </radialGradient>
+
+    <!-- Glowing Filters -->
+    <filter id="sb-glow-orange" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="sb-glow-fire" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Core Cylinder Gradient -->
+    <linearGradient id="sb-core" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#18202d"/>
+      <stop offset="35%" stop-color="#3d4c63"/>
+      <stop offset="70%" stop-color="#222b3a"/>
+      <stop offset="100%" stop-color="#10151f"/>
+    </linearGradient>
+
+    <!-- Orange Safe Segment Gradient -->
+    <linearGradient id="sb-orange" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff8a50"/>
+      <stop offset="40%" stop-color="#ff5722"/>
+      <stop offset="100%" stop-color="#c41c00"/>
+    </linearGradient>
+
+    <!-- Black Hazard Segment Gradient -->
+    <linearGradient id="sb-black" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2a313d"/>
+      <stop offset="50%" stop-color="#141820"/>
+      <stop offset="100%" stop-color="#090b0f"/>
+    </linearGradient>
+
+    <!-- Ball 3D Gradient -->
+    <radialGradient id="sb-ball" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="30%" stop-color="#ffd54f"/>
+      <stop offset="70%" stop-color="#ff5722"/>
+      <stop offset="100%" stop-color="#b71c1c"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Deep Stage Background -->
+  <rect width="480" height="270" fill="url(#sb-bg)"/>
+
+  <!-- Distant Stars & Embers -->
+  <g fill="#ffffff" opacity="0.6">
+    <circle cx="50" cy="45" r="1.2"/>
+    <circle cx="95" cy="110" r="1.5" opacity="0.3"/>
+    <circle cx="130" cy="30" r="1"/>
+    <circle cx="380" cy="50" r="1.4"/>
+    <circle cx="430" cy="100" r="1"/>
+    <circle cx="410" cy="190" r="1.2" opacity="0.4"/>
+    <circle cx="70" cy="210" r="1.3" opacity="0.3"/>
+  </g>
+
+  <!-- Central Core Column Cylinder -->
+  <rect x="226" y="0" width="28" height="270" fill="url(#sb-core)"/>
+  <line x1="226" y1="0" x2="226" y2="270" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+  <line x1="254" y1="0" x2="254" y2="270" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+
+  <!-- Helix Platforms Stack -->
+  <!-- Floor 1 (Bottom, intact green base) -->
+  <g transform="translate(240, 240)">
+    <ellipse cx="0" cy="0" rx="90" ry="32" fill="#00e676" stroke="#00a854" stroke-width="2" filter="url(#sb-glow-orange)"/>
+    <ellipse cx="0" cy="0" rx="14" ry="5" fill="#1b5e20"/>
+  </g>
+
+  <!-- Floor 2 (Intact Orange & Black Disc) -->
+  <g transform="translate(240, 204)">
+    <!-- Black Hazard Arc -->
+    <path d="M -78, -5 A 82 28 0 0 1 20 -27 L 10 -9 A 14 5 0 0 0 -14 -1 Z" fill="url(#sb-black)" stroke="#334155" stroke-width="1"/>
+    <!-- Orange Safe Arc -->
+    <path d="M 20, -27 A 82 28 0 0 1 -78 -5 L -14 -1 A 14 5 0 0 0 10 -9 Z" fill="url(#sb-orange)" stroke="#ff7043" stroke-width="1.5"/>
+  </g>
+
+  <!-- Floor 3 (Intact Orange & Black Disc) -->
+  <g transform="translate(240, 168)">
+    <!-- Safe Arc -->
+    <path d="M -80, -2 A 84 29 0 0 1 40 -25 L 12 -8 A 14 5 0 0 0 -14 0 Z" fill="url(#sb-orange)" stroke="#ff7043" stroke-width="1.5"/>
+    <!-- Hazard Arc -->
+    <path d="M 40, -25 A 84 29 0 0 1 -80 -2 L -14 0 A 14 5 0 0 0 12 -8 Z" fill="url(#sb-black)" stroke="#334155" stroke-width="1"/>
+  </g>
+
+  <!-- Floor 4 (Shattering / Smashing Disc) -->
+  <g transform="translate(240, 130)">
+    <!-- Shattered Flying Wedges -->
+    <g transform="translate(-60, -15) rotate(-22)">
+      <rect x="-14" y="-8" width="28" height="14" rx="2" fill="url(#sb-orange)" stroke="#ff7043" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(65, -8) rotate(26)">
+      <rect x="-16" y="-8" width="30" height="14" rx="2" fill="url(#sb-orange)" stroke="#ff7043" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(75, 18) rotate(45)">
+      <rect x="-10" y="-6" width="20" height="12" rx="2" fill="url(#sb-black)" stroke="#334155" stroke-width="1"/>
+    </g>
+    <g transform="translate(-70, 22) rotate(-35)">
+      <rect x="-12" y="-6" width="22" height="12" rx="2" fill="url(#sb-orange)" stroke="#ff7043" stroke-width="1.5"/>
+    </g>
+  </g>
+
+  <!-- Spark Bursts & Flame Blast -->
+  <g transform="translate(240, 118)">
+    <circle cx="0" cy="0" r="32" fill="rgba(255, 87, 34, 0.35)" filter="url(#sb-glow-fire)"/>
+    <circle cx="0" cy="0" r="18" fill="rgba(255, 214, 0, 0.6)" filter="url(#sb-glow-orange)"/>
+    <!-- Flying Sparks -->
+    <circle cx="-32" cy="-14" r="3" fill="#ffe082"/>
+    <circle cx="36" cy="-18" r="2.5" fill="#ff7043"/>
+    <circle cx="-25" cy="18" r="2" fill="#ffab00"/>
+    <circle cx="28" cy="22" r="3" fill="#ffffff"/>
+    <circle cx="45" cy="5" r="1.8" fill="#ffd54f"/>
+    <circle cx="-42" cy="8" r="2.2" fill="#ff5722"/>
+  </g>
+
+  <!-- The Smashing Bouncing Ball -->
+  <g transform="translate(240, 102)">
+    <!-- Flame Aura -->
+    <circle cx="0" cy="0" r="24" fill="rgba(255, 112, 67, 0.45)" filter="url(#sb-glow-fire)"/>
+    <!-- Ball Core -->
+    <circle cx="0" cy="0" r="15" fill="url(#sb-ball)" filter="url(#sb-glow-orange)"/>
+    <!-- Specular Highlight -->
+    <circle cx="-5" cy="-5" r="4" fill="#ffffff" opacity="0.85"/>
+  </g>
+
+  <!-- Fireball Streak Pill Badge -->
+  <g transform="translate(240, 68)">
+    <rect x="-70" y="-13" width="140" height="26" rx="13" fill="#0d111a" stroke="#ff5722" stroke-width="1.5" filter="url(#sb-glow-orange)"/>
+    <text x="0" y="5" font-family="'Space Grotesk', -apple-system, sans-serif" font-size="11" font-weight="800" fill="#ff5722" text-anchor="middle" letter-spacing="1.2">FIREBALL SMASH</text>
+  </g>
+
+  <!-- Header Title -->
+  <g transform="translate(240, 34)">
+    <text x="0" y="0" font-family="'Space Grotesk', -apple-system, sans-serif" font-size="24" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="2">STACK BALL</text>
+  </g>
+</svg>

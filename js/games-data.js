@@ -122,17 +122,17 @@ const ARCADE_GAMES = [
     features: ['8x8 Grid & Polyomino Dock', 'Classic, Challenge & Blitz', 'Row & Column Blast Combos', 'Full Keyboard & Touch Support']
   },
   {
-    id: 'stack-rush',
-    title: 'Stack Rush',
+    id: 'stack-ball',
+    title: 'Stack Ball',
     category: 'Arcade',
-    tags: ['arcade', '3d', 'stack', 'tower', 'timing', 'reflex', 'blocks', 'trim', 'one-button', 'casual'],
-    badge: 'New',
-    tagline: 'One-button 3D tower stacker. Time the drop. Trim the excess.',
-    description: 'Blocks glide horizontally across alternating 3D axes. Tap, click, or press Space to drop each block and build the tallest tower possible. Poorly aligned blocks get trimmed with realistic falling debris physics, making each subsequent move harder. Features ascending chime combos, particle sparkle bursts, increasing speed, and instant restart.',
-    route: 'games/stack-rush/index.html',
-    thumbnail: 'assets/games/stack-rush.svg',
-    controlsSummary: 'Tap Screen / Click / Spacebar to Drop • Instant One-Touch Restart • P to Pause • R to Restart • M to Mute',
-    features: ['One-Button Gameplay', 'Satisfying 3D Trimming', 'Ascending Chime Combos', 'Personal Best & Instant Restart']
+    tags: ['arcade', 'casual', '3d', 'helix', 'ball', 'smash', 'destruction', 'fireball', 'timing', 'stack', 'tap'],
+    badge: 'Featured',
+    tagline: 'Smash platforms. Avoid black zones. Unleash Fireball streaks.',
+    description: 'What looks calm quickly turns thrilling as Stack Ball places a bouncing ball above towering platforms begging to be destroyed. Break colored discs, avoid black hazard zones, and ignite invincible Fireball streaks!',
+    route: 'games/stack-ball/index.html',
+    thumbnail: 'assets/games/stack-ball.svg',
+    controlsSummary: 'Hold Click / Tap / Spacebar to smash down • Release to bounce • P to Pause • R to Restart • M to Mute',
+    features: ['3D Helix Platform Destruction', 'Unstoppable Fireball Mode', 'Dynamic Platform Rotations', 'Multi-Layer Plunge Streaks']
   },
   {
     id: 'circuit-connect',
