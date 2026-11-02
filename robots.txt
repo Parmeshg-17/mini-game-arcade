@@ -1,9 +1,14 @@
 # Robots.txt for Mini Game Arcade
 # https://mini-game-arcade-coral.vercel.app/
 
+User-agent: Bingbot
+Allow: /
+
+User-agent: msnbot
+Allow: /
+
 User-agent: *
 Allow: /
 
 # Sitemap Location
 Sitemap: https://mini-game-arcade-coral.vercel.app/sitemap.xml
-
